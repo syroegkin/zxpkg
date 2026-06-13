@@ -8,7 +8,7 @@ services:
       MARIADB_PASSWORD: ${DB_PASSWORD:-zxpkg}
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootzxpkg}
     volumes:
-      - db:/var/lib/mysql
+      - ./data/db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -22,7 +22,7 @@ services:
     environment:
       DB_HOST: mariadb
     volumes:
-      - keys:/data/keys
+      - ./data/keys:/data/keys
     depends_on:
       mariadb:
         condition: service_healthy
@@ -38,8 +38,8 @@ services:
     ports:
       - "127.0.0.1:4400:3000"
     volumes:
-      - store:/data/store
-      - keys:/data/keys
+      - ./data/store:/data/store
+      - ./data/keys:/data/keys
     depends_on:
       mariadb:
         condition: service_healthy
@@ -54,8 +54,8 @@ services:
     environment:
       DB_HOST: mariadb
     volumes:
-      - store:/data/store
-      - keys:/data/keys
+      - ./data/store:/data/store
+      - ./data/keys:/data/keys
     depends_on:
       mariadb:
         condition: service_healthy
