@@ -6,7 +6,8 @@
 // columns. Gophermap lines (RFC 1436): tab-separated <type><display>\t<selector>\t
 // <host>\t<port>; info lines use type 'i'. Selectors are absolute from the gopher
 // root, so they carry env.gopher.prefix (e.g. /pkg).
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { query } from "./db";
 import { store } from "./store";
 import { env } from "./env";
@@ -53,8 +54,83 @@ function wrap(s: string): string[] {
   return out;
 }
 
-export function renderRootMap(pkgs: GopherPkg[]): string {
+// --- markdown -> plain-text gopher doc (type 0), reflowed to the client width ---
+export interface DocLink { slug: string; title: string; file: string; }
+export const DOCS: DocLink[] = [
+  { slug: "docs",   title: "Guide: dot commands & how to install", file: "docs.md" },
+  { slug: "client", title: "On-device client (.pkg / .pkg-inst)",   file: "client.md" },
+  { slug: "wifi",   title: "Installing packages over WiFi",         file: "wifi.md" },
+];
+
+const stripInline = (s: string): string => s
+  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 ($2)")   // [text](url) -> text (url)
+  .replace(/\*\*([^*]+)\*\*/g, "$1")
+  .replace(/\*([^*]+)\*/g, "$1")
+  .replace(/_([^_]+)_/g, "$1")
+  .replace(/`([^`]+)`/g, "$1");
+
+const wrapWords = (words: string[], c: number): string[] => {
+  const out: string[] = [];
+  let cur = "";
+  for (let w of words) {
+    while (w.length > c) { if (cur) { out.push(cur); cur = ""; } out.push(w.slice(0, c)); w = w.slice(c); }
+    if (!cur) cur = w;
+    else if ((cur + " " + w).length <= c) cur += " " + w;
+    else { out.push(cur); cur = w; }
+  }
+  if (cur) out.push(cur);
+  return out.length ? out : [""];
+};
+
+// Lightweight markdown: headings (underlined), paragraphs (reflowed), -/*/N. lists
+// (hanging indent), ``` code (verbatim). Inline **/_/`/[]() are flattened.
+export function md2gopher(md: string, c: number = env.gopher.cols): string {
+  const out: string[] = [];
+  let para: string[] = [];
+  let item: string[] | null = null;
+  let marker = "";
+  let code = false;
+  const flushPara = () => { if (para.length) { out.push(...wrapWords(para, c)); para = []; } };
+  const flushItem = () => {
+    if (item) {
+      const ind = " ".repeat(marker.length);
+      wrapWords(item, Math.max(8, c - marker.length)).forEach((ln, i) => out.push((i ? ind : marker) + ln));
+      item = null; marker = "";
+    }
+  };
+  const flush = () => { flushPara(); flushItem(); };
+  for (const raw of md.replace(/\r\n/g, "\n").split("\n")) {
+    if (raw.trim().startsWith("```")) { flush(); code = !code; continue; }
+    if (code) { out.push("  " + raw); continue; }
+    const line = raw.trim();
+    if (line === "") { flush(); out.push(""); continue; }
+    const h = /^(#{1,6})\s+(.*)$/.exec(line);
+    if (h) {
+      flush();
+      const t = stripInline(h[2]);
+      out.push("");
+      if (h[1].length === 1) { out.push(t.toUpperCase().slice(0, c)); out.push("=".repeat(Math.min(t.length, c))); }
+      else if (h[1].length === 2) { out.push(t.slice(0, c)); out.push("-".repeat(Math.min(t.length, c))); }
+      else out.push(t.slice(0, c));
+      out.push("");
+      continue;
+    }
+    const li = /^([-*]|\d+\.)\s+(.*)$/.exec(line);
+    if (li) { flush(); marker = li[1] === "-" || li[1] === "*" ? "- " : li[1] + " "; item = stripInline(li[2]).split(/\s+/).filter(Boolean); continue; }
+    const words = stripInline(line).split(/\s+/).filter(Boolean);
+    if (item) item.push(...words); else para.push(...words);
+  }
+  flush();
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").replace(/^\n+/, "") + "\n";
+}
+
+export function renderRootMap(pkgs: GopherPkg[], docs: DocLink[] = []): string {
   const L = [info("ZXPkg — ZX Spectrum package registry"), info("")];
+  if (docs.length) {
+    L.push(info("Help & how-to:"));
+    for (const d of docs) L.push(link("0", d.title, `/${d.slug}`));
+    L.push(info(""), info("Packages:"));
+  }
   for (const p of pkgs) {
     L.push(link("1", `${p.name} ${p.version} - ${p.description}`, `/p/${p.name}`));
   }
@@ -96,7 +172,20 @@ export async function rebuildGopher(): Promise<void> {
   );
   const pkgs = groupPkgs(rows);
   mkdirSync(store.root, { recursive: true });
-  writeFileSync(store.gopherRootMap(), renderRootMap(pkgs));
+
+  // help/how-to: markdown (content/) -> 64-col text docs; skip any not deployed
+  const docs: DocLink[] = [];
+  for (const d of DOCS) {
+    try {
+      const md = readFileSync(join(process.cwd(), "content", d.file), "utf8");
+      writeFileSync(store.gopherDocFile(d.slug), md2gopher(md));
+      docs.push(d);
+    } catch {
+      /* content file absent in this deploy — just omit its menu entry */
+    }
+  }
+
+  writeFileSync(store.gopherRootMap(), renderRootMap(pkgs, docs));
   rmSync(store.gopherPkgDir(""), { recursive: true, force: true }); // clear stale per-package menus
   for (const p of pkgs) {
     mkdirSync(store.gopherPkgDir(p.name), { recursive: true });

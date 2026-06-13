@@ -43,4 +43,7 @@ export const store = {
   gopherPkgMap(pkg: string): string {
     return join(root, "p", pkg, "gophermap");
   },
+  gopherDocFile(slug: string): string {   // rendered help/how-to text doc (type 0)
+    return join(root, slug);
+  },
 };
