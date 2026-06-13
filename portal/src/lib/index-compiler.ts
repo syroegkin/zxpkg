@@ -7,6 +7,7 @@ import { query } from "./db";
 import { store } from "./store";
 import { signBlob, keyId } from "./sign";
 import { encodeIndex, type IndexRow } from "./index-format";
+import { rebuildGopher } from "./gopher-compiler";
 
 export async function compileIndex(): Promise<Buffer> {
   const rows = await query<IndexRow>(
@@ -26,4 +27,5 @@ export async function rebuildIndex(): Promise<void> {
   mkdirSync(dirname(store.indexDat()), { recursive: true });
   writeFileSync(store.indexDat(), buf);
   writeFileSync(store.indexSig(), signBlob(buf));
+  await rebuildGopher();   // keep the gopher human face in sync with the registry
 }

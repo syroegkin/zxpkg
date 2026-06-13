@@ -23,7 +23,7 @@ const extra = { file: "EXTRA", content: Buffer.from("manually placed, not in the
 const dot = join(root, "DOT");
 rmSync(dot, { recursive: true, force: true });
 mkdirSync(dot, { recursive: true });
-mkdirSync(join(root, "PKG"), { recursive: true });
+mkdirSync(join(root, "ZXPKG"), { recursive: true });
 for (const x of listed) writeFileSync(join(dot, x.file), x.content);
 writeFileSync(join(dot, extra.file), extra.content);
 
@@ -32,5 +32,5 @@ const rows: IndexRow[] = listed.map((x) => ({
   machine: "48k", os_csv: "esxdos", needs_csv: "", command: x.command,
   crc32c: crc32c(x.content), size: x.content.length,
 }));
-writeFileSync(join(root, "PKG", "INDEX.DAT"), encodeIndex(rows, 1));
-console.log(`staged ${listed.length} indexed + 1 unindexed file in /DOT, index in /PKG`);
+writeFileSync(join(root, "ZXPKG", "INDEX.DAT"), encodeIndex(rows, 1));
+console.log(`staged ${listed.length} indexed + 1 unindexed file in /DOT, index in /ZXPKG`);

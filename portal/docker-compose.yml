@@ -62,3 +62,8 @@ services:
       migrate:
         condition: service_completed_successfully
     command: npm run worker
+
+# The gopher face lives at the zx.in.net umbrella level (gopher.zx.in.net:70),
+# NOT here — the hub aggregates each service's subtree, mounting this portal's
+# data/store at /srv/gopher/pkg. See deploy/umbrella-gopher/ + plans/05-gopher-umbrella.md.
+# For local device testing over gopher use `make -C ../dot gopher-serve`.

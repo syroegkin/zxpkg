@@ -32,4 +32,15 @@ export const store = {
   distFile(name: string): string {
     return join(root, "dist", name);
   },
+  // Gopher human face (mirrors the website): the store IS the /pkg subtree the
+  // hub mounts, so these land at /pkg/gophermap and /pkg/p/<name>/gophermap.
+  gopherRootMap(): string {
+    return join(root, "gophermap");
+  },
+  gopherPkgDir(pkg: string): string {
+    return join(root, "p", pkg);
+  },
+  gopherPkgMap(pkg: string): string {
+    return join(root, "p", pkg, "gophermap");
+  },
 };

@@ -21,7 +21,7 @@ const art = Buffer.alloc(size);
 for (let i = 0; i < size; i++) art[i] = (i * 31 + 7) & 0xff; // deterministic
 const sigBytes = encodeSig(key.keyId, sign(art, key));
 
-mkdirSync(join(root, "CACHE"), { recursive: true });
-writeFileSync(join(root, "CACHE", "ART"), art);
-writeFileSync(join(root, "CACHE", "ART.SIG"), sigBytes);
-console.log(`staged ${size}-byte artifact + 130-byte .sig in ${root}/CACHE`);
+mkdirSync(join(root, "ZXPKG", "CACHE"), { recursive: true });
+writeFileSync(join(root, "ZXPKG", "CACHE", "ART"), art);
+writeFileSync(join(root, "ZXPKG", "CACHE", "ART.SIG"), sigBytes);
+console.log(`staged ${size}-byte artifact + 130-byte .sig in ${root}/ZXPKG/CACHE`);

@@ -20,4 +20,13 @@ export const env = {
   seedFile: process.env.SEED_FILE || "./repos.yaml",
   publicBaseUrl: (process.env.PUBLIC_BASE_URL || "http://localhost:3000").replace(/\/$/, ""),
   basePath: process.env.BASE_PATH || "",
+  // Gopher human face: the worker mirrors the registry as gophermaps under the
+  // store, served by the umbrella Gophernicus hub. host/port/prefix go into the
+  // generated menu links; cols = the target ZX client width (Moon Rabbit = 64).
+  gopher: {
+    host: process.env.GOPHER_HOST || "gopher.zx.in.net",
+    port: process.env.GOPHER_PORT || "70",
+    prefix: (process.env.GOPHER_PREFIX || "/pkg").replace(/\/$/, ""),
+    cols: Number(process.env.GOPHER_COLS || 64),
+  },
 };

@@ -31,4 +31,4 @@ EXPOSE 70
 # unprivileged user (Gophernicus refuses to run as root). nobody must be able to
 # read the mounted store (the files are world-readable as the worker writes them).
 CMD ["socat", "TCP-LISTEN:70,reuseaddr,fork", \
-     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher,su=nobody"]
+     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher -w 64,su=nobody"]
