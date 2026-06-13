@@ -1,0 +1,44 @@
+{
+  "schema_ver": 1,
+  "key_id": 1,
+  "record_count": 3,
+  "total_bytes": 158,
+  "rows": [
+    {
+      "name": "morse",
+      "version": "1.2.0",
+      "type": "dot",
+      "description": "Morse code for the ZX Spectrum",
+      "machine": "48k",
+      "os_csv": "nextzxos,esxdos",
+      "needs_csv": "",
+      "command": "MORSE",
+      "crc32c": 305441741,
+      "size": 512
+    },
+    {
+      "name": "nxtel",
+      "version": "0.9",
+      "type": "dot",
+      "description": "Viewdata / teletext client",
+      "machine": "next",
+      "os_csv": "nextzxos",
+      "needs_csv": "wifi",
+      "command": "NXTEL",
+      "crc32c": 3735928559,
+      "size": 4096
+    },
+    {
+      "name": "snake",
+      "version": "2.0.1",
+      "type": "game",
+      "description": "",
+      "machine": "128k",
+      "os_csv": "esxdos",
+      "needs_csv": "",
+      "command": "SNAKE",
+      "crc32c": 16711935,
+      "size": 16384
+    }
+  ]
+}

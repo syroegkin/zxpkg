@@ -1,0 +1,5 @@
+# Seed list of repositories the worker indexes on start.
+# Each repo must contain a .zxpkg.toml manifest at the default branch HEAD.
+# One-off repos can also be added at runtime via the /admin form.
+repos:
+  - https://github.com/syroegkin/dots

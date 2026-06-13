@@ -26,6 +26,12 @@ node_modules/
 
 # esxDOS host-dir test scratch (ZEsarUX --esxdos-root-dir)
 dot/esxdos_root/
+
+# built dot commands (regenerable via `make`)
 dot/PKG
+dot/PKG-INST
+dot/PKG-GET
+dot/PKGCLEAN
+dot/PKGDIAG
 .toolchain
 
