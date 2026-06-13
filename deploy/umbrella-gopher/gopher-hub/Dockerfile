@@ -14,11 +14,14 @@
 FROM alpine:3.20
 
 RUN apk add --no-cache socat \
- && apk add --no-cache --virtual .build build-base git \
+ && apk add --no-cache --virtual .build build-base git autoconf automake \
  && git clone --depth 1 https://github.com/gophernicus/gophernicus /tmp/g \
- && make -C /tmp/g \
- && make -C /tmp/g install \
- && rm -rf /tmp/g \
+ && cd /tmp/g \
+ && { test -f configure || autoreconf -fi; } \
+ && ./configure \
+ && make \
+ && make install \
+ && cd / && rm -rf /tmp/g \
  && apk del .build
 
 EXPOSE 70
