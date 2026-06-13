@@ -25,5 +25,9 @@ services:
       - ./zxpkg/portal/data/store:/srv/gopher/pkg:ro      # ZXPkg owns /pkg (its worker writes this)
       # - ./hub/gopher:/srv/gopher/hub:ro                 # the hub website's gopher face (optional)
       # - ./<svc>/gopher:/srv/gopher/<svc>:ro             # one line per additional service
+    # NOTE: /srv/gopher is mounted read-only, so each subtree mountpoint must ALREADY
+    # EXIST inside gopher-hub/root/ — Docker can't mkdir it under a read-only parent.
+    # For every service mounted above, create an empty dir: gopher-hub/root/<svc>/
+    # (this template ships gopher-hub/root/pkg/ for that reason).
     ports:
       - "70:70"

@@ -26,6 +26,9 @@ RUN apk add --no-cache socat \
 
 EXPOSE 70
 
-# fork a gophernicus per connection; -h = advertised host, -r = the aggregated root
+# fork a gophernicus per connection; -h = advertised host, -r = the aggregated root.
+# su=nobody: socat stays root only to bind :70, but runs gophernicus as an
+# unprivileged user (Gophernicus refuses to run as root). nobody must be able to
+# read the mounted store (the files are world-readable as the worker writes them).
 CMD ["socat", "TCP-LISTEN:70,reuseaddr,fork", \
-     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher"]
+     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher,su=nobody"]
