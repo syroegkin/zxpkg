@@ -1,0 +1,7 @@
+iZX over gopher — gopher.zx.in.net	fake	(NULL)	0
+i 	fake	(NULL)	0
+1pkg — ZX Spectrum package registry	/pkg	gopher.zx.in.net	70
+i 	fake	(NULL)	0
+iEach service owns its own subtree (mounted at /<svc> by the hub compose) and	fake	(NULL)	0
+iemits its own gophermap. Add a service: one volume line in docker-compose.yml	fake	(NULL)	0
+i+ a "1<name>	/<svc>	gopher.zx.in.net	70" entry below.	fake	(NULL)	0

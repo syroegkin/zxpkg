@@ -1,0 +1,29 @@
+# zx.in.net/docker-compose.yml — the Gophernicus hub for the whole zx.in.net family.
+#
+# LIFT THIS to the umbrella root. Target layout:
+#   zx.in.net/
+#     docker-compose.yml      <- this file
+#     gopher-hub/             <- the Dockerfile + root gophermap (this dir, moved up)
+#     zxpkg/                  <- this package-manager repo  -> /pkg
+#     hub/                    <- the hub website            -> /hub (optional gopher face)
+#     <svc>/                  <- future services            -> /<svc>
+#
+# ONE gopher tree at gopher.zx.in.net:70, composed by mounting each service's
+# subtree read-only under the root. Each service OWNS + PRODUCES its own subtree
+# in its own repo; this hub only aggregates and serves. Adding a service = one
+# volume line here + that service emitting a gopher subtree (a gophermap + files).
+#
+# DNS: gopher.zx.in.net must be GREY-CLOUD (DNS-only -> origin). Cloudflare does
+# not proxy gopher; the apex zx.in.net stays orange for the website.
+
+services:
+  gopher:
+    build: ./gopher-hub                 # gophernicus (built from source) + socat listener
+    restart: unless-stopped
+    volumes:
+      - ./gopher-hub/root:/srv/gopher:ro                  # root gophermap = the service directory
+      - ./zxpkg/portal/data/store:/srv/gopher/pkg:ro      # ZXPkg owns /pkg (its worker writes this)
+      # - ./hub/gopher:/srv/gopher/hub:ro                 # the hub website's gopher face (optional)
+      # - ./<svc>/gopher:/srv/gopher/<svc>:ro             # one line per additional service
+    ports:
+      - "70:70"
