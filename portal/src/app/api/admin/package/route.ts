@@ -75,7 +75,7 @@ export async function POST(req: Request) {
 
   // On a form submit, send failures back to /admin with the values so nothing is lost.
   const fail = (status: number, msg: string) =>
-    isJson ? new Response(msg, { status }) : adminBack(req.url, env.basePath, "pkg", msg, values);
+    isJson ? new Response(msg, { status }) : adminBack(env.basePath, "pkg", msg, values);
 
   if (!reqIsAdmin(req, token)) return new Response("Unauthorized", { status: 401 });
   if (!repoUrl) return fail(400, "Repository URL is required");
@@ -109,6 +109,6 @@ export async function POST(req: Request) {
   await exec("UPDATE repos SET last_commit_sha=NULL WHERE id=?", [repo.id]);
   await exec("INSERT INTO crawl_queue (repo_id) VALUES (?)", [repo.id]);
 
-  if (!isJson) return Response.redirect(new URL(`${env.basePath}/admin?ok=pkg`, req.url), 303);
+  if (!isJson) return Response.redirect(new URL(`${env.basePath}/admin?ok=pkg`, env.publicBaseUrl), 303);
   return Response.json({ ok: true, package: manifest.name, repo: ref.ownerRepo });
 }

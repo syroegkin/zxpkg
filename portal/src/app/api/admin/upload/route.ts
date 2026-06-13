@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     machine: g("machine"), os: form.getAll("os").map(String), needs: form.getAll("needs").map(String),
     command: g("command"), description: g("description"), license: g("license"), author: g("author"),
   };
-  const fail = (msg: string) => adminBack(req.url, env.basePath, "upload", msg, values);
+  const fail = (msg: string) => adminBack(env.basePath, "upload", msg, values);
 
   const input: ManifestInput = {
     name: g("name"),
@@ -69,5 +69,5 @@ export async function POST(req: Request) {
     return fail(`publish failed: ${e.message}`);
   }
 
-  return Response.redirect(new URL(`${env.basePath}/admin?ok=upload`, req.url), 303);
+  return Response.redirect(new URL(`${env.basePath}/admin?ok=upload`, env.publicBaseUrl), 303);
 }

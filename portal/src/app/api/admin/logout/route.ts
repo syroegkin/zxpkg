@@ -7,6 +7,6 @@ export async function POST(req: Request) {
   const cookie = `${ADMIN_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
   return new Response(null, {
     status: 303,
-    headers: { Location: new URL(`${env.basePath}/admin`, req.url).toString(), "Set-Cookie": cookie },
+    headers: { Location: new URL(`${env.basePath}/admin`, env.publicBaseUrl).toString(), "Set-Cookie": cookie },
   });
 }

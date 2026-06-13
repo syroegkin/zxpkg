@@ -24,5 +24,5 @@ export async function POST(req: Request) {
     await rm(store.packageDir(name), { recursive: true, force: true });
     await rebuildIndex();
   }
-  return Response.redirect(new URL(`${env.basePath}/admin?ok=del`, req.url), 303);
+  return Response.redirect(new URL(`${env.basePath}/admin?ok=del`, env.publicBaseUrl), 303);
 }

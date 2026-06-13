@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   }
 
   const fail = (msg: string) =>
-    isJson ? new Response(msg, { status: 400 }) : adminBack(req.url, env.basePath, "crawl", msg, { url });
+    isJson ? new Response(msg, { status: 400 }) : adminBack(env.basePath, "crawl", msg, { url });
 
   if (!reqIsAdmin(req, token)) return new Response("Unauthorized", { status: 401 });
   if (!url) return fail("Repository URL is required");
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
   if (!isJson) {
     // No-JS admin form: redirect back with a success flag.
-    return Response.redirect(new URL(`${env.basePath}/admin?ok=1`, req.url), 303);
+    return Response.redirect(new URL(`${env.basePath}/admin?ok=1`, env.publicBaseUrl), 303);
   }
   return Response.json({ ok: true, repo: ref.ownerRepo, queued: !!repo });
 }

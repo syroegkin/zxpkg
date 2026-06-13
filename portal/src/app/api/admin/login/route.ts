@@ -9,13 +9,13 @@ export async function POST(req: Request) {
   const base = env.basePath;
 
   if (!tokenIsValid(token)) {
-    return Response.redirect(new URL(`${base}/admin?bad=1`, req.url), 303);
+    return Response.redirect(new URL(`${base}/admin?bad=1`, env.publicBaseUrl), 303);
   }
 
   const secure = cookieIsSecure() ? "; Secure" : "";
   const cookie = `${ADMIN_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=28800${secure}`;
   return new Response(null, {
     status: 303,
-    headers: { Location: new URL(`${base}/admin`, req.url).toString(), "Set-Cookie": cookie },
+    headers: { Location: new URL(`${base}/admin`, env.publicBaseUrl).toString(), "Set-Cookie": cookie },
   });
 }

@@ -22,14 +22,14 @@ export async function POST(req: Request) {
   }
 
   const back = (q: string) =>
-    isJson ? new Response(q, { status: 400 }) : Response.redirect(new URL(`${env.basePath}/new?${q}`, req.url), 303);
+    isJson ? new Response(q, { status: 400 }) : Response.redirect(new URL(`${env.basePath}/new?${q}`, env.publicBaseUrl), 303);
 
   // Rate limit: 5 submissions per 10 minutes per IP.
   if (!rateLimit(`submit:${clientIp(req)}`, 5, 10 * 60 * 1000)) {
     const msg = "Too+many+submissions,+please+try+again+later";
     return isJson
       ? new Response("rate limited", { status: 429 })
-      : Response.redirect(new URL(`${env.basePath}/new?submit_err=${msg}`, req.url), 303);
+      : Response.redirect(new URL(`${env.basePath}/new?submit_err=${msg}`, env.publicBaseUrl), 303);
   }
 
   if (!url) return back("submit_err=Repository+URL+is+required");
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   if (existing) {
     await exec("INSERT INTO crawl_queue (repo_id) VALUES (?)", [existing.id]);
     if (isJson) return Response.json({ ok: true, repo: ref.ownerRepo, duplicate: true });
-    return Response.redirect(new URL(`${env.basePath}/new?submitted_repo=${encodeURIComponent(ref.ownerRepo)}&dup=1`, req.url), 303);
+    return Response.redirect(new URL(`${env.basePath}/new?submitted_repo=${encodeURIComponent(ref.ownerRepo)}&dup=1`, env.publicBaseUrl), 303);
   }
 
   await exec("INSERT INTO repos (source_url, host, status) VALUES (?,?, 'pending')", [ref.cloneUrl, ref.host]);
@@ -58,5 +58,5 @@ export async function POST(req: Request) {
   if (repo) await exec("INSERT INTO crawl_queue (repo_id) VALUES (?)", [repo.id]);
 
   if (isJson) return Response.json({ ok: true, repo: ref.ownerRepo });
-  return Response.redirect(new URL(`${env.basePath}/new?submitted_repo=${encodeURIComponent(ref.ownerRepo)}`, req.url), 303);
+  return Response.redirect(new URL(`${env.basePath}/new?submitted_repo=${encodeURIComponent(ref.ownerRepo)}`, env.publicBaseUrl), 303);
 }

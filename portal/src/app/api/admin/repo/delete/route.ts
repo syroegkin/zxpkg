@@ -31,5 +31,5 @@ export async function POST(req: Request) {
     for (const p of pkgs) await rm(store.packageDir(p.name), { recursive: true, force: true });
     await rebuildIndex();
   }
-  return Response.redirect(new URL(`${env.basePath}/admin?ok=repodel`, req.url), 303);
+  return Response.redirect(new URL(`${env.basePath}/admin?ok=repodel`, env.publicBaseUrl), 303);
 }

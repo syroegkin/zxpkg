@@ -1,13 +1,14 @@
 // Redirect back to /admin after a failed submit, carrying an error message and the
 // submitted values so the form can be re-populated (SSR-friendly, no client JS).
+import { env } from "./env";
+
 export function adminBack(
-  reqUrl: string,
   basePath: string,
   activeForm: string,
   err: string,
   values: Record<string, string | string[] | undefined>
 ): Response {
-  const u = new URL(`${basePath}/admin`, reqUrl);
+  const u = new URL(`${basePath}/admin`, env.publicBaseUrl);
   u.searchParams.set("af", activeForm);
   u.searchParams.set("err", err);
   for (const [k, val] of Object.entries(values)) {

@@ -16,5 +16,5 @@ export async function POST(req: Request) {
 
   await exec("UPDATE repos SET last_commit_sha=NULL WHERE id=?", [id]);
   await exec("INSERT INTO crawl_queue (repo_id) VALUES (?)", [id]);
-  return Response.redirect(new URL(`${env.basePath}/admin?ok=recrawl`, req.url), 303);
+  return Response.redirect(new URL(`${env.basePath}/admin?ok=recrawl`, env.publicBaseUrl), 303);
 }
