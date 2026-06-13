@@ -1,8 +1,8 @@
 ; pkg_inst.asm — the `.pkg-inst` dot command (crypto half of ZXPkg): install/update
 ; with signature verification.  Thin $2000 front-end; the logic + crypto cores live
 ; in pkg_inst_main.inc.asm (shared with the pkg_inst_esx test harness).
-;   .pkg-inst install <name>   /CACHE/<name>(+.SIG) -> /DOT/<name>   (sig-gated)
-;   .pkg-inst update           /CACHE/INDEX.DAT(+.SIG) -> /PKG/INDEX.DAT
+;   .pkg-inst install <name>   /ZXPKG/CACHE/<name>(+.SIG) -> /DOT/<name>   (sig-gated)
+;   .pkg-inst update           /ZXPKG/CACHE/INDEX.DAT(+.SIG) -> /ZXPKG/INDEX.DAT
 ; Build: `make pkg-inst` -> PKG-INST  (copy to /dot on the SD; run `.pkg-inst ...`).
 
 M_GETSETDRV equ $89

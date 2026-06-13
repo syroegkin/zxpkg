@@ -53,8 +53,8 @@ const root = path.resolve(process.argv[3] || "esxdos_root");
 if (mode === "setup") {
   fs.rmSync(path.join(root, "DOT"), { recursive: true, force: true });
   fs.mkdirSync(path.join(root, "DOT"), { recursive: true });
-  fs.mkdirSync(path.join(root, "PKG"), { recursive: true });
-  fs.writeFileSync(path.join(root, "PKG", "INDEX.DAT"), encIndex(recs));
+  fs.mkdirSync(path.join(root, "ZXPKG"), { recursive: true });
+  fs.writeFileSync(path.join(root, "ZXPKG", "INDEX.DAT"), encIndex(recs));
   fs.writeFileSync(path.join(root, "DOT", "MORSE"), MORSE);
   fs.writeFileSync(path.join(root, "DOT", "SNAKE"), SNAKE_INSTALLED);
   fs.writeFileSync(path.join(root, "DOT", "RANDOM"), RANDOM);

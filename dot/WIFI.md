@@ -33,8 +33,8 @@ WiFi itself must already be joined (it is — nextsync uses it).
 ## `update` over WiFi
 
 ```
-.pkg-get <host> <port> /index/v1.dat     /CACHE/INDEX.DAT
-.pkg-get <host> <port> /index/v1.dat.sig /CACHE/INDEX.SIG
+.pkg-get <host> <port> /index/v1.dat     /ZXPKG/CACHE/INDEX.DAT
+.pkg-get <host> <port> /index/v1.dat.sig /ZXPKG/CACHE/INDEX.SIG
 .pkg-inst update                            -> "index updated"
 .pkg list                                   -> the fresh catalogue
 ```
@@ -46,19 +46,30 @@ connection closes. Without the `[file]` argument it prints the item to screen
 end-of-file return or an idle timeout — a short read just means the signature
 check refuses the file and you retry.
 
-## `install <name>` over WiFi
+## `install <name>` over WiFi (smart device — one command)
 
-Selectors under a Gophernicus root mirroring the store:
+`.pkg-inst install <name>` does the whole thing itself:
+1. resolve `<name>` -> CMD + version from the local `/ZXPKG/INDEX.DAT`,
+2. if not already cached, gopher-fetch `<prefix>/artifacts/<name>/<ver>/<CMD>(.sig)`
+   into `/ZXPKG/CACHE/`, then
+3. Rabin+SHA verify -> `/DOT/<CMD>`.
 
 ```
-.pkg info <name>            ; note ver: and cmd:
-.pkg-get <host> <port> /artifacts/<name>/<ver>/<CMD>     /CACHE/<CMD>
-.pkg-get <host> <port> /artifacts/<name>/<ver>/<CMD>.sig /CACHE/<CMD>.SIG
-.pkg-inst install <CMD>
+.pkg-inst update            ; refresh the local index first (if stale)
+.pkg-inst install morse     ; resolve + fetch + verify + install
 ```
 
-(A by-name selector so the device doesn't need ver/cmd is a small portal/server
-addition once the portal runs against its live DB.)
+**Server config — `/ZXPKG/SERVER`** (one line: `host port prefix`). Defaults to
+`gopher.zx.in.net 70 /pkg`, so on a normal Next it needs no file. Override it for a
+LAN/dev gopher server (note the empty prefix — a trailing space):
+
+```
+192.168.1.50 7070 
+```
+
+The manual `.pkg-get <host> <port> <selector> [file]` still exists for diagnostics
+and for pre-staging into `/ZXPKG/CACHE/` (where `install` will find and use it
+without re-fetching).
 
 ## LAN bring-up (before Gophernicus is deployed)
 
@@ -68,8 +79,8 @@ make gopher-serve     # stages a signed index in gopher-root/ + prints this reci
 ```
 then on the Next:
 ```
-.pkg-get <pc-ip> 7070 /index/v1.dat     /CACHE/INDEX.DAT
-.pkg-get <pc-ip> 7070 /index/v1.dat.sig /CACHE/INDEX.SIG
+.pkg-get <pc-ip> 7070 /index/v1.dat     /ZXPKG/CACHE/INDEX.DAT
+.pkg-get <pc-ip> 7070 /index/v1.dat.sig /ZXPKG/CACHE/INDEX.SIG
 .pkg-inst update
 ```
 
@@ -85,8 +96,8 @@ misbehaves:
 
 ```
 make wifi-serve       # stages a signed index + python http.server recipe
-.http get -h <pc-ip> -p 8000 -u /index.dat     -f /CACHE/INDEX.DAT
-.http get -h <pc-ip> -p 8000 -u /index.dat.sig -f /CACHE/INDEX.SIG
+.http get -h <pc-ip> -p 8000 -u /index.dat     -f /ZXPKG/CACHE/INDEX.DAT
+.http get -h <pc-ip> -p 8000 -u /index.dat.sig -f /ZXPKG/CACHE/INDEX.SIG
 .pkg-inst update
 ```
 

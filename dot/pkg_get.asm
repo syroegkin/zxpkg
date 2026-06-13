@@ -1,6 +1,6 @@
 ; pkg_get.asm — `.pkg-get <host> <port> <selector> [file]` : fetch one item over
 ; GOPHER via the Next's WiFi (ESP8266, NextZXOS ESPAT driver) and either print it
-; (no [file]) or save it to [file] (e.g. /CACHE/INDEX.DAT).
+; (no [file]) or save it to [file] (e.g. /ZXPKG/CACHE/INDEX.DAT).
 ;
 ; *** HARDWARE BRING-UP — UNTESTED (no ESP emulation in our sim) ***
 ; This is the integrated-WiFi bring-up unit, now speaking the chosen transport:
@@ -411,7 +411,7 @@ s_operr:  db "open failed, err=", 0
 s_usage:  db "usage: .pkg-get host port", 13
           db "       selector [file]", 13
           db "e.g. .pkg-get 1.2.3.4 70", 13
-          db "  /index/v1.dat /CACHE/INDEX.DAT", 13, 0
+          db "  /index/v1.dat /ZXPKG/CACHE/INDEX.DAT", 13, 0
 pkg_get_end:
 
         SAVEBIN "PKG-GET", entry, pkg_get_end - entry

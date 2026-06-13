@@ -1,4 +1,4 @@
-; identify_core.inc.asm — `.pkg scan`: build the installed-package DB /INSTALL.DAT.
+; identify_core.inc.asm — `.pkg scan`: build the installed-package DB /ZXPKG/INSTALL.DAT.
 ; The ONE expensive pass: for each /DOT file, CRC it, match its NAME to a registry
 ; record's command (version-independent), and compare the CRC to the registry's
 ; latest to decide current vs outdated.  `.pkg status` then just reads /INSTALL.DAT
@@ -41,7 +41,7 @@ identify_run:
         call crc_make_table
         xor a
         ld (id_count),a
-        ; load the trusted index /PKG/INDEX.DAT into idxbuf
+        ; load the trusted index /ZXPKG/INDEX.DAT into idxbuf
         ld a,(id_drive)
         ld ix,idxname
         push ix
@@ -313,8 +313,8 @@ wr_emit:
         db F_WRITE
         ret
 
-idxname:    db "/PKG/INDEX.DAT", 0
-outname:    db "/INSTALL.DAT", 0     ; 8.3-legal (classic esxDOS rejects >8 char base)
+idxname:    db "/ZXPKG/INDEX.DAT", 0
+outname:    db "/ZXPKG/INSTALL.DAT", 0   ; 8.3-legal base names (classic esxDOS rejects >8 char base)
 dotpath:    db "/DOT", 0
 dotprefix:  db "/DOT/"
 dotprefix_len equ 5

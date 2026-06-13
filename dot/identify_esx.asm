@@ -1,5 +1,5 @@
 ; identify_esx.asm — `.pkg scan` (with identification) as a ZEsarUX snapshot.
-; CRCs each /DOT file, looks the CRC up in /PKG/INDEX.DAT, writes /INSTALLED.DAT.
+; CRCs each /DOT file, looks the CRC up in /ZXPKG/INDEX.DAT, writes /ZXPKG/INSTALL.DAT.
 ; Build: sjasmplus identify_esx.asm -> identify_esx.sna ; run via `make esx-identify`.
 
 M_GETSETDRV equ $89

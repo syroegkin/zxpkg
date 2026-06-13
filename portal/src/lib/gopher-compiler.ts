@@ -58,7 +58,6 @@ export function renderRootMap(pkgs: GopherPkg[]): string {
   for (const p of pkgs) {
     L.push(link("1", `${p.name} ${p.version} - ${p.description}`, `/p/${p.name}`));
   }
-  L.push(info(""), info(`${pkgs.length} package(s) - mirror of ${env.publicBaseUrl.replace(/^https?:\/\//, "")}`));
   return L.join("\r\n") + "\r\n";
 }
 

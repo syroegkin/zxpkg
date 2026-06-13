@@ -1,6 +1,6 @@
 ; update_esx.asm — `.pkg update` driver as a ZEsarUX snapshot.  Verifies the
-; staged /CACHE/INDEX.DAT against its .sig and the embedded key, and stores it as
-; the local trusted index /PKG/INDEX.DAT only if valid (install_core update_run).
+; staged /ZXPKG/CACHE/INDEX.DAT against its .sig and the embedded key, and stores it as
+; the local trusted index /ZXPKG/INDEX.DAT only if valid (install_core update_run).
 ; Build: sjasmplus update_esx.asm -> update_esx.sna ; run via `make esx-update`.
 
 M_GETSETDRV equ $89

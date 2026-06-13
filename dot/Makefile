@@ -222,7 +222,7 @@ pkg-inst: PKG-INST ## build the .pkg-inst dot command (install/update, signature
 	@echo "built dot command: PKG-INST ($$(stat -c%s PKG-INST) bytes, <7KB classic-ok: $$([ $$(stat -c%s PKG-INST) -lt 7168 ] && echo yes || echo NO))"
 
 # .pkg-get — HW bring-up for Next WiFi: GOPHER fetch over the ESPAT driver,
-# print to screen or save to a file (e.g. /CACHE/INDEX.DAT).
+# print to screen or save to a file (e.g. /ZXPKG/CACHE/INDEX.DAT).
 # *** untested on HW (no ESP in our sim); host side proven by `make gopher-test` ***
 PKG-GET: pkg_get.asm
 	$(SJASM) pkg_get.asm
@@ -249,26 +249,26 @@ pkgclean: PKGCLEAN ## build the .pkgclean cleanup dot command
         pkg pkg-inst pkg-get pkgdiag pkgclean
 
 # stage a NextSync mirror folder ($(SYNCDIR)) holding exactly the SD files we need:
-#   dot/PKG  dot/PKGDIAG  PKG/INDEX.DAT
+#   dot/PKG  dot/PKGDIAG  ZXPKG/INDEX.DAT
 # Then push with Jari Komppa's NextSync: run the server from $(SYNCDIR) and `.sync`
 # on the Next (the server mirrors $(SYNCDIR) to the SD root).  `.pkg scan` reads
 # /DOT, which IS /dot (FAT is case-insensitive) — i.e. your real dot-command dir.
-# Dirs must already exist on the SD — /dot does; create /PKG once on the card.
+# /dot exists on the SD; /ZXPKG (+ /ZXPKG/CACHE) are created by `.pkg-inst setup`.
 # NextSync server (Jari Komppa, unlicense), vendored into the toolchain alongside
 # sjasmplus/zesarux; next-push uses -o = sync once then quit.
 NEXTSYNC := $(TOOLCHAIN)/bin/nextsync.py
 SYNCDIR  := next-sync
 next-sync: PKG PKG-INST PKG-GET PKGDIAG PKGCLEAN ## stage the NextSync mirror folder for pushing to the Next
-	@mkdir -p $(SYNCDIR)/dot $(SYNCDIR)/PKG
+	@mkdir -p $(SYNCDIR)/dot $(SYNCDIR)/ZXPKG
 	@cp PKG PKG-INST PKG-GET PKGDIAG PKGCLEAN $(SYNCDIR)/dot/
-	@cp ../spec/vectors/index.dat $(SYNCDIR)/PKG/INDEX.DAT
+	@cp ../spec/vectors/index.dat $(SYNCDIR)/ZXPKG/INDEX.DAT
 	@printf 'syncpoint.dat\nsyncignore.txt\n' > $(SYNCDIR)/syncignore.txt  # keep bookkeeping off the SD
 	@rm -f $(SYNCDIR)/syncpoint.dat               # force a full re-send on next .sync
 	@echo "staged $(SYNCDIR)/ :"
 	@find $(SYNCDIR) -type f | sed 's,^$(SYNCDIR),  SD:,'
 	@echo ""
 	@echo "next: 'make next-push' to start the server, then run '.sync' on the Next"
-	@echo "      (first time only: create the /PKG dir on the SD card; /dot already exists)"
+	@echo "      (first time only: run '.pkg-inst setup' on the Next to create /ZXPKG; /dot already exists)"
 
 # gopher: the chosen device transport (see ../portal/DEPLOY.md §A).  Stage a
 # signed index in a gopher root + self-test that our server delivers it
@@ -284,8 +284,8 @@ gopher-serve: ## stage a signed index in a gopher root; print the LAN test recip
 	@echo "1) serve it (binary-clean gopher):"
 	@echo "     ! cd $(CURDIR) && python3 gopher_serve.py $(GOPHERROOT) $(GOPHERPORT)"
 	@echo "2) on the Next (needs espat.drv installed; use your PC's LAN IP):"
-	@echo "     .pkg-get <pc-ip> $(GOPHERPORT) /index/v1.dat /CACHE/INDEX.DAT"
-	@echo "     .pkg-get <pc-ip> $(GOPHERPORT) /index/v1.dat.sig /CACHE/INDEX.SIG"
+	@echo "     .pkg-get <pc-ip> $(GOPHERPORT) /index/v1.dat /ZXPKG/CACHE/INDEX.DAT"
+	@echo "     .pkg-get <pc-ip> $(GOPHERPORT) /index/v1.dat.sig /ZXPKG/CACHE/INDEX.SIG"
 	@echo "     .pkg-inst update      -> 'index updated'  (then .pkg list)"
 
 gopher-test: gopher-serve ## self-test: fetch via our gopher server, byte-compare
@@ -304,8 +304,8 @@ wifi-serve: ## stage a signed index + serve it over plain HTTP to test update-ov
 	@echo "1) serve it on your LAN (plain HTTP):"
 	@echo "     ! cd $(CURDIR)/$(WIFISERVE) && python3 -m http.server 8000"
 	@echo "2) on the Next (use your PC's LAN IP):"
-	@echo "     .http get -h <pc-ip> -p 8000 -u /index.dat     -f /CACHE/INDEX.DAT"
-	@echo "     .http get -h <pc-ip> -p 8000 -u /index.dat.sig -f /CACHE/INDEX.SIG"
+	@echo "     .http get -h <pc-ip> -p 8000 -u /index.dat     -f /ZXPKG/CACHE/INDEX.DAT"
+	@echo "     .http get -h <pc-ip> -p 8000 -u /index.dat.sig -f /ZXPKG/CACHE/INDEX.SIG"
 	@echo "     .pkg-inst update      -> 'index updated'  (then .pkg list)"
 
 # publish the built client into the portal's store as the stable /dist bootstrap
@@ -322,11 +322,11 @@ publish-client: PKG PKG-INST ## copy + sign PKG/PKG-INST into the portal store /
 
 next-install: ## stage a signed artifact for `.pkg install`:  make next-install NAME=MYCMD FILE=path
 	@test -n "$(NAME)" && test -n "$(FILE)" || { echo "usage: make next-install NAME=<cmd> FILE=<path>"; exit 2; }
-	@mkdir -p $(SYNCDIR)/CACHE
-	@cp "$(FILE)" "$(SYNCDIR)/CACHE/$(NAME)"
-	@cd ../portal && npx tsx src/scripts/sign-file.ts "$(CURDIR)/$(SYNCDIR)/CACHE/$(NAME)" "$(CURDIR)/$(SYNCDIR)/CACHE/$(NAME).SIG" >/dev/null
+	@mkdir -p $(SYNCDIR)/ZXPKG/CACHE
+	@cp "$(FILE)" "$(SYNCDIR)/ZXPKG/CACHE/$(NAME)"
+	@cd ../portal && npx tsx src/scripts/sign-file.ts "$(CURDIR)/$(SYNCDIR)/ZXPKG/CACHE/$(NAME)" "$(CURDIR)/$(SYNCDIR)/ZXPKG/CACHE/$(NAME).SIG" >/dev/null
 	@rm -f $(SYNCDIR)/syncpoint.dat
-	@echo "staged /CACHE/$(NAME) (+ .SIG) for install.  (create /CACHE on the SD once.)"
+	@echo "staged /ZXPKG/CACHE/$(NAME) (+ .SIG) for install.  (.pkg-inst setup creates /ZXPKG on the SD.)"
 	@echo "  next: make next-push  ->  on the Next: .sync  then  .pkg install $(NAME)"
 
 next-push: next-sync ## stage + start the NextSync server; then run '.sync' on the Next
@@ -356,9 +356,9 @@ pkg_shell_esx.sna: pkg_shell_esx.asm pkg_main.inc.asm index_core.inc.asm index_s
                    cmd_core.inc.asm crc_core.inc.asm identify_core.inc.asm
 	$(SJASM) pkg_shell_esx.asm
 esx-shell: pkg_shell_esx.sna
-	@mkdir -p $(ESXROOT)/PKG
-	@rm -rf $(ESXROOT)/CACHE   # install/update cases test the missing-file path (no crypto)
-	@cp ../spec/vectors/index.dat $(ESXROOT)/PKG/INDEX.DAT
+	@mkdir -p $(ESXROOT)/ZXPKG
+	@rm -rf $(ESXROOT)/ZXPKG/CACHE   # install/update cases test the missing-file path (no crypto)
+	@cp ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/INDEX.DAT
 	@for c in "list" "search n" "search morse" "search zzz" \
 	          "info nxtel" "info snake" "info ghost" "info" \
 	          "help" "install foo" "update" "bogus arg"; do \
@@ -374,24 +374,25 @@ pkg_inst_esx.sna: pkg_inst_esx.asm pkg_inst_main.inc.asm rabin_core.inc.asm bn_c
                   sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
 	$(SJASM) pkg_inst_esx.asm
 esx-pkg-inst: pkg_inst_esx.sna
-	@mkdir -p $(ESXROOT)/CACHE $(ESXROOT)/DOT   # /PKG deliberately NOT created (ensure_dirs must)
-	@printf 'hello package payload v1' > $(ESXROOT)/CACHE/MYPKG
-	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/CACHE/MYPKG $(ESXROOT)/CACHE/MYPKG.SIG >/dev/null
-	@rm -f $(ESXROOT)/DOT/MYPKG
-	@printf 'install MYPKG' > $(ESXROOT)/CMD.TXT
+	@mkdir -p $(ESXROOT)/ZXPKG/CACHE $(ESXROOT)/DOT   # ensure_dirs must (re)create /ZXPKG + /ZXPKG/CACHE
+	@cp ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/INDEX.DAT   # install resolves <name>->CMD via the local index
+	@printf 'hello package payload v1' > $(ESXROOT)/ZXPKG/CACHE/MORSE   # staged under the resolved CMD (morse->MORSE)
+	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/ZXPKG/CACHE/MORSE $(ESXROOT)/ZXPKG/CACHE/MORSE.SIG >/dev/null
+	@rm -f $(ESXROOT)/DOT/MORSE
+	@printf 'install morse' > $(ESXROOT)/CMD.TXT
 	@timeout 10 $(ZX_ESX) --snap pkg_inst_esx.sna >/dev/null 2>&1 || true
-	@if cmp -s $(ESXROOT)/CACHE/MYPKG $(ESXROOT)/DOT/MYPKG; then echo "pkg-inst install (valid):    PASS - /DOT/MYPKG written"; else echo "pkg-inst install (valid):    FAIL"; exit 1; fi
-	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/CACHE/MYPKG",b=fs.readFileSync(p);b[5]^=1;fs.writeFileSync(p,b)'
-	@rm -f $(ESXROOT)/DOT/MYPKG
-	@printf 'install MYPKG' > $(ESXROOT)/CMD.TXT
+	@if cmp -s $(ESXROOT)/ZXPKG/CACHE/MORSE $(ESXROOT)/DOT/MORSE; then echo "pkg-inst install (by-name->cached): PASS - morse resolved, /DOT/MORSE written"; else echo "pkg-inst install (valid): FAIL"; exit 1; fi
+	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/ZXPKG/CACHE/MORSE",b=fs.readFileSync(p);b[5]^=1;fs.writeFileSync(p,b)'
+	@rm -f $(ESXROOT)/DOT/MORSE
+	@printf 'install morse' > $(ESXROOT)/CMD.TXT
 	@timeout 10 $(ZX_ESX) --snap pkg_inst_esx.sna >/dev/null 2>&1 || true
-	@if [ -f $(ESXROOT)/DOT/MYPKG ]; then echo "pkg-inst install (tampered): FAIL - should be refused"; exit 1; else echo "pkg-inst install (tampered): PASS - refused"; fi
-	@cp ../spec/vectors/index.dat $(ESXROOT)/CACHE/INDEX.DAT
-	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/CACHE/INDEX.DAT $(ESXROOT)/CACHE/INDEX.SIG >/dev/null
-	@rm -rf $(ESXROOT)/PKG   # update must CREATE /PKG itself (ensure_dirs via F_MKDIR)
+	@if [ -f $(ESXROOT)/DOT/MORSE ]; then echo "pkg-inst install (tampered): FAIL - should be refused"; exit 1; else echo "pkg-inst install (tampered): PASS - refused"; fi
+	@cp ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT
+	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT $(ESXROOT)/ZXPKG/CACHE/INDEX.SIG >/dev/null
+	@rm -f $(ESXROOT)/ZXPKG/INDEX.DAT   # update must (re)write /ZXPKG/INDEX.DAT (ensure_dirs makes the dir)
 	@printf 'update' > $(ESXROOT)/CMD.TXT
 	@timeout 10 $(ZX_ESX) --snap pkg_inst_esx.sna >/dev/null 2>&1 || true
-	@if cmp -s $(ESXROOT)/CACHE/INDEX.DAT $(ESXROOT)/PKG/INDEX.DAT; then echo "pkg-inst update (valid):     PASS - /PKG created + INDEX.DAT stored"; else echo "pkg-inst update (valid):     FAIL"; exit 1; fi
+	@if cmp -s $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT $(ESXROOT)/ZXPKG/INDEX.DAT; then echo "pkg-inst update (valid):     PASS - /ZXPKG/INDEX.DAT stored"; else echo "pkg-inst update (valid):     FAIL"; exit 1; fi
 
 # `.pkg status`: scan builds the DB (MORSE=current, SNAKE=outdated, RANDOM=unmanaged),
 # then status reads /INSTALL.DAT and reports (no re-CRC).
@@ -424,12 +425,12 @@ pubkey.bin: ../spec/vectors/rabin.json
 install_esx.sna: install_esx.asm rabin_core.inc.asm bn_core.inc.asm sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
 	$(SJASM) install_esx.asm
 esx-install: install_esx.sna
-	@mkdir -p $(ESXROOT)/CACHE $(ESXROOT)/DOT
+	@mkdir -p $(ESXROOT)/ZXPKG/CACHE $(ESXROOT)/DOT
 	@cd ../portal && npx tsx src/scripts/gen-install-artifact.ts $(ESXROOT) 1234   # large (>180B) signed artifact
 	@rm -f $(ESXROOT)/DOT/ART
 	@timeout 8 $(ZX_ESX) --snap install_esx.sna >/dev/null 2>&1 || true
-	@if cmp -s $(ESXROOT)/CACHE/ART $(ESXROOT)/DOT/ART; then echo "install (valid sig, 1234B): PASS — /DOT/ART written, matches artifact"; else echo "install (valid sig): FAIL"; exit 1; fi
-	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/CACHE/ART",b=fs.readFileSync(p);b[100]^=1;fs.writeFileSync(p,b)'   # tamper 1 byte
+	@if cmp -s $(ESXROOT)/ZXPKG/CACHE/ART $(ESXROOT)/DOT/ART; then echo "install (valid sig, 1234B): PASS — /DOT/ART written, matches artifact"; else echo "install (valid sig): FAIL"; exit 1; fi
+	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/ZXPKG/CACHE/ART",b=fs.readFileSync(p);b[100]^=1;fs.writeFileSync(p,b)'   # tamper 1 byte
 	@rm -f $(ESXROOT)/DOT/ART
 	@timeout 8 $(ZX_ESX) --snap install_esx.sna >/dev/null 2>&1 || true
 	@if [ -f $(ESXROOT)/DOT/ART ]; then echo "install (tampered):        FAIL — should have been refused"; exit 1; else echo "install (tampered):        PASS — refused, /DOT/ART not created"; fi
@@ -438,16 +439,16 @@ esx-install: install_esx.sna
 update_esx.sna: update_esx.asm rabin_core.inc.asm bn_core.inc.asm sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
 	$(SJASM) update_esx.asm
 esx-update: update_esx.sna
-	@mkdir -p $(ESXROOT)/CACHE $(ESXROOT)/PKG
-	@cp ../spec/vectors/index.dat $(ESXROOT)/CACHE/INDEX.DAT
-	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/CACHE/INDEX.DAT $(ESXROOT)/CACHE/INDEX.SIG >/dev/null
-	@rm -f $(ESXROOT)/PKG/INDEX.DAT
+	@mkdir -p $(ESXROOT)/ZXPKG/CACHE
+	@cp ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT
+	@cd ../portal && npx tsx src/scripts/sign-file.ts $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT $(ESXROOT)/ZXPKG/CACHE/INDEX.SIG >/dev/null
+	@rm -f $(ESXROOT)/ZXPKG/INDEX.DAT
 	@timeout 8 $(ZX_ESX) --snap update_esx.sna >/dev/null 2>&1 || true
-	@if cmp -s $(ESXROOT)/CACHE/INDEX.DAT $(ESXROOT)/PKG/INDEX.DAT; then echo "update (valid sig):   PASS — index verified + stored to /PKG/INDEX.DAT"; else echo "update (valid sig):   FAIL"; exit 1; fi
-	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/CACHE/INDEX.DAT",b=fs.readFileSync(p);b[20]^=1;fs.writeFileSync(p,b)'   # tamper the index
-	@rm -f $(ESXROOT)/PKG/INDEX.DAT
+	@if cmp -s $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT $(ESXROOT)/ZXPKG/INDEX.DAT; then echo "update (valid sig):   PASS — index verified + stored to /ZXPKG/INDEX.DAT"; else echo "update (valid sig):   FAIL"; exit 1; fi
+	@E=$(ESXROOT) node -e 'const fs=require("fs"),p=process.env.E+"/ZXPKG/CACHE/INDEX.DAT",b=fs.readFileSync(p);b[20]^=1;fs.writeFileSync(p,b)'   # tamper the index
+	@rm -f $(ESXROOT)/ZXPKG/INDEX.DAT
 	@timeout 8 $(ZX_ESX) --snap update_esx.sna >/dev/null 2>&1 || true
-	@if [ -f $(ESXROOT)/PKG/INDEX.DAT ]; then echo "update (tampered):    FAIL — should have been refused"; exit 1; else echo "update (tampered):    PASS — refused, /PKG/INDEX.DAT not stored"; fi
+	@if [ -f $(ESXROOT)/ZXPKG/INDEX.DAT ]; then echo "update (tampered):    FAIL — should have been refused"; exit 1; else echo "update (tampered):    PASS — refused, /ZXPKG/INDEX.DAT not stored"; fi
 
 # ---- ZX taps + emulators ----
 rabin_zx.tap: rabin_zx.asm rabin_core.inc.asm bn_core.inc.asm sha_core.inc.asm vectors/rabin_vectors.inc.asm

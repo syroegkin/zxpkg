@@ -2,8 +2,8 @@
 ; staged file and copy it into place only if its signature is valid.  Both are
 ; the same operation (stream-hash -> verify against the embedded key -> stream-
 ; copy), parameterised by source/sig/destination paths:
-;   install : /CACHE/ART        + .sig -> /DOT/ART
-;   update  : /CACHE/INDEX.DAT  + .sig -> /PKG/INDEX.DAT   (local trusted index)
+;   install : /ZXPKG/CACHE/ART        + .sig -> /DOT/ART
+;   update  : /ZXPKG/CACHE/INDEX.DAT  + .sig -> /ZXPKG/INDEX.DAT   (local trusted index)
 ;
 ; INCLUDE after sha_core + sha_stream + rabin_core + bn_core.  Caller sets
 ; in_drive, then calls install_run or update_run.  esxDOS pointers = IX+HL.
@@ -145,11 +145,11 @@ cp_closesrc:
         db F_CLOSE
         ret
 
-artpath: db "/CACHE/ART", 0
-artsig:  db "/CACHE/ART.SIG", 0
+artpath: db "/ZXPKG/CACHE/ART", 0
+artsig:  db "/ZXPKG/CACHE/ART.SIG", 0
 art_dst: db "/DOT/ART", 0
-idxpath: db "/CACHE/INDEX.DAT", 0
-idxsig:  db "/CACHE/INDEX.SIG", 0
-pkgdst:  db "/PKG/INDEX.DAT", 0
+idxpath: db "/ZXPKG/CACHE/INDEX.DAT", 0
+idxsig:  db "/ZXPKG/CACHE/INDEX.SIG", 0
+pkgdst:  db "/ZXPKG/INDEX.DAT", 0
 pubkey:                         ; embedded trust anchor: [key_id][algo][128 n LE]
         INCBIN "pubkey.bin"

@@ -6,7 +6,7 @@
 ;
 ; Flow per run:
 ;   1. read the command tail from /CMD.TXT  -> ci_in / ci_len
-;   2. pkg_run   (loads /PKG/INDEX.DAT itself, dispatches, formats into outbuf)
+;   2. pkg_run   (loads /ZXPKG/INDEX.DAT itself, dispatches, formats into outbuf)
 ;   3. write outbuf -> /OUT.TXT
 ; The host (`make esx-shell`) writes /CMD.TXT, runs this, and checks /OUT.TXT
 ; against output it derives from the same index.json — a Node<->Z80 parity check

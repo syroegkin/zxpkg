@@ -8,7 +8,7 @@ const path = require("path");
 const { crc32c } = require("./crc32c");
 
 const root = path.resolve(process.argv[2] || "esxdos_root");
-const dat = fs.readFileSync(path.join(root, "INSTALL.DAT"));
+const dat = fs.readFileSync(path.join(root, "ZXPKG", "INSTALL.DAT"));
 const got = {};
 let p = 0;
 while (p < dat.length) {

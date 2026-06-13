@@ -7,7 +7,7 @@
 ;                         whole dispatch->query->format path is testable headless.
 ;
 ; Both front-ends have esxDOS file I/O, so the query handlers load the index from
-; /PKG/INDEX.DAT themselves (load_index).  The only thing a front-end must set up
+; /ZXPKG/INDEX.DAT themselves (load_index).  The only thing a front-end must set up
 ; before calling pkg_run is:
 ;   ci_in / ci_len   = the command tail (pointer + length)        [cmd_core vars]
 ;   id_drive         = the esxDOS default drive                   [identify_core]
@@ -127,7 +127,7 @@ hi_usage:
 
 ; ---- scan : CRC every /DOT file, name it via the index, write /INSTALL.DAT ----
 h_scan:
-        call identify_run      ; loads /PKG/INDEX.DAT + walks /DOT (a '.' per file)
+        call identify_run      ; loads /ZXPKG/INDEX.DAT + walks /DOT (a '.' per file)
         jr c,hs_fail           ; CF = couldn't open index or create the output file
         call pcrlf             ; end the row of progress dots
         ld de,s_scandone
@@ -142,7 +142,7 @@ hs_fail:
         ld de,s_scanfail
         jp pstr
 
-; ---- status : read the installed DB /INSTALL.DAT (built by scan) and report ----
+; ---- status : read the installed DB /ZXPKG/INSTALL.DAT (built by scan) and report ----
 ; Bare `.pkg` runs this.  Instant — no CRC walk; just prints managed packages with
 ; "name vVER  ok|UPD" and tallies managed vs unmanaged.  Run `.pkg scan` to refresh.
 h_status:
@@ -229,7 +229,7 @@ set_machine:
         ld (srch_mach),a
         ret
 
-; open_index_or_err: load /PKG/INDEX.DAT and set idxptr.  On failure print a
+; open_index_or_err: load /ZXPKG/INDEX.DAT and set idxptr.  On failure print a
 ; friendly message and return CF=1 so the handler bails.
 open_index_or_err:
         call load_index
@@ -239,7 +239,7 @@ open_index_or_err:
         scf
         ret
 
-; load_index: read /PKG/INDEX.DAT into idxbuf (<=8 KB) and point idxptr at it.
+; load_index: read /ZXPKG/INDEX.DAT into idxbuf (<=8 KB) and point idxptr at it.
 ; CF=1 if the file can't be opened.  (identify_run loads its own copy; this is the
 ; query path's copy — same buffer, never used concurrently.)
 load_index:
@@ -269,7 +269,7 @@ load_index:
 
 ; mk_path: build (mk_dst) = <prefix HL, ASCIIZ> + <arg_ptr/arg_len> + <suffix DE,
 ; ASCIIZ incl. its NUL>.  Caller sets mk_dst (the destination buffer) first.  Used
-; by remove (/DOT/<name>) and install (/CACHE/<name>(+.SIG), /DOT/<name>).
+; by remove (/DOT/<name>) and install (/ZXPKG/CACHE/<name>(+.SIG), /DOT/<name>).
 mk_path:
         push de                ; save suffix ptr
         ld de,(mk_dst)
@@ -591,7 +591,7 @@ pd_emit:
 ; =====================================================================
 ; strings
 ; =====================================================================
-li_idxname:  db "/PKG/INDEX.DAT", 0
+li_idxname:  db "/ZXPKG/INDEX.DAT", 0
 
 s_usage:     db "ZXPkg .pkg commands:", 13
              db " status          installed", 13
@@ -606,7 +606,7 @@ s_nofound:   db "not found", 13, 0
 s_infousage: db "usage: info <name>", 13, 0
 s_noindex:   db "no index - run .pkg update", 13, 0
 s_nomatch:   db "no matches", 13, 0
-s_scandone:  db "scanned /DOT -> /INSTALL.DAT (", 0
+s_scandone:  db "scanned /DOT -> /ZXPKG/INSTALL.DAT (", 0
 s_scanfiles: db " files)", 13, 0
 s_scanfail:  db "scan failed (file I/O)", 13, 0
 

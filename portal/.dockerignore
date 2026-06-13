@@ -1,0 +1,22 @@
+# Keep the Docker build context tiny — the image rebuilds node_modules + .next
+# itself (npm install + npm run build), so none of this belongs in the context.
+node_modules
+.next
+dist
+out
+
+# runtime data — NOT build inputs (data/db is the live MariaDB, can be huge)
+data
+store
+keys
+
+# secrets — provided at runtime via env_file, must never be baked into the image
+.env
+.env.local
+.env.*.local
+
+# vcs / misc
+.git
+.gitignore
+*.log
+npm-debug.log*
