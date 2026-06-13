@@ -392,7 +392,8 @@ esx-pkg-inst: pkg_inst_esx.sna
 	@rm -f $(ESXROOT)/ZXPKG/INDEX.DAT   # update must (re)write /ZXPKG/INDEX.DAT (ensure_dirs makes the dir)
 	@printf 'update' > $(ESXROOT)/CMD.TXT
 	@timeout 10 $(ZX_ESX) --snap pkg_inst_esx.sna >/dev/null 2>&1 || true
-	@if cmp -s $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT $(ESXROOT)/ZXPKG/INDEX.DAT; then echo "pkg-inst update (valid):     PASS - /ZXPKG/INDEX.DAT stored"; else echo "pkg-inst update (valid):     FAIL"; exit 1; fi
+	@if cmp -s ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/INDEX.DAT; then echo "pkg-inst update (valid):     PASS - /ZXPKG/INDEX.DAT stored"; else echo "pkg-inst update (valid):     FAIL"; exit 1; fi
+	@if [ -f $(ESXROOT)/ZXPKG/CACHE/INDEX.DAT ]; then echo "pkg-inst update (cleanup):   FAIL - cache index not cleared"; exit 1; else echo "pkg-inst update (cleanup):   PASS - staged index cleared (refetch next time)"; fi
 
 # `.pkg status`: scan builds the DB (MORSE=current, SNAKE=outdated, RANDOM=unmanaged),
 # then status reads /INSTALL.DAT and reports (no re-CRC).
@@ -420,8 +421,11 @@ esx-sha-file: sha_file_esx.sna
 	@node sha_file_test.js $(ESXROOT)
 
 # `.pkg install`: verify a staged artifact's signature, copy to /DOT only if valid.
-pubkey.bin: ../spec/vectors/rabin.json
-	@node -e 'const fs=require("fs"),v=require("../spec/vectors/rabin.json");fs.writeFileSync("pubkey.bin",Buffer.concat([Buffer.from([v.key_id,1]),Buffer.from(v.n_le_hex,"hex")]))'
+# Embedded trust anchor. Defaults to the TEST key; for the live registry build with
+#   rm -f pubkey.bin && make pkg-inst PUBKEY_SRC=/path/to/data/keys/public.json
+PUBKEY_SRC ?= ../spec/vectors/rabin.json
+pubkey.bin: $(PUBKEY_SRC) make-pubkey.js
+	@node make-pubkey.js "$(PUBKEY_SRC)"
 install_esx.sna: install_esx.asm rabin_core.inc.asm bn_core.inc.asm sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
 	$(SJASM) install_esx.asm
 esx-install: install_esx.sna

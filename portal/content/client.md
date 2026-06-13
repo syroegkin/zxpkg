@@ -21,7 +21,8 @@ LOAD "install.bas": RUN
 
 ## Manual setup (classic machines, or no WiFi)
 
-1. Copy the two command files PKG and PKG-INST into /dot on your SD card.
+1. Copy the two command files [PKG](/dist/PKG) and [PKG-INST](/dist/PKG-INST)
+   into /dot on your SD card.
 2. Run .pkg-inst setup — it creates the /ZXPKG folder (registry index, download
    cache and the installed-package database all live under it).
 

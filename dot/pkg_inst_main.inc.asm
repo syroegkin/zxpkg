@@ -32,6 +32,7 @@ cfg_host equ $9080          ; server host, ASCIIZ (<=32)
 cfg_port equ $90A0          ; server port, ASCIIZ (<=8)
 cfg_pfx  equ $90A8          ; selector prefix e.g. /pkg, ASCIIZ (<=16)
 cfgbuf   equ $90C0          ; /ZXPKG/SERVER read buffer (<=63 + NUL)
+F_UNLINK equ $ad            ; esxDOS delete-file (for transient cache cleanup)
 
 ; pkg_inst_run: parse the tail and dispatch install/update/setup.
 pkg_inst_run:
@@ -117,15 +118,20 @@ di_usage:
 
 ; ---- update : /ZXPKG/CACHE/INDEX.DAT(+.SIG) -> /ZXPKG/INDEX.DAT ----
 do_update:
+        call ensure_index_staged          ; fetch /pkg/index/v1.dat(+sig) over WiFi (or use staged)
+        jp c,du_neterr
         call update_run
         ld a,(in_status)
         cp 1 : jr z,du_ok
         cp 2 : jr z,du_bad
         ld de,s_upd_io : jp pstr
 du_ok:
+        call del_cache_index              ; transient: drop the staged index so next update refetches
         ld de,s_upd_ok : jp pstr
 du_bad:
         ld de,s_upd_bad : jp pstr
+du_neterr:
+        ld de,s_inst_neterr : jp pstr
 
 ; parse_tail: split (pi_in, pi_len) into a leading token + the remaining argument.
 parse_tail:
@@ -346,6 +352,60 @@ net_fetch:
         call gf_run
         ret
 
+; ensure_index_staged: refresh /ZXPKG/CACHE/INDEX.DAT(+.SIG) by gopher-fetching
+; <prefix>/index/v1.dat(+.sig). On fetch failure, fall back to a pre-staged index
+; (keeps the sim test + manual staging working). CF=1 only if neither is available.
+ensure_index_staged:
+        ld a,(in_drive)                   ; cache-first: use a staged index if present
+        ld ix,idxpath
+        push ix : pop hl
+        ld b,FA_READ
+        rst $08
+        db F_OPEN
+        jr c,eis_fetch                    ; not staged -> fetch over WiFi
+        ld (if_fh),a
+        rst $08
+        db F_CLOSE
+        or a                              ; CF=0 -> use the staged index
+        ret
+eis_fetch:
+        call load_server_cfg
+        call build_index_selector         ; sel_buf = <prefix>/index/v1.dat
+        ld hl,cfg_host : ld (gf_host),hl
+        ld hl,cfg_port : ld (gf_port),hl
+        ld hl,sel_buf : ld (gf_sel),hl
+        ld hl,idxpath : ld (gf_file),hl   ; /ZXPKG/CACHE/INDEX.DAT (from install_core)
+        call gf_run
+        ret c
+        call build_index_selector
+        call sel_append_sig               ; sel_buf = <prefix>/index/v1.dat.sig
+        ld hl,idxsig : ld (gf_file),hl    ; /ZXPKG/CACHE/INDEX.SIG
+        call gf_run
+        ret                               ; CF from the sig fetch
+
+; del_cache_index: drop the staged index (+.SIG) after update consumes it, so the
+; next update refetches fresh rather than reusing a lingering cache copy.
+del_cache_index:
+        ld a,(in_drive)
+        ld ix,idxpath
+        push ix : pop hl
+        rst $08
+        db F_UNLINK
+        ld a,(in_drive)
+        ld ix,idxsig
+        push ix : pop hl
+        rst $08
+        db F_UNLINK
+        ret
+
+; build_index_selector: sel_buf = <prefix>/index/v1.dat
+build_index_selector:
+        ld de,sel_buf
+        ld hl,cfg_pfx    : call bs_catz
+        ld hl,s_indexsel : call bs_catz
+        xor a : ld (de),a
+        ret
+
 ; build_selector: sel_buf = "/artifacts/" + name + "/" + ver + "/" + CMD + NUL.
 build_selector:
         ld de,sel_buf
@@ -465,6 +525,7 @@ s_host:       db "gopher.zx.in.net", 0   ; default server host (overridable via 
 s_port:       db "70", 0                 ; default port
 s_defpfx:     db "/pkg", 0               ; default selector prefix
 s_artpre:     db "/artifacts/", 0
+s_indexsel:   db "/index/v1.dat", 0
 s_sigsel:     db ".sig", 0
 s_upd_ok:     db "index updated", 13, 0
 s_upd_bad:    db "update: bad signature - refused", 13, 0

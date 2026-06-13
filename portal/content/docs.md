@@ -18,7 +18,7 @@ utilities, format converters, network tools.
 2. Copy it into the /DOT folder on your SD card (c:/dot on the Next).
 3. Run it from BASIC with a leading dot, e.g. .morse.
 
-Or use the on-device client — two dot commands, .pkg (search, list, identify
+Or use the [on-device client](/client) — two dot commands, .pkg (search, list, identify
 what's installed and outdated) and .pkg-inst (install and update, gated by
 on-device signature verification). Works on the Next and on classic esxDOS
 machines.
@@ -32,10 +32,10 @@ catalogue by machine and OS to see what runs on yours.
 
 ## Publish your own
 
-Use the manifest wizard to generate a .zxpkg.toml, commit it to your public git
-repo (one manifest per package), then submit the repo. ZXPkg watches it and
-indexes it once the manifest appears, and keeps a full mirror so it's preserved
-even if the original goes offline.
+Use the [manifest wizard](/new) to generate a .zxpkg.toml, commit it to your
+public git repo (one manifest per package), then submit the repo. ZXPkg watches
+it and indexes it once the manifest appears, and keeps a full mirror so it's
+preserved even if the original goes offline.
 
 ## FAQ
 
