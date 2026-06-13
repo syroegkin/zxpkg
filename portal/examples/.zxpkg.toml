@@ -1,0 +1,23 @@
+# Example ZXPkg manifest. Place this file as `.zxpkg.toml` at the root of your
+# dot-command repository's default branch. The portal reads it on each crawl.
+
+[package]
+name        = "morse"            # registry id (lowercase); shown as the package name
+version     = "1.2.0"            # semver; bump this to publish a new version
+type        = "dot"              # dot | game | util | demo | tool | core | … (default: dot)
+description = "Brings Morse code to your ZX Spectrum"
+author      = "syroegkin"
+license     = "MIT"
+homepage    = "https://github.com/syroegkin/dots"
+# claim     = "zxpkg-claim-..."  # optional: token issued by the portal to claim ownership
+
+[compat]
+machine  = "next"                # minimum machine: 16k | 48k | 128k | next
+os       = ["nextzxos", "esxdos"]# which DOS APIs it works under
+needs     = []                   # optional feature tags: wifi, accelerator, 2mb
+# min_core = "3.1.5"             # optional minimum Next core
+
+# One or more files installed into /DOT. `src` may be a repo path or a release URL.
+[[artifact]]
+src     = "build/MORSE"          # path in the repo (read at the committed version)
+command = "MORSE"                # filename written to /DOT (esxDOS 8.3, uppercase)

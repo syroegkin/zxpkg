@@ -1,0 +1,31 @@
+# Local toolchain built from source (sjasmplus, ZEsarUX, etc.) — not committed.
+/.toolchain/
+
+# PoC / build artifacts
+*.o
+*.bin
+*.sna
+*.tap
+*.lst
+*.map
+*.sld
+dot/runner
+dot/sha_runner
+dot/sha_full_runner
+dot/rabin_runner
+dot/verify_sig_runner
+dot/index_runner
+dot/crc_runner
+dot/search_runner
+dot/cmd_runner
+dot/z80.h          # vendored third-party header, fetched by build.sh
+dot/vectors/rabin_vectors.inc.asm   # generated (random keys) by rabin_sign.js
+
+# Node / portal (already present locally)
+node_modules/
+
+# esxDOS host-dir test scratch (ZEsarUX --esxdos-root-dir)
+dot/esxdos_root/
+dot/PKG
+.toolchain
+

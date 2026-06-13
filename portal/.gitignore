@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+.env.local
+store/
+keys/
+*.pem
+next-env.d.ts

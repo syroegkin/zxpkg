@@ -1,0 +1,64 @@
+services:
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-zxpkg}
+      MARIADB_USER: ${DB_USER:-zxpkg}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-zxpkg}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootzxpkg}
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # One-shot: apply schema + idempotent migrations, then exit. web/worker wait for it.
+  migrate:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: mariadb
+    volumes:
+      - keys:/data/keys
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command: npm run db:migrate
+    restart: "no"
+
+  web:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mariadb
+    ports:
+      - "3000:3000"
+    volumes:
+      - store:/data/store
+      - keys:/data/keys
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    command: npm start
+
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mariadb
+    volumes:
+      - store:/data/store
+      - keys:/data/keys
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    command: npm run worker
