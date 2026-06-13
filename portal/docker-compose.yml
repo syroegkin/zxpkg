@@ -36,7 +36,7 @@ services:
     environment:
       DB_HOST: mariadb
     ports:
-      - "127.0.0.1:4400:3000"
+      - "127.0.0.1:4500:3000"
     volumes:
       - ./data/store:/data/store
       - ./data/keys:/data/keys
