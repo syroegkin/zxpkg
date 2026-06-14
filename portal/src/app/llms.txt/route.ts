@@ -12,6 +12,7 @@ export async function GET() {
     pkgs = await query(
       `SELECT p.name, p.description
        FROM packages p JOIN versions v ON v.package_id = p.id AND v.is_latest = 1
+       WHERE p.archive_state = 'listed'
        ORDER BY p.name LIMIT 500`
     );
   } catch {

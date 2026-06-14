@@ -2,10 +2,20 @@ import { env } from "@/lib/env";
 import { reqIsAdmin } from "@/lib/admin-auth";
 import { validateManifest, type ManifestInput } from "@/lib/manifest";
 import { publishUpload } from "@/lib/publish";
+import { addSourceBundle } from "@/lib/source-bundle";
 import { adminBack } from "@/lib/form-redirect";
 import { isSafePublicUrl } from "@/lib/url-guard";
 
 export const dynamic = "force-dynamic";
+
+// Pull a non-empty uploaded file out of a FormData value (null if absent/empty/text).
+async function fileFrom(value: FormDataEntryValue | null): Promise<{ name: string; bytes: Buffer } | null> {
+  if (!value || typeof value === "string" || typeof (value as File).arrayBuffer !== "function" || (value as File).size === 0) {
+    return null;
+  }
+  const f = value as File;
+  return { name: f.name || "", bytes: Buffer.from(await f.arrayBuffer()) };
+}
 
 // Register a repo-less package from an uploaded binary (no git, no manifest file).
 export async function POST(req: Request) {
@@ -22,6 +32,7 @@ export async function POST(req: Request) {
     binary_url: g("binary_url"), name: g("name"), version: g("version"), type: g("type"),
     machine: g("machine"), os: form.getAll("os").map(String), needs: form.getAll("needs").map(String),
     command: g("command"), description: g("description"), license: g("license"), author: g("author"),
+    homepage: g("homepage"), source_url: g("source_url"), source_label: g("source_label"),
   };
   const fail = (msg: string) => adminBack(env.basePath, "upload", msg, values);
 
@@ -45,9 +56,9 @@ export async function POST(req: Request) {
 
   // Bytes come from a physical upload, or — if none — by downloading a binary URL.
   let bytes: Buffer | null = null;
-  const file = form.get("file");
-  if (file && typeof file !== "string" && typeof (file as File).arrayBuffer === "function" && (file as File).size > 0) {
-    bytes = Buffer.from(await (file as File).arrayBuffer());
+  const uploaded = await fileFrom(form.get("file"));
+  if (uploaded) {
+    bytes = uploaded.bytes;
   } else {
     const url = g("binary_url");
     if (url) {
@@ -63,10 +74,32 @@ export async function POST(req: Request) {
   }
   if (!bytes || bytes.length === 0) return fail("Provide a file or a binary URL");
 
+  // Optionally preserve the author's original source (a file and/or an upstream URL).
+  // Read + cap-check the source file up front so a too-big bundle fails before publishing.
+  const srcUrl = g("source_url");
+  let bundleFile: { name: string; bytes: Buffer } | undefined;
+  const srcUpload = await fileFrom(form.get("source_file"));
+  if (srcUpload) {
+    if (srcUpload.bytes.length > env.maxSourceBundleBytes) {
+      return fail(`source bundle exceeds ${env.maxSourceBundleBytes} byte limit`);
+    }
+    bundleFile = { name: srcUpload.name || "source.bin", bytes: srcUpload.bytes };
+  }
+
+  let versionId: number;
   try {
-    await publishUpload(manifest, { [manifest.artifacts[0].command]: bytes });
+    versionId = await publishUpload(manifest, { [manifest.artifacts[0].command]: bytes });
   } catch (e: any) {
     return fail(`publish failed: ${e.message}`);
+  }
+
+  if (bundleFile || srcUrl) {
+    // URL fetch is best-effort (falls back to link-only); the file was already cap-checked.
+    await addSourceBundle(versionId, manifest.name, manifest.version, {
+      file: bundleFile,
+      url: srcUrl,
+      label: g("source_label"),
+    });
   }
 
   return Response.redirect(new URL(`${env.basePath}/admin?ok=upload`, env.publicBaseUrl), 303);

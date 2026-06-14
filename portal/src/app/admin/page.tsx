@@ -101,8 +101,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
           description: spStr("description"),
           license: spStr("license"),
           author: spStr("author"),
+          homepage: spStr("homepage"),
+          source_url: spStr("source_url"),
+          source_label: spStr("source_label"),
         }
-      : { binary_url: "", name: "", version: "", type: "dot", machine: "next", os: ["esxdos"], needs: [] as string[], command: "", description: "", license: "", author: "" };
+      : { binary_url: "", name: "", version: "", type: "dot", machine: "next", os: ["esxdos"], needs: [] as string[], command: "", description: "", license: "", author: "", homepage: "", source_url: "", source_label: "" };
 
   const crawlUrl = af === "crawl" ? spStr("url") : "";
 
@@ -118,6 +121,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
     del: "Package deleted.",
     repodel: "Repository and its packages deleted.",
     recrawl: "Re-crawl queued.",
+    state: "Package state updated.",
   };
   const ok = okMsg[spStr("ok")];
 
@@ -144,6 +148,21 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
           <form method="post" action={`${bp}/api/admin/package/delete`}>
             <input type="hidden" name="name" value={confirmName} />
             <button type="submit" className="btn-danger">Yes, delete</button>
+          </form>
+          <a className="cancel" href={`${bp}/admin`}>Cancel</a>
+        </div>
+      )}
+      {confirmKind === "remove" && confirmName && (
+        <div className="confirm">
+          <p>
+            Remove <strong>{confirmName}</strong> at the owner&rsquo;s request? Its files (artifact,
+            signature, source bundles) are deleted and it&rsquo;s pulled from the catalog &amp; device
+            index. A tombstone is kept so it can&rsquo;t be silently re-archived.
+          </p>
+          <form method="post" action={`${bp}/api/admin/package/state`}>
+            <input type="hidden" name="name" value={confirmName} />
+            <input type="hidden" name="state" value="removed" />
+            <button type="submit" className="btn-danger">Yes, remove</button>
           </form>
           <a className="cancel" href={`${bp}/admin`}>Cancel</a>
         </div>
@@ -218,7 +237,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <input name="file" type="file" />
         <input name="binary_url" type="url" placeholder="…or binary URL" defaultValue={up.binary_url} />
         <input name="name" placeholder="name (e.g. morse)" defaultValue={up.name} required />
-        <input name="version" placeholder="version (1.0.0)" defaultValue={up.version} required />
+        <input name="version" placeholder="version (1.0.0 or date 2017.11.21)" defaultValue={up.version} required />
         <input name="type" list="zx-types" placeholder="type" defaultValue={up.type} />
         <select name="machine" defaultValue={up.machine}>
           {MACHINES.map((m) => (
@@ -245,13 +264,21 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <textarea name="description" placeholder="description" defaultValue={up.description} rows={2} className="grid-full" />
         <input name="license" placeholder="license" defaultValue={up.license} />
         <input name="author" placeholder="author" defaultValue={up.author} />
+        <input name="homepage" type="url" placeholder="homepage / original post URL" defaultValue={up.homepage} />
+        <p className="muted grid-full">
+          Preserve the author&rsquo;s original source (optional): attach a file <em>and/or</em> give an upstream URL
+          to mirror. Stored as a download-only bundle — never signed, never sent to devices.
+        </p>
+        <input name="source_file" type="file" />
+        <input name="source_url" type="url" placeholder="…or source URL to mirror (e.g. cowsay.zip)" defaultValue={up.source_url} />
+        <input name="source_label" placeholder="source label (e.g. source + binary zip)" defaultValue={up.source_label} className="grid-full" />
         <button type="submit">Upload &amp; index</button>
       </form>
 
       <h2>Packages <span className="muted">({packages.length})</span></h2>
       <table className="repos">
         <thead>
-          <tr><th>Name</th><th>Type</th><th>Version</th><th>Source</th><th>Actions</th></tr>
+          <tr><th>Name</th><th>Type</th><th>Version</th><th>Source</th><th>State</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {packages.map((p) => {
@@ -262,8 +289,19 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
                 <td>{p.type || "—"}</td>
                 <td>{p.version || "—"}</td>
                 <td>{source}</td>
+                <td>{p.archive_state === "listed" ? "—" : p.archive_state}</td>
                 <td className="row-actions">
                   {p.is_manual ? <a href={`${bp}/admin?edit=${encodeURIComponent(p.name)}#manual`}>Edit</a> : null}
+                  {p.archive_state !== "removed" && (
+                    <>
+                      <form method="post" action={`${bp}/api/admin/package/state`}>
+                        <input type="hidden" name="name" value={p.name} />
+                        <input type="hidden" name="state" value={p.archive_state === "hidden" ? "listed" : "hidden"} />
+                        <button type="submit" className="linkish">{p.archive_state === "hidden" ? "Show" : "Hide"}</button>
+                      </form>
+                      <a href={`${bp}/admin?confirm=remove&name=${encodeURIComponent(p.name)}`}>Remove</a>
+                    </>
+                  )}
                   <a className="btn-danger-link" href={`${bp}/admin?confirm=package&name=${encodeURIComponent(p.name)}`}>Delete</a>
                 </td>
               </tr>

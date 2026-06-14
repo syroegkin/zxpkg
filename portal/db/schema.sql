@@ -15,15 +15,19 @@ CREATE TABLE IF NOT EXISTS repos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS packages (
-  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  repo_id     INT UNSIGNED NULL,                 -- NULL = repo-less (uploaded binary)
-  name        VARCHAR(64)  NOT NULL UNIQUE,
-  description VARCHAR(255) NULL,
-  homepage    VARCHAR(512) NULL,
-  license     VARCHAR(64)  NULL,
-  author      VARCHAR(128) NULL,
-  category    VARCHAR(64)  NULL,
-  created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  repo_id       INT UNSIGNED NULL,                 -- NULL = repo-less (uploaded binary)
+  name          VARCHAR(64)  NOT NULL UNIQUE,
+  description   VARCHAR(255) NULL,
+  homepage      VARCHAR(512) NULL,
+  license       VARCHAR(64)  NULL,
+  author        VARCHAR(128) NULL,
+  category      VARCHAR(64)  NULL,
+  -- listed = public; hidden = unlisted (review); removed = tombstone (files deleted,
+  -- row kept so it can't be silently re-archived). Public catalog/index = listed only.
+  archive_state ENUM('listed','hidden','removed') NOT NULL DEFAULT 'listed',
+  archived_at   DATETIME     NULL,                 -- when set to hidden/removed
+  created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_pkg_repo FOREIGN KEY (repo_id) REFERENCES repos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -71,6 +75,23 @@ CREATE TABLE IF NOT EXISTS manual_manifests (
   CONSTRAINT fk_manual_repo FOREIGN KEY (repo_id) REFERENCES repos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Non-installable, download-only companion files preserved for a version (e.g. the
+-- author's original source/binary zip). Never signed, never put in the device index
+-- (index.dat is built from `artifacts` only) — a zip can't leak into the on-device flow.
+-- file_path NULL = link-only (mirror failed / over size cap); rely on original_url.
+CREATE TABLE IF NOT EXISTS source_bundles (
+  id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  version_id   INT UNSIGNED NOT NULL,
+  label        VARCHAR(128) NULL,
+  file_path    VARCHAR(512) NULL,                  -- local mirror; NULL = link-only
+  original_url VARCHAR(512) NULL,                  -- upstream source URL
+  sha256       CHAR(64)     NULL,                  -- identity of the mirrored file
+  size         INT UNSIGNED NULL,
+  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_srcbundle_ver (version_id),
+  CONSTRAINT fk_srcbundle_ver FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS crawl_queue (
   id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   repo_id      INT UNSIGNED NOT NULL,
@@ -85,3 +106,8 @@ CREATE TABLE IF NOT EXISTS crawl_queue (
 ALTER TABLE versions ADD COLUMN IF NOT EXISTS type VARCHAR(24) NOT NULL DEFAULT 'dot' AFTER version;
 -- Allow repo-less (uploaded) packages on databases created before this was nullable.
 ALTER TABLE packages MODIFY repo_id INT UNSIGNED NULL;
+-- Git-less archive sources (blog posts, orphaned uploads) have no commit.
+ALTER TABLE versions MODIFY commit_sha CHAR(40) NULL;
+-- Takedown/visibility state for preserved third-party packages.
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS archive_state ENUM('listed','hidden','removed') NOT NULL DEFAULT 'listed';
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS archived_at DATETIME NULL;

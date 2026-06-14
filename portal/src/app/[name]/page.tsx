@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { basename } from "node:path";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { getPackage } from "@/lib/queries";
@@ -34,10 +35,34 @@ export async function generateMetadata({ params }: { params: { name: string } })
 export default async function PackagePage({ params }: { params: { name: string } }) {
   const data = await getPackage(params.name);
   if (!data) notFound();
-  const { pkg, versions, artifacts } = data;
+  const { pkg, versions, artifacts, bundles } = data;
   const isAdmin = tokenIsValid(cookies().get(ADMIN_COOKIE)?.value);
+
+  // Takedown states: removed shows a tombstone to everyone; hidden is unlisted (admins
+  // can still view by direct link, the public gets a 404).
+  if (pkg.archive_state === "removed") {
+    return (
+      <article className="pkg-page">
+        <div className="pkg-main">
+          <header className="pkg-head"><h1>{pkg.name}</h1></header>
+          <p className="pkg-lead">
+            This package was removed at the owner&rsquo;s request{pkg.archived_at ? ` on ${ymd(pkg.archived_at)}` : ""}.
+          </p>
+          <p className="muted">The files are no longer available from this archive.</p>
+        </div>
+      </article>
+    );
+  }
+  if (pkg.archive_state === "hidden" && !isAdmin) notFound();
+
   const latest = versions.find((v) => v.is_latest) || versions[0];
   const latestArtifacts = latest ? artifacts.filter((a) => a.version_id === latest.id) : [];
+  // Preservation case: an uploaded package with no upstream git repository.
+  const isPreserved = !pkg.source_url;
+  const bundleHref = (b: (typeof bundles)[number], version: string): string | null =>
+    b.file_path ? `${bp}/source/${pkg.name}/${version}/${basename(b.file_path)}` : safeHref(b.original_url);
+  const bundleName = (b: (typeof bundles)[number]): string =>
+    b.label || (b.file_path ? basename(b.file_path) : b.original_url ? b.original_url.replace(/^https?:\/\//, "") : "source");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -110,6 +135,12 @@ export default async function PackagePage({ params }: { params: { name: string }
                     {pkg.source_url && (
                       <a href={`${bp}/source/${pkg.name}/${v.version}.tar.gz`}>source</a>
                     )}
+                    {bundles.filter((b) => b.version_id === v.id).map((b, i) => {
+                      const href = bundleHref(b, v.version);
+                      return href ? (
+                        <a key={i} href={href} rel="nofollow">{bundleName(b)}</a>
+                      ) : null;
+                    })}
                   </td>
                 </tr>
               );
@@ -161,10 +192,10 @@ export default async function PackagePage({ params }: { params: { name: string }
             </ul>
           </section>
         )}
-        {pkg.license && (
+        {(pkg.license || isPreserved) && (
           <section>
             <h3>License</h3>
-            <p>{pkg.license}</p>
+            {pkg.license ? <p>{pkg.license}</p> : <p className="muted">unknown — preserved in good faith</p>}
           </section>
         )}
         {pkg.author && (
@@ -183,7 +214,30 @@ export default async function PackagePage({ params }: { params: { name: string }
         ) : (
           <section>
             <h3>Source</h3>
-            <p className="muted">Uploaded binary, no source repository.</p>
+            {bundles.length > 0 ? (
+              <>
+                <ul className="crc-list">
+                  {bundles.map((b, i) => {
+                    const v = versions.find((vr) => vr.id === b.version_id);
+                    const href = v ? bundleHref(b, v.version) : null;
+                    return (
+                      <li key={i}>
+                        {href ? <a href={href} rel="nofollow">{bundleName(b)}</a> : bundleName(b)}
+                        {b.size ? <span className="muted"> · {b.size} B</span> : <span className="muted"> · link</span>}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="muted">Original author&rsquo;s source, preserved as-is.</p>
+              </>
+            ) : (
+              <p className="muted">Uploaded binary, no source repository.</p>
+            )}
+          </section>
+        )}
+        {isPreserved && (
+          <section>
+            <p className="muted">Preserved by the archive. Rights remain with the original author.</p>
           </section>
         )}
         {safeHref(pkg.homepage) && (

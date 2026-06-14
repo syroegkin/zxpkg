@@ -21,6 +21,15 @@ export const store = {
   sigFile(pkg: string, version: string, command: string): string {
     return join(root, "artifacts", pkg, version, `${command}.sig`);
   },
+  // Preserved source bundles live in a `src/` subfolder of the version dir, kept apart
+  // from the command files (which sit directly in the version dir) so nothing that scans
+  // for commands can ever trip on a zip. Cascades with the version dir on takedown.
+  sourceBundleDir(pkg: string, version: string): string {
+    return join(root, "artifacts", pkg, version, "src");
+  },
+  sourceBundleFile(pkg: string, version: string, filename: string): string {
+    return join(root, "artifacts", pkg, version, "src", filename);
+  },
   indexDat(): string {
     return join(root, "index", "v1.dat");
   },

@@ -11,6 +11,9 @@ export const env = {
   },
   adminToken: process.env.ADMIN_TOKEN || "",
   storeDir: process.env.STORE_DIR || "./store",
+  // Hard ceiling for a single preserved source bundle (the author's source/binary zip).
+  // Over this, an upload is rejected and a mirror-fetch falls back to link-only.
+  maxSourceBundleBytes: Number(process.env.MAX_SOURCE_BUNDLE_BYTES || 25 * 1024 * 1024),
   sign: {
     keyId: Number(process.env.SIGN_KEY_ID || 1),
     privateKeyPath: process.env.SIGN_PRIVATE_KEY || "./keys/private.json",

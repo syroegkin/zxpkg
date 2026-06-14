@@ -167,7 +167,7 @@ export async function rebuildGopher(): Promise<void> {
      FROM versions v
      JOIN packages p ON p.id = v.package_id
      JOIN artifacts a ON a.version_id = v.id
-     WHERE v.is_latest = 1
+     WHERE v.is_latest = 1 AND p.archive_state = 'listed'
      ORDER BY p.name, a.command`
   );
   const pkgs = groupPkgs(rows);

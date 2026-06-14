@@ -12,7 +12,7 @@ export interface PackageListItem {
 }
 
 export async function searchPackages(opts: { q?: string; type?: string; machine?: string; os?: string }): Promise<PackageListItem[]> {
-  const where: string[] = ["v.is_latest=1"];
+  const where: string[] = ["v.is_latest=1", "p.archive_state='listed'"];
   const params: any[] = [];
   if (opts.q) {
     where.push("(p.name LIKE ? OR p.description LIKE ?)");
@@ -46,11 +46,12 @@ export interface AdminPackageRow {
   type: string | null;
   repo_id: number | null;
   is_manual: number | null;
+  archive_state: "listed" | "hidden" | "removed";
 }
 
 export async function adminPackages(): Promise<AdminPackageRow[]> {
   return query<AdminPackageRow>(
-    `SELECT p.name, p.repo_id, v.version, v.type,
+    `SELECT p.name, p.repo_id, p.archive_state, v.version, v.type,
             (SELECT 1 FROM manual_manifests mm WHERE mm.name = p.name) AS is_manual
      FROM packages p
      LEFT JOIN versions v ON v.package_id = p.id AND v.is_latest = 1
@@ -71,7 +72,10 @@ export async function getManualManifest(name: string): Promise<{ repoUrl: string
 }
 
 export async function allTypes(): Promise<string[]> {
-  const rows = await query<{ type: string }>("SELECT DISTINCT type FROM versions WHERE is_latest=1 ORDER BY type");
+  const rows = await query<{ type: string }>(
+    `SELECT DISTINCT v.type FROM versions v JOIN packages p ON p.id = v.package_id
+     WHERE v.is_latest=1 AND p.archive_state='listed' ORDER BY v.type`
+  );
   return rows.map((r) => r.type);
 }
 
@@ -85,6 +89,8 @@ export interface PackageRow {
   category: string | null;
   source_url: string | null;
   is_manual: number | null;
+  archive_state: "listed" | "hidden" | "removed";
+  archived_at: string | null;
 }
 export interface VersionRow {
   id: number;
@@ -104,8 +110,18 @@ export interface ArtifactRow {
   crc32c: number;
   size: number;
 }
+export interface SourceBundleRow {
+  version_id: number;
+  label: string | null;
+  file_path: string | null;
+  original_url: string | null;
+  sha256: string | null;
+  size: number | null;
+}
 
-export async function getPackage(name: string): Promise<{ pkg: PackageRow; versions: VersionRow[]; artifacts: ArtifactRow[] } | null> {
+export async function getPackage(
+  name: string
+): Promise<{ pkg: PackageRow; versions: VersionRow[]; artifacts: ArtifactRow[]; bundles: SourceBundleRow[] } | null> {
   const pkg = await one<PackageRow>(
     `SELECT p.*, r.source_url,
             (SELECT 1 FROM manual_manifests mm WHERE mm.name = p.name) AS is_manual
@@ -113,26 +129,35 @@ export async function getPackage(name: string): Promise<{ pkg: PackageRow; versi
     [name]
   );
   if (!pkg) return null;
-  const versions = await query<VersionRow>("SELECT * FROM versions WHERE package_id = ? ORDER BY created_at DESC", [pkg.id]);
-  const artifacts = await query<ArtifactRow>(
-    `SELECT a.version_id, a.command, a.crc32c, a.size
-     FROM artifacts a JOIN versions v ON v.id = a.version_id
-     WHERE v.package_id = ? ORDER BY a.command`,
-    [pkg.id]
-  );
-  return { pkg, versions, artifacts };
+  // The three are independent of each other — fetch them concurrently.
+  const [versions, artifacts, bundles] = await Promise.all([
+    query<VersionRow>("SELECT * FROM versions WHERE package_id = ? ORDER BY created_at DESC", [pkg.id]),
+    query<ArtifactRow>(
+      `SELECT a.version_id, a.command, a.crc32c, a.size
+       FROM artifacts a JOIN versions v ON v.id = a.version_id
+       WHERE v.package_id = ? ORDER BY a.command`,
+      [pkg.id]
+    ),
+    query<SourceBundleRow>(
+      `SELECT sb.version_id, sb.label, sb.file_path, sb.original_url, sb.sha256, sb.size
+       FROM source_bundles sb JOIN versions v ON v.id = sb.version_id
+       WHERE v.package_id = ? ORDER BY sb.id`,
+      [pkg.id]
+    ),
+  ]);
+  return { pkg, versions, artifacts, bundles };
 }
 
 export async function crcLookup(crc: number): Promise<{ package: string; version: string; command: string } | null> {
   return one(
     `SELECT p.name AS package, v.version, a.command
      FROM artifacts a JOIN versions v ON v.id = a.version_id JOIN packages p ON p.id = v.package_id
-     WHERE a.crc32c = ? LIMIT 1`,
+     WHERE a.crc32c = ? AND p.archive_state='listed' LIMIT 1`,
     [crc >>> 0]
   );
 }
 
 export async function allPackageNames(): Promise<string[]> {
-  const rows = await query<{ name: string }>("SELECT name FROM packages ORDER BY name");
+  const rows = await query<{ name: string }>("SELECT name FROM packages WHERE archive_state='listed' ORDER BY name");
   return rows.map((r) => r.name);
 }

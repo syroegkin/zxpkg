@@ -10,7 +10,7 @@ import type { Manifest } from "./manifest";
 
 const UPLOAD_SHA = "0".repeat(40); // sentinel commit for uploaded packages
 
-export async function publishUpload(manifest: Manifest, files: Record<string, Buffer>): Promise<void> {
+export async function publishUpload(manifest: Manifest, files: Record<string, Buffer>): Promise<number> {
   // Upsert the (repo-less) package — refuse if the name is owned by a repo.
   let pkg = await one<{ id: number; repo_id: number | null }>("SELECT id, repo_id FROM packages WHERE name=?", [manifest.name]);
   if (pkg && pkg.repo_id !== null) {
@@ -54,4 +54,5 @@ export async function publishUpload(manifest: Manifest, files: Record<string, Bu
   }
 
   await rebuildIndex();
+  return vr.insertId;
 }
