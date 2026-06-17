@@ -94,9 +94,11 @@ function needsSet(hw: string, comment: string): string[] {
 }
 // provenance: "ESXDOS 0.8.6 Final" -> "esxdos 0.8.6 final"; "---"/blank -> null
 function bundledIn(raw: string): string | null {
-  const s = clean(raw);
-  if (!s || s === "---") return null;
-  return /esxdos|next/i.test(s) ? s.toLowerCase() : "esxdos " + s.toLowerCase();
+  let s = clean(raw);
+  if (!s || s === "---" || /not in /i.test(s)) return null; // "Not in esxDOS-Release" = not bundled
+  s = s.split(/ - | \(|https?:\/\//)[0].trim(); // drop trailing commentary / URLs / notes
+  s = (/esxdos|next/i.test(s) ? s : "esxdos " + s).toLowerCase();
+  return s.slice(0, 120); // provenance is a short tag; column has margin (VARCHAR 255)
 }
 function redistributable(comment: string, fn: string): boolean {
   const lc = (comment + " " + fn).toLowerCase();

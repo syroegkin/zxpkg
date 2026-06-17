@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS versions (
   os_csv        VARCHAR(64)  NOT NULL DEFAULT '',
   needs_csv     VARCHAR(128) NOT NULL DEFAULT '',
   min_core      VARCHAR(16)  NULL,
-  bundled_in    VARCHAR(64)  NULL,                  -- provenance: OS/distro release it shipped in
+  bundled_in    VARCHAR(255) NULL,                  -- provenance: OS/distro release it shipped in
   commit_sha    CHAR(40)     NOT NULL,
   manifest_json LONGTEXT     NOT NULL,
   is_latest     TINYINT(1)   NOT NULL DEFAULT 0,
@@ -122,7 +122,8 @@ ALTER TABLE packages ADD COLUMN IF NOT EXISTS archived_at DATETIME NULL;
 ALTER TABLE versions ADD COLUMN IF NOT EXISTS machine_csv VARCHAR(64) NOT NULL DEFAULT '' AFTER type;
 ALTER TABLE versions DROP COLUMN IF EXISTS machine;
 -- Provenance: OS/distro release a command originally shipped in (display-only).
-ALTER TABLE versions ADD COLUMN IF NOT EXISTS bundled_in VARCHAR(64) NULL;
+ALTER TABLE versions ADD COLUMN IF NOT EXISTS bundled_in VARCHAR(255) NULL;
+ALTER TABLE versions MODIFY bundled_in VARCHAR(255) NULL;  -- widen if it pre-existed as VARCHAR(64)
 -- Redistribution flag: false => portal mirrors link-only (paid/permission-restricted artifacts).
 ALTER TABLE packages ADD COLUMN IF NOT EXISTS redistributable TINYINT(1) NOT NULL DEFAULT 1;
 -- Duplicate model (2026-06-16): identity is (name, owner), not name alone. Same name is

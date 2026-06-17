@@ -188,8 +188,7 @@ packages:
       with this shorter name
     download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/BROWSE_latest.zip
     repo: null
-    bundled_in: esxdos included in package "new file browser for zx-uno" (which can
-      also be used on non-zx-uno-devices)
+    bundled_in: esxdos included in package "new file browser for zx-uno"
     redistributable: true
   - name: brwsfont
     version: "0.01"
@@ -342,8 +341,7 @@ packages:
       NextZX" The other from Authors Homepage seems to run on esxDOS 0.8.7'
     download: http://somebitsofme.altervista.org/misc/spectrum/dotCommands/cowsay.zip
     repo: null
-    bundled_in: system-next v.1.03 distro - this version is other size than the one
-      from https://retrobits.altervista.org/blog/2017/11/dot-command-fun/
+    bundled_in: system-next v.1.03 distro
     redistributable: true
   - name: cp
     version: "0"
@@ -740,7 +738,7 @@ packages:
     description: Flips Screen-Content
     download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
     repo: null
-    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    bundled_in: null
     redistributable: true
   - name: file
     version: "0.1"
@@ -858,7 +856,7 @@ packages:
     description: ""
     download: http://www.esxdos.org/files/esxdos074.zip
     repo: null
-    bundled_in: esxdos 0.7.4 public beta (bugfix release)
+    bundled_in: esxdos 0.7.4 public beta
     redistributable: true
   - name: hexview
     version: "0.3"
@@ -1403,8 +1401,7 @@ packages:
       previous page Q/SPACE: exit Displays <FILE> one screen at a time"
     download: https://gitlab.com/thesmog358/tbblue
     repo: https://gitlab.com/thesmog358/tbblue
-    bundled_in: system-next v.1.03 distro - there are v0.9 files with different
-      sizes in this distro (one in \dot\ and one in \dot\extra\
+    bundled_in: system-next v.1.03 distro
     redistributable: true
   - name: mon
     version: "0"
@@ -2046,7 +2043,7 @@ packages:
     description: Vertical Downward Character WrapScroll
     download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
     repo: null
-    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    bundled_in: null
     redistributable: true
   - name: scrolldwn
     version: "0"
@@ -2062,7 +2059,7 @@ packages:
     description: Vertical Downward Character WrapScroll
     download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
     repo: null
-    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    bundled_in: null
     redistributable: true
   - name: sercp
     version: "0.3"
@@ -2587,7 +2584,7 @@ packages:
     description: White Noise Generator - Plays White Noise
     download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
     repo: null
-    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    bundled_in: null
     redistributable: true
   - name: writespi
     version: "0"
@@ -2621,7 +2618,7 @@ packages:
     description: ZXCircle - Fast circle drawing algorithm
     download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
     repo: null
-    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    bundled_in: null
     redistributable: true
   - name: zxunocfg
     version: "0"
