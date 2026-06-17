@@ -14,11 +14,11 @@ import { env } from "./env";
 
 interface PkgRow {
   name: string; version: string; type: string; description: string | null;
-  machine_csv: string; os_csv: string; command: string;
+  machine_csv: string; os_csv: string; homepage: string | null; command: string | null;
 }
 export interface GopherPkg {
   name: string; version: string; type: string; description: string;
-  machine: string; os: string; commands: string[];
+  machine: string; os: string; homepage: string; commands: string[];
 }
 
 const TAB = "\t";
@@ -33,6 +33,10 @@ const info = (text = ""): string => `i${clip(text)}${TAB}fake${TAB}(NULL)${TAB}0
 // resource line — type + display, pointing at <prefix><selector> on the hub.
 const link = (type: string, display: string, selector: string): string =>
   `${type}${clip(display)}${TAB}${env.gopher.prefix}${selector}${TAB}${env.gopher.host}${TAB}${env.gopher.port}`;
+
+// external http(s) link — gopher type 'h' with a "URL:" selector (clients open it directly).
+const extlink = (display: string, url: string): string =>
+  `h${clip(display)}${TAB}URL:${url}${TAB}${env.gopher.host}${TAB}${env.gopher.port}`;
 
 // word-wrap to the client width; only hard-splits a word too long to ever fit.
 function wrap(s: string): string[] {
@@ -140,8 +144,14 @@ export function renderRootMap(pkgs: GopherPkg[], docs: DocLink[] = []): string {
 export function renderPkgMap(p: GopherPkg): string {
   const L = [info(`${p.name} ${p.version}  [${p.type}]`), info("")];
   for (const line of wrap(p.description || "(no description)")) L.push(info(line));
-  L.push(info(""), info(`machine: ${p.machine}   os: ${p.os}`), info(""), info("Download (signed):"));
-  for (const cmd of p.commands) L.push(link("9", cmd, `/artifacts/${p.name}/${p.version}/${cmd}`));
+  L.push(info(""), info(`machine: ${p.machine}   os: ${p.os}`), info(""));
+  if (p.commands.length) {
+    L.push(info("Download (signed):"));
+    for (const cmd of p.commands) L.push(link("9", cmd, `/artifacts/${p.name}/${p.version}/${cmd}`));
+  } else {
+    L.push(info("No on-device artifact yet — browse on the web:"));
+    if (p.homepage) L.push(extlink(p.homepage, p.homepage));
+  }
   L.push(info(""), link("1", "< back to package list", ""));
   return L.join("\r\n") + "\r\n";
 }
@@ -153,20 +163,20 @@ export function groupPkgs(rows: PkgRow[]): GopherPkg[] {
     let p = byName.get(r.name);
     if (!p) {
       p = { name: r.name, version: r.version, type: r.type, description: r.description || "",
-            machine: r.machine_csv, os: r.os_csv, commands: [] };
+            machine: r.machine_csv, os: r.os_csv, homepage: r.homepage || "", commands: [] };
       byName.set(r.name, p);
     }
-    p.commands.push(r.command);
+    if (r.command) p.commands.push(r.command); // link-only (catalog) packages have no artifact
   }
   return [...byName.values()];
 }
 
 export async function rebuildGopher(): Promise<void> {
   const rows = await query<PkgRow>(
-    `SELECT p.name, v.version, v.type, p.description, v.machine_csv, v.os_csv, a.command
+    `SELECT p.name, v.version, v.type, p.description, v.machine_csv, v.os_csv, p.homepage, a.command
      FROM versions v
      JOIN packages p ON p.id = v.package_id
-     JOIN artifacts a ON a.version_id = v.id
+     LEFT JOIN artifacts a ON a.version_id = v.id
      WHERE v.is_latest = 1 AND p.archive_state = 'listed'
      ORDER BY p.name, a.command`
   );

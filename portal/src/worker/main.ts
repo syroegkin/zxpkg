@@ -6,6 +6,7 @@ import { bootstrap, query, exec, one } from "../lib/db";
 import { crawlRepo, type RepoRow } from "../lib/archiver";
 import { parseRepoUrl } from "../lib/repo-url";
 import { seedCatalog } from "../lib/seed-catalog";
+import { rebuildIndex } from "../lib/index-compiler";
 import { env } from "../lib/env";
 
 function log(msg: string): void {
@@ -85,6 +86,8 @@ async function main(): Promise<void> {
   const cat = await seedCatalog(); // metadata + link-only packages from seed/catalog.yaml
   log(`catalog seed: +${cat.added} added, ${cat.skipped} skipped`);
   await crawlAll(); // initial sweep on boot
+  await rebuildIndex(); // regen index.dat + v1.json + gopher from the full DB (incl. seeded catalog)
+  log("index + gopher rebuilt");
 
   setInterval(() => crawlAll().catch((e) => log(`sweep error: ${e.message}`)), env.pollIntervalMs);
   setInterval(() => drainQueue().catch((e) => log(`drain error: ${e.message}`)), 5000);
