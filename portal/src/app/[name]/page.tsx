@@ -102,7 +102,7 @@ export default async function PackagePage({ params }: { params: { name: string }
 
         <div className="install-box">
           <span className="install-label">Install on your ZX Spectrum</span>
-          <code>.pkg install {pkg.name}</code>
+          <code>.pkg-inst install {pkg.name}</code>
         </div>
 
         <h2>Versions</h2>
@@ -155,7 +155,7 @@ export default async function PackagePage({ params }: { params: { name: string }
       <aside className="pkg-side">
         <section>
           <h3>Install</h3>
-          <code className="side-install">.pkg install {pkg.name}</code>
+          <code className="side-install">.pkg-inst install {pkg.name}</code>
           {!pkg.redistributable && (
             <p className="muted">Preserved but not redistributed — download via the original source link.</p>
           )}
