@@ -1,12 +1,13 @@
 // Read queries shared by the web pages (SSR) and the JSON API.
 import { query, one } from "./db";
+import { splitCsv } from "./manifest";
 
 export interface PackageListItem {
   name: string;
   description: string | null;
   author: string | null;
   type: string;
-  machine: string;
+  machine_csv: string;
   os_csv: string;
   version: string;
 }
@@ -23,8 +24,8 @@ export async function searchPackages(opts: { q?: string; type?: string; machine?
     params.push(opts.type);
   }
   if (opts.machine) {
-    // A package runs on the selected machine if its minimum is the same or lower.
-    where.push("FIELD(v.machine,'16k','48k','128k','next') <= FIELD(?,'16k','48k','128k','next')");
+    // machine is a known-good SET: a package matches if its set contains the selected model.
+    where.push("FIND_IN_SET(?, v.machine_csv)");
     params.push(opts.machine);
   }
   if (opts.os) {
@@ -32,7 +33,7 @@ export async function searchPackages(opts: { q?: string; type?: string; machine?
     params.push(opts.os);
   }
   return query<PackageListItem>(
-    `SELECT p.name, p.description, p.author, v.type, v.machine, v.os_csv, v.version
+    `SELECT p.name, p.description, p.author, v.type, v.machine_csv, v.os_csv, v.version
      FROM packages p JOIN versions v ON v.package_id = p.id
      WHERE ${where.join(" AND ")}
      ORDER BY p.name LIMIT 200`,
@@ -82,9 +83,12 @@ export async function allTypes(): Promise<string[]> {
 export interface PackageRow {
   id: number;
   name: string;
+  owner: string;
+  preferred: number;
   description: string | null;
   homepage: string | null;
   license: string | null;
+  redistributable: number;
   author: string | null;
   category: string | null;
   source_url: string | null;
@@ -96,10 +100,11 @@ export interface VersionRow {
   id: number;
   version: string;
   type: string;
-  machine: string;
+  machine_csv: string;
   os_csv: string;
   needs_csv: string;
   min_core: string | null;
+  bundled_in: string | null;
   commit_sha: string;
   is_latest: number;
   created_at: string;
@@ -125,7 +130,8 @@ export async function getPackage(
   const pkg = await one<PackageRow>(
     `SELECT p.*, r.source_url,
             (SELECT 1 FROM manual_manifests mm WHERE mm.name = p.name) AS is_manual
-     FROM packages p LEFT JOIN repos r ON r.id = p.repo_id WHERE p.name = ?`,
+     FROM packages p LEFT JOIN repos r ON r.id = p.repo_id WHERE p.name = ?
+     ORDER BY p.preferred DESC, p.created_at ASC LIMIT 1`,
     [name]
   );
   if (!pkg) return null;
@@ -155,6 +161,32 @@ export async function crcLookup(crc: number): Promise<{ package: string; version
      WHERE a.crc32c = ? AND p.archive_state='listed' LIMIT 1`,
     [crc >>> 0]
   );
+}
+
+// Same-name packages whose latest machine sets INTERSECT — the true collision case
+// (two different packages contend for the same command on the same platform). Disjoint
+// same-name packages (cross-platform variants) are fine and are NOT returned here.
+export async function machineCollisions(): Promise<{ name: string; entries: { owner: string; machine: string[] }[] }[]> {
+  const rows = await query<{ name: string; owner: string; machine_csv: string }>(
+    `SELECT p.name, p.owner, v.machine_csv
+     FROM packages p JOIN versions v ON v.package_id = p.id AND v.is_latest = 1
+     WHERE p.archive_state='listed'
+       AND p.name IN (SELECT name FROM packages WHERE archive_state='listed' GROUP BY name HAVING COUNT(*) > 1)
+     ORDER BY p.name, p.owner`
+  );
+  const byName = new Map<string, { owner: string; machine: string[] }[]>();
+  for (const r of rows) {
+    if (!byName.has(r.name)) byName.set(r.name, []);
+    byName.get(r.name)!.push({ owner: r.owner, machine: splitCsv(r.machine_csv) });
+  }
+  const out: { name: string; entries: { owner: string; machine: string[] }[] }[] = [];
+  for (const [name, entries] of byName) {
+    const collide = entries.some((a, i) =>
+      entries.slice(i + 1).some((b) => a.machine.some((m) => b.machine.includes(m)))
+    );
+    if (collide) out.push({ name, entries });
+  }
+  return out;
 }
 
 export async function allPackageNames(): Promise<string[]> {

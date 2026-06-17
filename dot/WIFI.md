@@ -10,14 +10,17 @@ request line, headers, or status parsing. Integrity still comes from the
 plaintext transport is safe by design — a tampered or truncated download is
 simply refused.
 
-The fetch is **`.pkg-get`**, which drives the ESP8266 through the NextZXOS
-**ESPAT driver** (`M_DRVAPI`); when proven it folds into `.pkg-inst`.
+**`.pkg-inst install`/`update` are self-contained** — they talk to the ESP8266
+**directly over the Next UART** (`gopher_uart.inc.asm`, raw AT in transparent mode),
+so **no ESPAT driver install is needed** (like `.http`/`.nxtp`). The standalone
+**`.pkg-get`** diagnostic still uses the NextZXOS **ESPAT driver** (`M_DRVAPI`).
 
-## One-time Next setup
+## One-time Next setup (only for the `.pkg-get` diagnostic)
 
-`.pkg-get` needs the ESPAT driver installed (NextZXOS mode; `err=00` from
-`.pkg-get` means exactly "driver not installed"). Once per boot — or put it in
-`autoexec.bas` (this is the `autoexec-pluspack.bas` sequence):
+`.pkg-inst install`/`update` need none of this. Only the standalone `.pkg-get` needs
+the ESPAT driver installed (NextZXOS mode; `err=00` from `.pkg-get` means "driver not
+installed"). Once per boot — or put it in `autoexec.bas` (the `autoexec-pluspack.bas`
+sequence):
 
 ```
 .install /nextzxos/espat.drv

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { query } from "@/lib/db";
 import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
 import { SUGGESTED_TYPES, MACHINES, OSES, FEATURES } from "@/lib/manifest";
-import { adminPackages, getManualManifest } from "@/lib/queries";
+import { adminPackages, getManualManifest, machineCollisions } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false } };
@@ -58,9 +58,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         name: em.name || "",
         version: em.version || "",
         type: em.type || "dot",
-        machine: em.machine || "next",
+        machine: (em.machine as string[]) || ["next"],
         os: (em.os as string[]) || ["esxdos"],
         needs: (em.needs as string[]) || [],
+        redistributable: em.redistributable === false ? "false" : "true",
+        bundled_in: (em.bundledIn as string) || "",
         command: em.artifacts?.[0]?.command || "",
         src: em.artifacts?.[0]?.src || "",
         description: em.description || "",
@@ -74,9 +76,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         name: spStr("name"),
         version: spStr("version"),
         type: spStr("type") || "dot",
-        machine: spStr("machine") || "next",
+        machine: spArr("machine").length ? spArr("machine") : ["next"],
         os: spArr("os").length ? spArr("os") : ["esxdos"],
         needs: spArr("needs"),
+        redistributable: spStr("redistributable") || "true",
+        bundled_in: spStr("bundled_in"),
         command: spStr("command"),
         src: spStr("src"),
         description: spStr("description"),
@@ -84,7 +88,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         author: spStr("author"),
         homepage: spStr("homepage"),
       }
-    : { repo_url: "", name: "", version: "", type: "dot", machine: "next", os: ["esxdos"], needs: [] as string[], command: "", src: "", description: "", license: "", author: "", homepage: "" };
+    : { repo_url: "", name: "", version: "", type: "dot", machine: ["next"] as string[], os: ["esxdos"], needs: [] as string[], redistributable: "true", bundled_in: "", command: "", src: "", description: "", license: "", author: "", homepage: "" };
 
   // Defaults for the upload form (error round-trip only; the file can't be restored).
   const up =
@@ -94,9 +98,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
           name: spStr("name"),
           version: spStr("version"),
           type: spStr("type") || "dot",
-          machine: spStr("machine") || "next",
+          machine: spArr("machine").length ? spArr("machine") : ["next"],
           os: spArr("os").length ? spArr("os") : ["esxdos"],
           needs: spArr("needs"),
+          redistributable: spStr("redistributable") || "true",
+          bundled_in: spStr("bundled_in"),
           command: spStr("command"),
           description: spStr("description"),
           license: spStr("license"),
@@ -105,7 +111,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
           source_url: spStr("source_url"),
           source_label: spStr("source_label"),
         }
-      : { binary_url: "", name: "", version: "", type: "dot", machine: "next", os: ["esxdos"], needs: [] as string[], command: "", description: "", license: "", author: "", homepage: "", source_url: "", source_label: "" };
+      : { binary_url: "", name: "", version: "", type: "dot", machine: ["next"] as string[], os: ["esxdos"], needs: [] as string[], redistributable: "true", bundled_in: "", command: "", description: "", license: "", author: "", homepage: "", source_url: "", source_label: "" };
 
   const crawlUrl = af === "crawl" ? spStr("url") : "";
 
@@ -113,6 +119,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
     "SELECT id, source_url, status, error_message, last_crawled_at, last_commit_sha FROM repos ORDER BY source_url"
   );
   const packages = await adminPackages();
+  const collisions = await machineCollisions();
 
   const okMsg: Record<string, string> = {
     "1": "Repository added and queued for crawl.",
@@ -201,11 +208,14 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
             <option key={t} value={t} />
           ))}
         </datalist>
-        <select name="machine" defaultValue={pkg.machine}>
+        <span className="os-select">
+          <span className="grp-label">runs on</span>
           {MACHINES.map((m) => (
-            <option key={m} value={m}>{m}</option>
+            <label key={m}>
+              <input type="checkbox" name="machine" value={m} defaultChecked={pkg.machine.includes(m)} /> {m}
+            </label>
           ))}
-        </select>
+        </span>
         <span className="os-select">
           <span className="grp-label">os</span>
           {OSES.map((o) => (
@@ -228,6 +238,13 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <input name="license" placeholder="license" defaultValue={pkg.license} />
         <input name="author" placeholder="author" defaultValue={pkg.author} />
         <input name="homepage" placeholder="homepage" defaultValue={pkg.homepage} />
+        <input name="bundled_in" placeholder="bundled in (e.g. esxdos 0.8.7)" defaultValue={pkg.bundled_in} />
+        <label className="redist-field">redistributable
+          <select name="redistributable" defaultValue={pkg.redistributable}>
+            <option value="true">yes — rehost</option>
+            <option value="false">no — link-only</option>
+          </select>
+        </label>
         <button type="submit">{edit ? "Save changes" : "Save package"}</button>
       </form>
 
@@ -239,11 +256,14 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <input name="name" placeholder="name (e.g. morse)" defaultValue={up.name} required />
         <input name="version" placeholder="version (1.0.0 or date 2017.11.21)" defaultValue={up.version} required />
         <input name="type" list="zx-types" placeholder="type" defaultValue={up.type} />
-        <select name="machine" defaultValue={up.machine}>
+        <span className="os-select">
+          <span className="grp-label">runs on</span>
           {MACHINES.map((m) => (
-            <option key={m} value={m}>{m}</option>
+            <label key={m}>
+              <input type="checkbox" name="machine" value={m} defaultChecked={up.machine.includes(m)} /> {m}
+            </label>
           ))}
-        </select>
+        </span>
         <span className="os-select">
           <span className="grp-label">os</span>
           {OSES.map((o) => (
@@ -265,6 +285,13 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <input name="license" placeholder="license" defaultValue={up.license} />
         <input name="author" placeholder="author" defaultValue={up.author} />
         <input name="homepage" type="url" placeholder="homepage / original post URL" defaultValue={up.homepage} />
+        <input name="bundled_in" placeholder="bundled in (e.g. esxdos 0.8.7)" defaultValue={up.bundled_in} />
+        <label className="redist-field">redistributable
+          <select name="redistributable" defaultValue={up.redistributable}>
+            <option value="true">yes — rehost</option>
+            <option value="false">no — link-only</option>
+          </select>
+        </label>
         <p className="muted grid-full">
           Preserve the author&rsquo;s original source (optional): attach a file <em>and/or</em> give an upstream URL
           to mirror. Stored as a download-only bundle — never signed, never sent to devices.
@@ -274,6 +301,24 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <input name="source_label" placeholder="source label (e.g. source + binary zip)" defaultValue={up.source_label} className="grid-full" />
         <button type="submit">Upload &amp; index</button>
       </form>
+
+      {collisions.length > 0 && (
+        <section className="collisions">
+          <h2>⚠ Name collisions <span className="muted">({collisions.length})</span></h2>
+          <p className="muted">
+            Same name, overlapping machine set — two packages contend for one command on a platform.
+            Mark one <code>preferred</code> per name (it wins on the site + device); the others stay archived.
+          </p>
+          <ul>
+            {collisions.map((c) => (
+              <li key={c.name}>
+                <code>{c.name}</code>:{" "}
+                {c.entries.map((e) => `${e.owner} [${e.machine.join(",")}]`).join("  vs  ")}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <h2>Packages <span className="muted">({packages.length})</span></h2>
       <table className="repos">

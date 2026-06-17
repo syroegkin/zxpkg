@@ -18,10 +18,12 @@ export function manifestToToml(m: Manifest): string {
   if (m.author) lines.push(`author      = ${q(m.author)}`);
   if (m.license) lines.push(`license     = ${q(m.license)}`);
   if (m.homepage) lines.push(`homepage    = ${q(m.homepage)}`);
+  if (!m.redistributable) lines.push(`redistributable = false`);
+  if (m.bundledIn) lines.push(`bundled_in  = ${q(m.bundledIn)}`);
 
   lines.push("");
   lines.push("[compat]");
-  lines.push(`machine  = ${q(m.machine)}`);
+  lines.push(`machine  = ${arr(m.machine)}`);
   lines.push(`os       = ${arr(m.os)}`);
   lines.push(`needs    = ${arr(m.needs)}`);
   if (m.minCore) lines.push(`min_core = ${q(m.minCore)}`);

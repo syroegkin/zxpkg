@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getPackage } from "@/lib/queries";
-import { machineLabel } from "@/lib/manifest";
+import { machinesLabel } from "@/lib/manifest";
 
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
@@ -14,7 +14,7 @@ export default async function Image({ params }: { params: { name: string } }) {
   const desc = (data?.pkg.description ?? "A ZX Spectrum package").slice(0, 150);
   const latest = data ? data.versions.find((v) => v.is_latest) || data.versions[0] : null;
   const type = latest?.type ?? "dot";
-  const machine = latest ? machineLabel(latest.machine) : "";
+  const machine = latest ? machinesLabel(latest.machine_csv) : "";
   const version = latest?.version ?? "";
 
   const bars = ["#ff0000", "#ffff00", "#00ff00", "#0000ff"];

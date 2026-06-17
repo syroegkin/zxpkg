@@ -14,7 +14,7 @@ import { env } from "./env";
 
 interface PkgRow {
   name: string; version: string; type: string; description: string | null;
-  machine: string; os_csv: string; command: string;
+  machine_csv: string; os_csv: string; command: string;
 }
 export interface GopherPkg {
   name: string; version: string; type: string; description: string;
@@ -153,7 +153,7 @@ export function groupPkgs(rows: PkgRow[]): GopherPkg[] {
     let p = byName.get(r.name);
     if (!p) {
       p = { name: r.name, version: r.version, type: r.type, description: r.description || "",
-            machine: r.machine, os: r.os_csv, commands: [] };
+            machine: r.machine_csv, os: r.os_csv, commands: [] };
       byName.set(r.name, p);
     }
     p.commands.push(r.command);
@@ -163,7 +163,7 @@ export function groupPkgs(rows: PkgRow[]): GopherPkg[] {
 
 export async function rebuildGopher(): Promise<void> {
   const rows = await query<PkgRow>(
-    `SELECT p.name, v.version, v.type, p.description, v.machine, v.os_csv, a.command
+    `SELECT p.name, v.version, v.type, p.description, v.machine_csv, v.os_csv, a.command
      FROM versions v
      JOIN packages p ON p.id = v.package_id
      JOIN artifacts a ON a.version_id = v.id

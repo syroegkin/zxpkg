@@ -36,6 +36,10 @@ export const store = {
   indexSig(): string {
     return join(root, "index", "v1.dat.sig");
   },
+  // Human-readable companion to v1.dat (same content, decoded) for debugging.
+  indexJson(): string {
+    return join(root, "index", "v1.json");
+  },
   // Stable bootstrap copies of the on-device client (PKG, PKG-INST + .sig) for
   // the BASIC installer — published here by the device build, served by /dist.
   distFile(name: string): string {

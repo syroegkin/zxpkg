@@ -3,23 +3,30 @@
 //   - an admin-entered object, for repos with no manifest (validateManifest)
 // Runs on the portal (Node), never the device.
 import { parse as parseToml } from "smol-toml";
+import { parseRepoUrl } from "./repo-url";
 
-export type Machine = "16k" | "48k" | "128k" | "next";
-export type Os = "nextzxos" | "esxdos";
+export type Machine = "16k" | "48k" | "128k" | "next" | "zxuno";
+export type Os = "nextzxos" | "esxdos" | "unodos";
 
-export const MACHINES: Machine[] = ["16k", "48k", "128k", "next"];
-export const OSES: Os[] = ["nextzxos", "esxdos"];
+export const MACHINES: Machine[] = ["16k", "48k", "128k", "next", "zxuno"];
+export const OSES: Os[] = ["nextzxos", "esxdos", "unodos"];
 
-// `machine` is the MINIMUM model; ZX software is upward-compatible, so a package also
-// runs on every higher tier. These derive the full supported set from the minimum.
-export const MACHINE_RANK: Record<string, number> = { "16k": 0, "48k": 1, "128k": 2, next: 3 };
-export function supportedMachines(min: string): Machine[] {
-  const r = MACHINE_RANK[min] ?? 0;
-  return MACHINES.filter((m) => MACHINE_RANK[m] >= r);
+// `machine` and `os` are KNOWN-GOOD SETS — the models/OSes a package is tested or
+// declared to run on (NOT a minimum-model floor). Stored/encoded as bitfields.
+export const splitCsv = (s: string): string[] => s.split(",").map((x) => x.trim()).filter(Boolean);
+// Publisher slug for the (name, owner) package identity. Lowercase a-z0-9-, else "community".
+export const slug = (s: string | undefined | null): string =>
+  (s || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "community";
+// Single rule for a package's owner: the repo owner if it came from a repo, else the
+// author slug. Shared by the crawler, the uploader, and the catalog seeder.
+export function deriveOwner(opts: { repoUrl?: string | null; author?: string | null }): string {
+  if (opts.repoUrl) {
+    try { return parseRepoUrl(opts.repoUrl).owner; } catch { /* unparseable -> fall back to author */ }
+  }
+  return slug(opts.author);
 }
-export function machineLabel(min: string): string {
-  return min === "next" ? "next" : `${min}+`;
-}
+export const machineLabel = (m: string): string => m;
+export const machinesLabel = (csv: string): string => splitCsv(csv).join(", ") || "—";
 
 // Package type/category: a free-form lowercase slug. `dot` (a dot command) is one of
 // many — others: game, util, demo, tool, core, … The device maps known types to an
@@ -27,12 +34,22 @@ export function machineLabel(min: string): string {
 export type PkgType = string;
 export const SUGGESTED_TYPES = ["dot", "game", "util", "demo", "tool", "core", "other"];
 
-// Known hardware/feature requirements (compat.needs). Shown as checkboxes in the UI.
-export const FEATURES = ["wifi", "accelerator", "2mb"];
+// Closed `compat.needs` enum (hardware/interface). Shown as checkboxes in the UI.
+// Only wifi/accelerator/2mb are device-actionable (see index-format FEATURE_BIT);
+// the rest are portal-only metadata for search/display.
+export const FEATURES = ["wifi", "accelerator", "2mb", "divide", "divmmc", "divtiesus", "mb03plus", "ezx", "ay", "rtc", "rpi0"];
 export const FEATURE_LABELS: Record<string, string> = {
   wifi: "WiFi",
   accelerator: "Pi Accelerator",
   "2mb": "2 MB RAM",
+  divide: "divIDE",
+  divmmc: "divMMC",
+  divtiesus: "DivTIESUS",
+  mb03plus: "MB03+",
+  ezx: "eLeMeNt ZX",
+  ay: "AY sound",
+  rtc: "RTC clock",
+  rpi0: "Raspberry Pi Zero",
 };
 export const featureLabel = (f: string): string => FEATURE_LABELS[f] || f;
 
@@ -50,7 +67,9 @@ export interface Manifest {
   license?: string;
   homepage?: string;
   claim?: string;
-  machine: Machine;
+  redistributable: boolean; // default true; false ⇒ portal mirrors link-only
+  bundledIn?: string; // provenance: OS/distro release it originally shipped in
+  machine: Machine[]; // known-good set
   os: Os[];
   needs: string[];
   minCore?: string;
@@ -67,6 +86,8 @@ export interface ManifestInput {
   license?: unknown;
   homepage?: unknown;
   claim?: unknown;
+  redistributable?: unknown;
+  bundledIn?: unknown;
   machine?: unknown;
   os?: unknown;
   needs?: unknown;
@@ -90,6 +111,18 @@ function strArray(v: unknown): string[] {
   if (Array.isArray(v)) return v.map(String);
   return [];
 }
+// Coerce a set field that may arrive as an array (TOML) or a single string (form).
+function setArray(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map(String).map((s) => s.trim()).filter(Boolean);
+  if (typeof v === "string" && v.length) return splitCsv(v);
+  return [];
+}
+function bool(v: unknown, dflt: boolean): boolean {
+  if (v === undefined || v === null || v === "") return dflt;
+  if (typeof v === "boolean") return v;
+  const s = String(v).toLowerCase();
+  return !(s === "false" || s === "0" || s === "no" || s === "off");
+}
 
 export function validateManifest(input: ManifestInput): ParseResult {
   const errors: string[] = [];
@@ -109,9 +142,14 @@ export function validateManifest(input: ManifestInput): ParseResult {
     else type = t;
   }
 
-  const machine = str(input.machine) as Machine | undefined;
-  if (!machine) errors.push("machine is required");
-  else if (!MACHINES.includes(machine)) errors.push(`machine "${machine}" must be one of ${MACHINES.join("|")}`);
+  let machine: Machine[] = [];
+  if (input.machine === undefined) {
+    errors.push('machine is required (e.g. ["48k","128k"])');
+  } else {
+    machine = setArray(input.machine) as Machine[];
+    for (const m of machine) if (!MACHINES.includes(m)) errors.push(`machine has invalid entry "${m}" (allowed: ${MACHINES.join("|")})`);
+    if (machine.length === 0) errors.push("machine must list at least one model");
+  }
 
   let os: Os[] = [];
   if (input.os === undefined) {
@@ -128,6 +166,7 @@ export function validateManifest(input: ManifestInput): ParseResult {
   if (homepage && !/^https?:\/\//i.test(homepage)) errors.push("homepage must be an http(s) URL");
 
   const needs = strArray(input.needs);
+  for (const n of needs) if (!FEATURES.includes(n)) errors.push(`needs has invalid entry "${n}" (allowed: ${FEATURES.join("|")})`);
 
   const artifacts: ManifestArtifact[] = [];
   if (!Array.isArray(input.artifacts) || input.artifacts.length === 0) {
@@ -156,7 +195,9 @@ export function validateManifest(input: ManifestInput): ParseResult {
       license: str(input.license),
       homepage,
       claim: str(input.claim),
-      machine: machine!,
+      redistributable: bool(input.redistributable, true),
+      bundledIn: str(input.bundledIn),
+      machine,
       os,
       needs,
       minCore: str(input.minCore),
@@ -183,6 +224,8 @@ export function parseManifest(text: string): ParseResult {
     license: pkg.license,
     homepage: pkg.homepage,
     claim: pkg.claim,
+    redistributable: pkg.redistributable,
+    bundledIn: pkg.bundled_in,
     machine: compat.machine,
     os: compat.os,
     needs: compat.needs,

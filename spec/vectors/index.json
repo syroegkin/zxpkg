@@ -1,15 +1,15 @@
 {
   "schema_ver": 1,
   "key_id": 1,
-  "record_count": 3,
-  "total_bytes": 158,
+  "record_count": 5,
+  "total_bytes": 250,
   "rows": [
     {
       "name": "morse",
       "version": "1.2.0",
       "type": "dot",
       "description": "Morse code for the ZX Spectrum",
-      "machine": "48k",
+      "machine_csv": "48k,128k,next",
       "os_csv": "nextzxos,esxdos",
       "needs_csv": "",
       "command": "MORSE",
@@ -21,7 +21,7 @@
       "version": "0.9",
       "type": "dot",
       "description": "Viewdata / teletext client",
-      "machine": "next",
+      "machine_csv": "next,zxuno",
       "os_csv": "nextzxos",
       "needs_csv": "wifi",
       "command": "NXTEL",
@@ -33,12 +33,36 @@
       "version": "2.0.1",
       "type": "game",
       "description": "",
-      "machine": "128k",
-      "os_csv": "esxdos",
+      "machine_csv": "128k",
+      "os_csv": "esxdos,unodos",
       "needs_csv": "",
       "command": "SNAKE",
       "crc32c": 16711935,
       "size": 16384
+    },
+    {
+      "name": "ztool",
+      "version": "2.0",
+      "type": "util",
+      "description": "Z tool (newer)",
+      "machine_csv": "128k",
+      "os_csv": "esxdos",
+      "needs_csv": "",
+      "command": "ZTOOL",
+      "crc32c": 2863267842,
+      "size": 1000
+    },
+    {
+      "name": "ztool",
+      "version": "1.0",
+      "type": "util",
+      "description": "Z tool (older)",
+      "machine_csv": "128k",
+      "os_csv": "esxdos",
+      "needs_csv": "",
+      "command": "ZTOOL",
+      "crc32c": 2863267841,
+      "size": 900
     }
   ]
 }

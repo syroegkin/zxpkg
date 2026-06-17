@@ -17,10 +17,13 @@ CREATE TABLE IF NOT EXISTS repos (
 CREATE TABLE IF NOT EXISTS packages (
   id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   repo_id       INT UNSIGNED NULL,                 -- NULL = repo-less (uploaded binary)
-  name          VARCHAR(64)  NOT NULL UNIQUE,
+  name          VARCHAR(64)  NOT NULL,             -- NOT globally unique; see uq_name_owner
+  owner         VARCHAR(64)  NOT NULL DEFAULT 'community', -- publisher slug; (name,owner) is the identity
+  preferred     TINYINT(1)   NOT NULL DEFAULT 0,   -- default pick when same name collides on a platform
   description   VARCHAR(255) NULL,
   homepage      VARCHAR(512) NULL,
   license       VARCHAR(64)  NULL,
+  redistributable TINYINT(1) NOT NULL DEFAULT 1,    -- false => portal mirrors link-only (paid/restricted)
   author        VARCHAR(128) NULL,
   category      VARCHAR(64)  NULL,
   -- listed = public; hidden = unlisted (review); removed = tombstone (files deleted,
@@ -28,6 +31,7 @@ CREATE TABLE IF NOT EXISTS packages (
   archive_state ENUM('listed','hidden','removed') NOT NULL DEFAULT 'listed',
   archived_at   DATETIME     NULL,                 -- when set to hidden/removed
   created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_name_owner (name, owner),
   CONSTRAINT fk_pkg_repo FOREIGN KEY (repo_id) REFERENCES repos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -36,10 +40,11 @@ CREATE TABLE IF NOT EXISTS versions (
   package_id    INT UNSIGNED NOT NULL,
   version       VARCHAR(32)  NOT NULL,
   type          VARCHAR(24)  NOT NULL DEFAULT 'dot',
-  machine       ENUM('16k','48k','128k','next') NOT NULL,
+  machine_csv   VARCHAR(64)  NOT NULL DEFAULT '',   -- known-good set (CSV), e.g. '48k,128k,next'
   os_csv        VARCHAR(64)  NOT NULL DEFAULT '',
   needs_csv     VARCHAR(128) NOT NULL DEFAULT '',
   min_core      VARCHAR(16)  NULL,
+  bundled_in    VARCHAR(64)  NULL,                  -- provenance: OS/distro release it shipped in
   commit_sha    CHAR(40)     NOT NULL,
   manifest_json LONGTEXT     NOT NULL,
   is_latest     TINYINT(1)   NOT NULL DEFAULT 0,
@@ -111,3 +116,18 @@ ALTER TABLE versions MODIFY commit_sha CHAR(40) NULL;
 -- Takedown/visibility state for preserved third-party packages.
 ALTER TABLE packages ADD COLUMN IF NOT EXISTS archive_state ENUM('listed','hidden','removed') NOT NULL DEFAULT 'listed';
 ALTER TABLE packages ADD COLUMN IF NOT EXISTS archived_at DATETIME NULL;
+-- Compat redesign (2026-06-16): `machine` becomes a known-good SET (CSV), not a single enum.
+-- The old single-value `machine` column is dropped (no backfill — prod is being reset; existing
+-- rows had one model, which would just become a one-element set).
+ALTER TABLE versions ADD COLUMN IF NOT EXISTS machine_csv VARCHAR(64) NOT NULL DEFAULT '' AFTER type;
+ALTER TABLE versions DROP COLUMN IF EXISTS machine;
+-- Provenance: OS/distro release a command originally shipped in (display-only).
+ALTER TABLE versions ADD COLUMN IF NOT EXISTS bundled_in VARCHAR(64) NULL;
+-- Redistribution flag: false => portal mirrors link-only (paid/permission-restricted artifacts).
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS redistributable TINYINT(1) NOT NULL DEFAULT 1;
+-- Duplicate model (2026-06-16): identity is (name, owner), not name alone. Same name is
+-- allowed across owners (cross-platform variants); `preferred` resolves a same-platform clash.
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS owner VARCHAR(64) NOT NULL DEFAULT 'community';
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS preferred TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE packages DROP INDEX IF EXISTS name;             -- old global-unique on name
+ALTER TABLE packages ADD UNIQUE INDEX IF NOT EXISTS uq_name_owner (name, owner);

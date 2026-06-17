@@ -5,7 +5,8 @@
 ;
 ; Layout decoded:
 ;   [u8 schema_ver=1][u8 key_id][u16 record_count]
-;   record*: [u32 crc32c][u8 machine][u8 os_flags][u8 feature_flags][u24 size]
+;   record*: [u32 crc32c][u8 machine_flags][u8 os_flags][u8 feature_flags][u24 size]
+;   (machine_flags/os_flags are known-good SET bitfields, not ordinals)
 ;            [u8 t_len][type][u8 c_len][cmd][u8 n_len][name][u8 v_len][ver][u8 d_len][desc]
 
 ; ---- decoder state ----

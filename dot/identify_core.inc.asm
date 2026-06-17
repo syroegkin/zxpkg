@@ -31,9 +31,14 @@ id_match    equ $903c          ; 1 if the filename matched a registry command (1
 id_count    equ $903d          ; number of /DOT files processed (for the summary)
 id_nlen     equ $903e          ; index_find_cmd: filename length to compare (1)
 id_status   equ $903f          ; computed record status 0/1/2 (1)
+id_txth     equ $9040          ; INSTALL.TXT sidecar file handle (1)
+id_txtok    equ $9041          ; 1 if the .TXT sidecar opened OK (1)
+id_dirpath  equ $9042          ; current scan directory path ptr (2)
+id_pfx      equ $9044          ; current scan path prefix ptr ("/DOT/" or "/BIN/") (2)
 dirent      equ $9100          ; readdir entry
 pathbuf     equ $9200          ; "/DOT/<name>"
 recbuf      equ $9300          ; output record assembly
+txtbuf      equ $9380          ; human-readable line assembly for INSTALL.TXT
 idxbuf      equ $A000          ; the loaded index.dat (<= 8 KB)
 filebuf     equ $C000          ; current file contents for CRC (<= 8 KB)
 
@@ -71,17 +76,54 @@ identify_run:
         db F_OPEN
         ret c
         ld (id_outh),a
-        ; walk /DOT
+        ; open the human-readable sidecar /ZXPKG/INSTALL.TXT (best-effort)
+        xor a
+        ld (id_txtok),a
         ld a,(id_drive)
-        ld ix,dotpath
+        ld ix,txtname
         push ix
         pop hl
+        ld b,FA_OPEN_CREAT_WRITE
+        rst $08
+        db F_OPEN
+        jr c,id_walk           ; couldn't create .TXT -> scan anyway, no sidecar
+        ld (id_txth),a
+        ld a,1
+        ld (id_txtok),a
+id_walk:
+        ; scan /DOT then /BIN (NextZXOS uses /DOT, classic esxDOS uses /BIN; a missing
+        ; directory just opendir-fails in scan_dir and is skipped)
+        ld hl,dotpath   : ld (id_dirpath),hl
+        ld hl,dotprefix : ld (id_pfx),hl
+        call scan_dir
+        ld hl,binpath   : ld (id_dirpath),hl
+        ld hl,binprefix : ld (id_pfx),hl
+        call scan_dir
+id_closeout:
+        ld a,(id_outh)
+        rst $08
+        db F_CLOSE
+        ld a,(id_txtok)        ; close the sidecar too, if it opened
+        or a
+        ret z
+        ld a,(id_txth)
+        rst $08
+        db F_CLOSE
+        ret
+
+; scan_dir: enumerate the directory at (id_dirpath); CRC + identify each regular file
+; and append a record (+ INSTALL.TXT line).  build_path uses (id_pfx) as the prefix.
+; opendir-fail (directory absent) returns quietly so /DOT-only or /BIN-only systems work.
+scan_dir:
+        ld a,(id_drive)
+        ld ix,(id_dirpath)
+        ld hl,(id_dirpath)
         ld b,0
         rst $08
         db F_OPENDIR
-        jr c,id_closeout
+        ret c                  ; directory absent -> skip
         ld (id_dirh),a
-id_loop:
+sd_loop:
         ld a,(id_dirh)
         ld ix,dirent
         push ix
@@ -89,26 +131,23 @@ id_loop:
         rst $08
         db F_READDIR
         or a
-        jr z,id_enddir
+        jr z,sd_end
         ld a,(dirent)
         and $10
-        jr nz,id_loop          ; skip directories
+        jr nz,sd_loop          ; skip directories (incl . and ..)
         call scan_tick         ; per-file progress (front-end defines it)
         call build_path
         call crc_file          ; -> crcval ; CF skip on open error
-        jr c,id_loop
+        jr c,sd_loop
         call index_find_cmd    ; match filename -> command ; id_match + cur_* on hit
         call write_record      ; emit [fname][status][crc](+name+ver) to /INSTALL.DAT
+        call write_txt         ; mirror a human-readable line to /INSTALL.TXT
         ld a,(id_count)        ; count this file
         inc a
         ld (id_count),a
-        jr id_loop
-id_enddir:
+        jr sd_loop
+sd_end:
         ld a,(id_dirh)
-        rst $08
-        db F_CLOSE
-id_closeout:
-        ld a,(id_outh)
         rst $08
         db F_CLOSE
         ret
@@ -198,7 +237,7 @@ cs_old:
 
 ; build_path: pathbuf = "/DOT/" + (dirent+1) ; sets id_namelen.
 build_path:
-        ld hl,dotprefix
+        ld hl,(id_pfx)         ; "/DOT/" or "/BIN/" (both 5 chars)
         ld de,pathbuf
         ld bc,dotprefix_len
         ldir
@@ -313,8 +352,130 @@ wr_emit:
         db F_WRITE
         ret
 
+; --- human-readable sidecar (INSTALL.TXT) ------------------------------------
+; write_txt: append "<fname> <status> <CRC8> <name> v<ver>\r" for the current file.
+; Best-effort: returns immediately if the sidecar isn't open.
+write_txt:
+        ld a,(id_txtok)
+        or a
+        ret z
+        ld de,txtbuf
+        ld hl,dirent+1         ; fname
+        ld a,(id_namelen)
+        call wt_copy
+        call wt_sp
+        ld a,(id_status)       ; status word
+        call wt_statusword
+        call wt_sp
+        call wt_crc8           ; CRC, MSB-first hex
+        ld a,(id_status)
+        or a
+        jr z,wt_eol            ; unmanaged -> no name/version
+        call wt_sp
+        ld hl,(cur_name)       ; package name
+        ld a,(cur_name+2)
+        call wt_copy
+        call wt_sp
+        ld a,'v'
+        ld (de),a
+        inc de
+        ld hl,(cur_ver)        ; latest version
+        ld a,(cur_ver+2)
+        call wt_copy
+wt_eol:
+        ld a,13                ; CR-terminate (ZX line ending)
+        ld (de),a
+        inc de
+        ld hl,txtbuf           ; length = DE - txtbuf
+        ex de,hl
+        or a
+        sbc hl,de
+        ld c,l
+        ld b,h
+        ld a,(id_txth)
+        ld ix,txtbuf
+        push ix
+        pop hl
+        rst $08
+        db F_WRITE
+        ret
+; wt_copy: append A bytes (HL)->(DE); DE advanced. A=0 -> nothing.
+wt_copy:
+        or a
+        ret z
+        ld c,a
+        ld b,0
+        ldir
+        ret
+; wt_sp: append one space.
+wt_sp:
+        ld a,' '
+        ld (de),a
+        inc de
+        ret
+; wt_statusword: A=0/1/2 -> append "unmanaged"/"current"/"outdated".
+wt_statusword:
+        or a
+        jr nz,wsw1
+        ld hl,s_unman
+        jr wsw_cp
+wsw1:
+        cp 1
+        jr nz,wsw2
+        ld hl,s_cur
+        jr wsw_cp
+wsw2:
+        ld hl,s_out
+wsw_cp:
+        ld a,(hl)
+        or a
+        ret z
+        ld (de),a
+        inc de
+        inc hl
+        jr wsw_cp
+; wt_crc8: crcval (u32 LE) -> 8 hex chars, MSB first, into DE.
+wt_crc8:
+        ld hl,crcval+3
+        ld b,4
+wc8_lp:
+        ld a,(hl)
+        push hl
+        push bc
+        call wt_byte
+        pop bc
+        pop hl
+        dec hl
+        djnz wc8_lp
+        ret
+; wt_byte: A -> two hex chars into DE.
+wt_byte:
+        push af
+        rrca
+        rrca
+        rrca
+        rrca
+        call wt_nib
+        pop af
+wt_nib:
+        and $0f
+        add a,'0'
+        cp '9'+1
+        jr c,wtn_put
+        add a,7
+wtn_put:
+        ld (de),a
+        inc de
+        ret
+
 idxname:    db "/ZXPKG/INDEX.DAT", 0
 outname:    db "/ZXPKG/INSTALL.DAT", 0   ; 8.3-legal base names (classic esxDOS rejects >8 char base)
+txtname:    db "/ZXPKG/INSTALL.TXT", 0
+s_cur:      db "current", 0
+s_out:      db "outdated", 0
+s_unman:    db "unmanaged", 0
 dotpath:    db "/DOT", 0
 dotprefix:  db "/DOT/"
 dotprefix_len equ 5
+binpath:    db "/BIN", 0
+binprefix:  db "/BIN/"

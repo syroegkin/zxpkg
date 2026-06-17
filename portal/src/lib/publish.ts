@@ -6,26 +6,27 @@ import { store } from "./store";
 import { crc32c } from "./crc32c";
 import { signBlob } from "./sign";
 import { rebuildIndex } from "./index-compiler";
-import type { Manifest } from "./manifest";
+import { deriveOwner, type Manifest } from "./manifest";
 
 const UPLOAD_SHA = "0".repeat(40); // sentinel commit for uploaded packages
 
 export async function publishUpload(manifest: Manifest, files: Record<string, Buffer>): Promise<number> {
-  // Upsert the (repo-less) package — refuse if the name is owned by a repo.
-  let pkg = await one<{ id: number; repo_id: number | null }>("SELECT id, repo_id FROM packages WHERE name=?", [manifest.name]);
+  // Identity is (name, owner): repo-less uploads use the author slug as owner.
+  const owner = deriveOwner({ author: manifest.author });
+  let pkg = await one<{ id: number; repo_id: number | null }>("SELECT id, repo_id FROM packages WHERE name=? AND owner=?", [manifest.name, owner]);
   if (pkg && pkg.repo_id !== null) {
-    throw new Error(`package name "${manifest.name}" already belongs to a repo`);
+    throw new Error(`package "${owner}/${manifest.name}" already belongs to a repo`);
   }
   if (!pkg) {
     const r = await exec(
-      "INSERT INTO packages (repo_id,name,description,homepage,license,author) VALUES (NULL,?,?,?,?,?)",
-      [manifest.name, manifest.description || null, manifest.homepage || null, manifest.license || null, manifest.author || null]
+      "INSERT INTO packages (repo_id,name,owner,description,homepage,license,redistributable,author) VALUES (NULL,?,?,?,?,?,?,?)",
+      [manifest.name, owner, manifest.description || null, manifest.homepage || null, manifest.license || null, manifest.redistributable ? 1 : 0, manifest.author || null]
     );
     pkg = { id: r.insertId, repo_id: null };
   } else {
     await exec(
-      "UPDATE packages SET description=?, homepage=?, license=?, author=? WHERE id=?",
-      [manifest.description || null, manifest.homepage || null, manifest.license || null, manifest.author || null, pkg.id]
+      "UPDATE packages SET description=?, homepage=?, license=?, redistributable=?, author=? WHERE id=?",
+      [manifest.description || null, manifest.homepage || null, manifest.license || null, manifest.redistributable ? 1 : 0, manifest.author || null, pkg.id]
     );
   }
 
@@ -34,9 +35,9 @@ export async function publishUpload(manifest: Manifest, files: Record<string, Bu
 
   await exec("UPDATE versions SET is_latest=0 WHERE package_id=?", [pkg.id]);
   const vr = await exec(
-    `INSERT INTO versions (package_id,version,type,machine,os_csv,needs_csv,min_core,commit_sha,manifest_json,is_latest)
-     VALUES (?,?,?,?,?,?,?,?,?,1)`,
-    [pkg.id, manifest.version, manifest.type, manifest.machine, manifest.os.join(","), manifest.needs.join(","), manifest.minCore || null, UPLOAD_SHA, JSON.stringify(manifest)]
+    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,commit_sha,manifest_json,is_latest)
+     VALUES (?,?,?,?,?,?,?,?,?,?,1)`,
+    [pkg.id, manifest.version, manifest.type, manifest.machine.join(","), manifest.os.join(","), manifest.needs.join(","), manifest.minCore || null, manifest.bundledIn || null, UPLOAD_SHA, JSON.stringify(manifest)]
   );
 
   mkdirSync(store.artifactDir(manifest.name, manifest.version), { recursive: true });

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { getPackage } from "@/lib/queries";
 import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
-import { featureLabel, supportedMachines } from "@/lib/manifest";
+import { featureLabel, splitCsv, machinesLabel } from "@/lib/manifest";
 import { safeHref } from "@/lib/url-guard";
 import { env } from "@/lib/env";
 import JsonLd from "@/app/JsonLd";
@@ -44,7 +44,10 @@ export default async function PackagePage({ params }: { params: { name: string }
     return (
       <article className="pkg-page">
         <div className="pkg-main">
-          <header className="pkg-head"><h1>{pkg.name}</h1></header>
+          <header className="pkg-head">
+            <h1>{pkg.name}</h1>
+            <span className="muted">owner: {pkg.owner}</span>
+          </header>
           <p className="pkg-lead">
             This package was removed at the owner&rsquo;s request{pkg.archived_at ? ` on ${ymd(pkg.archived_at)}` : ""}.
           </p>
@@ -122,7 +125,7 @@ export default async function PackagePage({ params }: { params: { name: string }
                     {v.version}
                     {v.is_latest ? <span className="tag-latest">latest</span> : null}
                   </td>
-                  <td>{v.machine}</td>
+                  <td>{v.machine_csv.split(",").join(", ")}</td>
                   <td>{v.os_csv.split(",").join(", ")}</td>
                   <td>{ymd(v.created_at)}</td>
                   <td>
@@ -132,7 +135,7 @@ export default async function PackagePage({ params }: { params: { name: string }
                         <a className="sig" href={`${bp}/artifact/${pkg.name}/${v.version}/${a.command}.sig`}>.sig</a>
                       </span>
                     ))}
-                    {pkg.source_url && (
+                    {pkg.source_url && v.commit_sha && (
                       <a href={`${bp}/source/${pkg.name}/${v.version}.tar.gz`}>source</a>
                     )}
                     {bundles.filter((b) => b.version_id === v.id).map((b, i) => {
@@ -153,21 +156,25 @@ export default async function PackagePage({ params }: { params: { name: string }
         <section>
           <h3>Install</h3>
           <code className="side-install">.pkg install {pkg.name}</code>
+          {!pkg.redistributable && (
+            <p className="muted">Preserved but not redistributed — download via the original source link.</p>
+          )}
         </section>
         {latest && (
           <section>
             <h3>Compatibility</h3>
             <div className="chips">
               <span className="chip chip-type">{latest.type}</span>
-              {supportedMachines(latest.machine).map((m) => (
+              {splitCsv(latest.machine_csv).map((m) => (
                 <span key={m} className="chip">{m}</span>
               ))}
               {latest.os_csv.split(",").filter(Boolean).map((o) => (
                 <span key={o} className="chip chip-os">{o}</span>
               ))}
             </div>
-            <p className="muted">minimum model: {latest.machine}</p>
+            <p className="muted">runs on: {machinesLabel(latest.machine_csv)}</p>
             {latest.min_core && <p className="muted">core ≥ {latest.min_core}</p>}
+            {latest.bundled_in && <p className="muted">bundled in {latest.bundled_in}</p>}
           </section>
         )}
         {latest && latest.needs_csv.split(",").filter(Boolean).length > 0 && (

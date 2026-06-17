@@ -30,9 +30,10 @@ export async function POST(req: Request) {
   // Re-populate the upload form on failure (the file input can't be restored by browsers).
   const values: Record<string, string | string[] | undefined> = {
     binary_url: g("binary_url"), name: g("name"), version: g("version"), type: g("type"),
-    machine: g("machine"), os: form.getAll("os").map(String), needs: form.getAll("needs").map(String),
+    machine: form.getAll("machine").map(String), os: form.getAll("os").map(String), needs: form.getAll("needs").map(String),
     command: g("command"), description: g("description"), license: g("license"), author: g("author"),
-    homepage: g("homepage"), source_url: g("source_url"), source_label: g("source_label"),
+    homepage: g("homepage"), redistributable: g("redistributable"), bundled_in: g("bundled_in"),
+    source_url: g("source_url"), source_label: g("source_label"),
   };
   const fail = (msg: string) => adminBack(env.basePath, "upload", msg, values);
 
@@ -44,7 +45,9 @@ export async function POST(req: Request) {
     author: g("author"),
     license: g("license"),
     homepage: g("homepage"),
-    machine: g("machine"),
+    redistributable: g("redistributable"),
+    bundledIn: g("bundled_in"),
+    machine: form.getAll("machine").map(String),
     os: form.getAll("os").map(String),
     needs: form.getAll("needs").map(String),
     minCore: g("min_core"),

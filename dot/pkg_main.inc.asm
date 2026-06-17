@@ -73,6 +73,7 @@ pkg_run:
         cp 7 : jp z,h_scan
         cp 8 : jp z,h_update
         cp 9 : jp z,h_status
+        cp 10 : jp z,h_env
         jp h_unknown           ; cmd_id 0
 
 ; ---- search <term> : list compatible packages whose name contains <term> ----
@@ -117,7 +118,8 @@ h_info:
         ld a,(found_flag)
         or a
         jr z,hi_none
-        jp print_detail
+        call print_detail
+        jp print_versions
 hi_none:
         ld de,s_nofound
         jp pstr
@@ -220,14 +222,75 @@ h_help:
 ; helpers
 ; =====================================================================
 
-; set_machine: choose the running machine code for the compat filter.
-; TODO(HW): detect 16k/48k/128k/next at runtime.  Default = next (3) so the query
-; shows every package; on a classic machine this may list Next-only packages that
-; won't run — harmless for a query tool, tighten once we can probe the hardware.
+; set_machine: set srch_mach to the running machine's known-good bit-mask for the compat
+; filter.  The headless query harness (TEST_OUT) forces $FF (show-all) so the fixture tests
+; stay deterministic; the shipped dot probes the hardware via detect_machine.
 set_machine:
-        ld a,3
+    IFDEF TEST_OUT
+        ld a,$FF
         ld (srch_mach),a
         ret
+    ELSE
+        jp detect_machine
+    ENDIF
+
+; detect_machine: probe the platform and set srch_mach (machine_flags bitfield:
+; 16k=1 48k=2 128k=4 next=8 zxuno=16).  Refs: NextZXOS API (M_DOSVERSION); z88dk
+; esxdos.h; MrKWatkins/ZXSpectrumNextTests (NextReg). M_DOSVERSION ($88): NextZXOS
+; returns Fc=0 with B='N',C='X' (-> ZX Next platform); esxDOS returns Fc=1,A=14
+; (-> classic Spectrum). Map NextZXOS->next, classic->48k|128k, unknown->$FF (show all).
+; Exact 48k/128k (port $7FFD) and ZX-Uno (zxuno regs) tiers, and NextReg $00/$03 machine-id
+; refinement (ports $243B/$253B), are future HW work.
+detect_machine:
+        call os_kind            ; A = 0 esxDOS / 1 NextZXOS / 2 unknown
+        cp 1 : jr z,dm_next
+        or a : jr z,dm_classic
+        ld a,$ff                ; unknown -> show all (warn-not-refuse)
+        ld (srch_mach),a
+        ret
+dm_next:
+        ld a,8                  ; ZX Spectrum Next
+        ld (srch_mach),a
+        ret
+dm_classic:
+        ld a,6                  ; 48k | 128k (exact tier not probed yet)
+        ld (srch_mach),a
+        ret
+
+; os_kind: classify the OS via M_DOSVERSION ($88) — A = 1 NextZXOS (Fc=0, B='N',C='X'),
+; 0 esxDOS (Fc=1), 2 unknown.  Single source for detect_machine + h_env.
+os_kind:
+        rst $08
+        db $88
+        jr c,ok_esx
+        ld a,b : cp 'N' : jr nz,ok_unk
+        ld a,c : cp 'X' : jr nz,ok_unk
+        ld a,1 : ret
+ok_esx:
+        xor a : ret
+ok_unk:
+        ld a,2 : ret
+
+; ---- env : runtime diagnostics for hardware testing (no secrets) ----
+; Prints the .pkg version, the DETECTED machine set, and the OS — to validate
+; detect_machine on real hardware.  Runs the real probe (not the TEST_OUT show-all).
+h_env:
+        ld de,s_env_hdr : call pstr
+        ld de,s_env_mach : call pstr
+        call detect_machine             ; real probe -> srch_mach
+        ld a,(srch_mach)
+        ld (cur_mach),a                 ; print_mach reads cur_mach as a machine_flags bitfield
+        call print_mach
+        call pcrlf
+        ld de,s_env_os : call pstr
+        call os_kind                    ; 0 esxDOS / 1 NextZXOS / 2 unknown
+        cp 1 : jr z,he_next
+        or a : jr z,he_esx
+        ld de,s_os_unk : jp pstr
+he_next:
+        ld de,s_nextzxos : jp pstr
+he_esx:
+        ld de,s_esxdos : jp pstr
 
 ; open_index_or_err: load /ZXPKG/INDEX.DAT and set idxptr.  On failure print a
 ; friendly message and return CF=1 so the handler bails.
@@ -410,9 +473,9 @@ pn_lp:
         djnz pn_lp
         ret
 
-; query_print: walk the index at idxptr; print "name vVER" for each record that
-; is machine-compatible (cur_mach <= srch_mach) and whose name contains ndl_buf
-; (empty needle = all).  Prints "no matches" if nothing qualified.
+; query_print: walk the index at idxptr; print "name vVER" for each record whose
+; known-good set overlaps the running machine (cur_mach AND srch_mach != 0) and whose
+; name contains ndl_buf (empty needle = all).  Prints "no matches" if nothing qualified.
 query_print:
         ld hl,(idxptr)
         call index_open
@@ -425,12 +488,10 @@ qp_walk:
         or l
         jr z,qp_done
         call index_next
-        ld a,(cur_mach)        ; compat: cur_mach <= srch_mach
+        ld a,(cur_mach)        ; compat: cur_mach AND srch_mach != 0
         ld hl,srch_mach
-        cp (hl)
-        jr z,qp_ok
-        jr nc,qp_skip
-qp_ok:
+        and (hl)
+        jr z,qp_skip
         call name_match
         or a
         jr z,qp_skip
@@ -520,26 +581,75 @@ print_detail:
         ld hl,(cur_desc) : ld a,(cur_desc+2) : ld b,a : call print_field
         jp pcrlf
 
-; print_mach: print the machine name for cur_mach (0=16k 1=48k 2=128k else next).
+; print_versions: after the latest-version detail, list every version of the same
+; package (name matches name_buf/nf_len set by info_find).  The portal emits all
+; versions latest-first, so this prints newest -> oldest, one "  vVER" per line.
+print_versions:
+        ld de,s_versions
+        call pstr
+        ld hl,(idxptr)
+        call index_open
+        ret c
+pv_walk:
+        ld hl,(idx_count)
+        ld a,h
+        or l
+        ret z
+        call index_next
+        ld a,(cur_name+2)      ; same length as the target name?
+        ld hl,nf_len
+        cp (hl)
+        jr nz,pv_walk
+        or a
+        jr z,pv_walk
+        ld b,a                 ; compare bytes (names are lowercase by manifest rule)
+        ld hl,(cur_name)
+        ld de,name_buf
+pv_cmp:
+        ld a,(de)
+        cp (hl)
+        jr nz,pv_walk
+        inc hl
+        inc de
+        djnz pv_cmp
+        ld a,' ' : call pkg_putc   ; "  vVER"
+        ld a,' ' : call pkg_putc
+        ld a,'v' : call pkg_putc
+        ld hl,(cur_ver)
+        ld a,(cur_ver+2)
+        ld b,a
+        call print_field
+        call pcrlf
+        jr pv_walk
+
+; print_mach: print the known-good machine SET in cur_mach (bitfield: bit0 16k,
+; bit1 48k, bit2 128k, bit3 next, bit4 zxuno) as space-separated names.  Walks the
+; contiguous NUL-terminated name table (s_16k..s_zxuno), in bit order.
 print_mach:
         ld a,(cur_mach)
+        ld c,a                 ; C = bits to test (shifted right each step)
+        ld de,s_16k            ; first name; table is contiguous in bit order
+        ld b,5
+pm_lp:
+        srl c                  ; CF = current bit; C = remaining bits
+        jr nc,pm_skip
+        push bc
+        push de
+        call pstr              ; print name at DE
+        ld a,' ' : call pkg_putc
+        pop de
+        pop bc
+pm_skip:
+        call pm_adv            ; advance DE past this name's NUL terminator
+        djnz pm_lp
+        ret
+; pm_adv: advance DE to just past the next NUL.
+pm_adv:
+        ld a,(de)
+        inc de
         or a
-        jr nz,pm_1
-        ld de,s_16k
-        jp pstr
-pm_1:
-        cp 1
-        jr nz,pm_2
-        ld de,s_48k
-        jp pstr
-pm_2:
-        cp 2
-        jr nz,pm_n
-        ld de,s_128k
-        jp pstr
-pm_n:
-        ld de,s_next
-        jp pstr
+        jr nz,pm_adv
+        ret
 
 ; pstr: print the NUL-terminated string at DE.
 pstr:
@@ -600,6 +710,7 @@ s_usage:     db "ZXPkg .pkg commands:", 13
              db " info <name>", 13
              db " scan            rebuild DB", 13
              db " remove <name>", 13
+             db " env             machine/os", 13
              db " (install/update: .pkg-inst)", 13, 0
 s_unknown:   db "unknown command", 13, 0
 s_nofound:   db "not found", 13, 0
@@ -608,6 +719,12 @@ s_noindex:   db "no index - run .pkg update", 13, 0
 s_nomatch:   db "no matches", 13, 0
 s_scandone:  db "scanned /DOT -> /ZXPKG/INSTALL.DAT (", 0
 s_scanfiles: db " files)", 13, 0
+s_env_hdr:   db "ZXPkg .pkg v0.1", 13, 0
+s_env_mach:  db "machine: ", 0
+s_env_os:    db "os: ", 0
+s_nextzxos:  db "nextzxos", 13, 0
+s_esxdos:    db "esxdos", 13, 0
+s_os_unk:    db "unknown", 13, 0
 s_scanfail:  db "scan failed (file I/O)", 13, 0
 
 ; install / update live in the .pkg-inst dot
@@ -637,7 +754,9 @@ s_cmd:     db "cmd:  ", 0
 s_mach:    db "mach: ", 0
 s_size:    db "size: ", 0
 s_desc:    db "desc: ", 0
+s_versions: db "versions:", 13, 0
 s_16k:     db "16k", 0
 s_48k:     db "48k", 0
 s_128k:    db "128k", 0
 s_next:    db "next", 0
+s_zxuno:   db "zxuno", 0

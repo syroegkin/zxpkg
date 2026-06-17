@@ -23,15 +23,16 @@ while (p < dat.length) {
 
 // ABC/CHECK: file CRC == index latest -> current (1); EXTRA: no command -> unmanaged (0)
 const expect = {
-  ABC: { status: 1, name: "alpha", ver: "1.0" },
-  CHECK: { status: 1, name: "checker", ver: "2.1" },
-  BIGGY: { status: 1, name: "biggy", ver: "3.0" }, // >8KB: streaming CRC must match whole file
-  EXTRA: { status: 0, name: "", ver: "" },
+  ABC: { status: 1, name: "alpha", ver: "1.0", dir: "DOT" },
+  CHECK: { status: 1, name: "checker", ver: "2.1", dir: "DOT" },
+  BIGGY: { status: 1, name: "biggy", ver: "3.0", dir: "DOT" }, // >8KB: streaming CRC must match whole file
+  EXTRA: { status: 0, name: "", ver: "", dir: "DOT" },
+  BINTOOL: { status: 1, name: "bintool", ver: "1.5", dir: "BIN" }, // in /BIN (esxDOS dir)
 };
 let ok = true;
 for (const [fn, e] of Object.entries(expect)) {
   const g = got[fn];
-  const hostCrc = crc32c(fs.readFileSync(path.join(root, "DOT", fn)));
+  const hostCrc = crc32c(fs.readFileSync(path.join(root, e.dir, fn)));
   const pass = g && g.status === e.status && g.name === e.name && g.ver === e.ver && g.crc === hostCrc;
   if (!pass) ok = false;
   const lbl = ["unmanaged", "current", "outdated"][g ? g.status : 0];

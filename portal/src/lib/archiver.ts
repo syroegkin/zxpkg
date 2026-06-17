@@ -2,7 +2,7 @@
 // artifacts (CRC + sign), and recompile the device index. Used by the worker.
 import { writeFileSync, mkdirSync } from "node:fs";
 import { exec, one, query } from "./db";
-import { parseManifest, type Manifest } from "./manifest";
+import { parseManifest, deriveOwner, type Manifest } from "./manifest";
 import { parseRepoUrl, type RepoRef } from "./repo-url";
 import { store } from "./store";
 import { crc32c } from "./crc32c";
@@ -44,21 +44,24 @@ async function fetchArtifactBytes(mirrorDir: string, src: string): Promise<Buffe
 }
 
 async function indexVersion(repo: RepoRow, head: string, m: Manifest, mirrorDir: string): Promise<void> {
-  // Upsert the package row — refuse if the name is owned by a different source.
-  let pkg = await one<{ id: number; repo_id: number | null }>("SELECT id, repo_id FROM packages WHERE name=?", [m.name]);
+  // Identity is (name, owner): owner = the repo's owner, so two different repos may both
+  // publish a same-named package (cross-platform variants). Refuse only a (name,owner) clash
+  // that points at a different source.
+  const owner = deriveOwner({ repoUrl: repo.source_url });
+  let pkg = await one<{ id: number; repo_id: number | null }>("SELECT id, repo_id FROM packages WHERE name=? AND owner=?", [m.name, owner]);
   if (pkg && (pkg.repo_id ?? null) !== repo.id) {
-    throw new Error(`package name "${m.name}" already belongs to another source`);
+    throw new Error(`package "${owner}/${m.name}" already belongs to another source`);
   }
   if (!pkg) {
     const r = await exec(
-      "INSERT INTO packages (repo_id,name,description,homepage,license,author) VALUES (?,?,?,?,?,?)",
-      [repo.id, m.name, m.description || null, m.homepage || null, m.license || null, m.author || null]
+      "INSERT INTO packages (repo_id,name,owner,description,homepage,license,redistributable,author) VALUES (?,?,?,?,?,?,?,?)",
+      [repo.id, m.name, owner, m.description || null, m.homepage || null, m.license || null, m.redistributable ? 1 : 0, m.author || null]
     );
     pkg = { id: r.insertId, repo_id: repo.id };
   } else {
     await exec(
-      "UPDATE packages SET description=?, homepage=?, license=?, author=? WHERE id=?",
-      [m.description || null, m.homepage || null, m.license || null, m.author || null, pkg.id]
+      "UPDATE packages SET description=?, homepage=?, license=?, redistributable=?, author=? WHERE id=?",
+      [m.description || null, m.homepage || null, m.license || null, m.redistributable ? 1 : 0, m.author || null, pkg.id]
     );
   }
 
@@ -69,9 +72,9 @@ async function indexVersion(repo: RepoRow, head: string, m: Manifest, mirrorDir:
   // New version becomes the latest.
   await exec("UPDATE versions SET is_latest=0 WHERE package_id=?", [pkg.id]);
   const vr = await exec(
-    `INSERT INTO versions (package_id,version,type,machine,os_csv,needs_csv,min_core,commit_sha,manifest_json,is_latest)
-     VALUES (?,?,?,?,?,?,?,?,?,1)`,
-    [pkg.id, m.version, m.type, m.machine, m.os.join(","), m.needs.join(","), m.minCore || null, head, JSON.stringify(m)]
+    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,commit_sha,manifest_json,is_latest)
+     VALUES (?,?,?,?,?,?,?,?,?,?,1)`,
+    [pkg.id, m.version, m.type, m.machine.join(","), m.os.join(","), m.needs.join(","), m.minCore || null, m.bundledIn || null, head, JSON.stringify(m)]
   );
 
   mkdirSync(store.artifactDir(m.name, m.version), { recursive: true });

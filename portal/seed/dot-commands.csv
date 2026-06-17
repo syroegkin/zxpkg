@@ -1,0 +1,1563 @@
+"One Hint from Phoebus Dokos on Facebook 2017-12-31: ""Most .dot command versions in the BIN directory coming in the TBBLUE distributions are modified from the original ones""
+and please read Comment on the end of this list about special extended .DOT-command (DOTN) for ZX Next (ZXN) and on extended (DOTX) commands which can be bigger than about 7k size
+From ZX Next Distro v1.03 .DOT-commands for ZXN are completely found in directory \DOT\ and only those for esxDOS in \BIN\ directory! If DOT-Command is not found under /DOT it is searched for in /BIN (at least under NextZXOS v2.09)
+Hint from Garry Lancaster: If you want to execute DOT-Commands like .ls from esxDOS under NextBASIC you can do this by running it with the complete path like e.g.: ./bin/ls
+If you consider programming .DOT-commands on the Spectrum Next, please read the Comment from Robin Verhagen-Guest on Facebook-Group ""Spectrum Next Dev"" on 2025-01-01 at the End of this Sheet.
+
+https://stackoverflow.com/questions/8779197/how-to-link-files-directly-from-github-raw-github-com Answer: Append ?raw=true at the end of the file link.",,,,,,,,,
+".System-Command
+Name",Version (Newest comes first),"Special Hardware required?
+(e.g. ""SpecNext only"" or
+""ZX-Uno only"").",Comment,First appeared included in this Version in esxDOS Version,Author,Download-Link:,Found on:,Usage:,Function:
+.$,v1.4,SpecNext only,Executes any dot command with a string argument. .$ v1.3: fix for chaining large (>8K) dot commands such as .ls,---,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/$,https://gitlab.com/thesmog358/tbblue/-/tree/master/dot,"SYNOPSIS:
+ .$ <COMMAND> <LETTER>$
+
+INFO:
+eg:  LET x$=""myfile.dsk""
+     .$ DEFRAG x$
+
+does the same as:
+     .DEFRAG myfile.dsk","Executes any dot command with a string argument.
+
+Another example:
+
+.cd /games/next/warhawk
+.browse a$ -t nex
+.$ nexload a$"
+.128 (Fixed for esxDOS 0.8.7),,,Fixed for esxDOS 0.8.7 as described here by nagydani: http://board.esxdos.org/viewtopic.php?pid=1244#p1244,,Fixed for esxDOS 0.8.7 as described here by nagydani: http://board.esxdos.org/viewtopic.php?pid=1244#p1244,http://forum.tlienhard.com/phpBB3/download/file.php?id=8847,http://board.esxdos.org/viewtopic.php?pid=1244#p1244,,Fixed for esxDOS 0.8.7 as described here by nagydani: http://board.esxdos.org/viewtopic.php?pid=1244#p1244
+.128 (Older),,,,ESXDOS 0.8.6 Final,lordcoxis,http://www.esxdos.org/files/esxdos086.zip,http://board.esxdos.org/viewtopic.php?pid=834#p834,,"From http://board.esxdos.org/viewtopic.php?pid=834#p834:
+""[17/02/2018] Commands: Added .128 command to test 128K mode using Velesoft's ""zx128rom-for-divide"" ROM (lordcoxis)"""
+.2browse,v0.01a1,"divMMC with min. 128k Memory and installed Package ""New File Browser for ZX-UNO"" (which can also be used on non-ZX-Uno-devices)"," 2browse - a twin pane file manager for esxDOS based on my long filename browser code.
+
+Seems to hang under SpecNext NextBASIC. Only works with 48k/128k Personality esxDOS on SpecNext yet!",---,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/2BROWSE_001-1.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?f=9&t=6049,"2browse
+
+2browse /diectory-name","Copy the contents of the 2browse BIN folder to the /BIN folder on your SD Card. To run, from BASIC enter: .2browse
+or if you want to start browsing from a specific folder, in this case the /BIN folder: .2browse /bin
+
+2browse supports browser plugins and the majority of keys from the long filename browser with the following additions:
+
+Extended Mode - Swap between windows
+Caps Shift + M - Move selected file to other window
+Caps Shift + C - Copy selected file to other window
+
+The following browser keys are not supported in 2browse:
+
+Caps Shift + S - Save snapshot
+Caps Shift + K - Poke
+Caps Shift + L - External command
+Caps Shift + N - Default NMI
+Symbol Shift + F - Toggle full-screen file browser
+
+Known issues:
+
+    All file operations (Move, Copy, New Folder, Rename) are limited to 8.3 filenames.
+    If you copy a file and then perform the same copy again, you aren't prompted to overwrite or abort the copy. You just get a cryptic error message displayed.
+    2browse uses the BROWSE.CFG and font file from the long filename browser. Any changes you make to those will be carried over into 2browse.
+    Copy and move operations cannot be aborted once started."
+.50hz,v1.00,SpecNext only,Also works under 48k/128k Personality of Next,---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19871,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372,.50hz,"Without Parameters:
+Sets Display to 50Hz on Spectrum Next
+
+With (any) Parameter: Displays help-screen"
+.60hz,v1.00,SpecNext only,Also works under 48k/128k Personality of Next,---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19871,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372,.60hz,"Without Parameters:
+Sets Display to 60Hz on Spectrum Next
+
+With (any) Parameter: Displays help-screen"
+.7gfx_fo,v0.1,SpecNext only,dot7gFX set / Collection of FX (effects) tools for 8bit computer ZX Spectrum Next / fade-out effect for ZX Spectrum Next,---,Ped7g / Peter Helcmanovsky (Ped),https://itch.io/jam/dotjam/rate/1571495,https://itch.io/jam/dotjam,".7gfx_fo <pal> [<delay>]
+
+fade-out palette to black
+
+SYNOPSIS:
+ ../7GFX_FO.DOT <pal> [<delay>]
+ARGUMENTS:
+ pal = <letter u|l|s|t>[0|1]
+ delay = <integer 1..255>
+
+EXAMPLE:
+ ../7GFX_FO.DOT u1 3
+     fades second ULA palette
+     in 21 frames (delay * 7)","### what it does and how to use it
+
+Fades out selected palette `<pal>` until all is black, in 7 steps.
+
+The speed of the fade can be adjusted by `<delay>` option, default delay
+is 6 frames per step, that is 6 * 7 = 42 frames in total, ~0.84s at 50Hz.
+
+The faded palette is being uploaded at scanline 224 (below 320x256 area with
+nextreg $64 (100) set to zero).
+
+The fadeout effect takes about ~40 scanlines to calculate and apply palette
+changes, so there should be plenty of CPU time left for your own routines
+running in interrupt, like music player, etc.
+
+After the dot command is finished, the selected palette is set completely
+to black color, it's up to caller to modify it further.
+"
+.associate,,,"Was removed from SpecNext Master with comment: ""Remove .ASSOCIATE (deprecated)""",---,,,https://gitlab.com/thesmog358/tbblue/-/commit/070e329cc8d0db28add56364154963a09fe6b80e,,"Was removed from SpecNext Master with comment: ""Remove .ASSOCIATE (deprecated)"""
+.backoff,,SpecNext only,SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",,
+.backon,,SpecNext only,SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",,
+.bmp2next,,SpecNext only,SpecNext only,---,Alcoholics Anonymous (The PC version was written by Jim Bagley).,As postet 2017-11-11 on: http://board.esxdos.org/viewtopic.php?pid=555#p555 this can now be found on: https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command,http://board.esxdos.org/viewtopic.php?pid=308#p308,"BMP2Next Usage :-
+.bmp2next src.bmp [dst.bmp]",bmp2next converts standard 256-colour bitmaps to bitmaps using the Next's RRRGGGBB palette.
+.bmpload,,SpecNext only,Maybe SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",picload <filename> to load image to background,
+.browse,v0.13,,Some people rename this .browse to .b so it can be started faster with this shorter name,"Included in Package ""New File Browser for ZX-UNO"" (which can also be used on non-ZX-Uno-devices)",bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/BROWSE_latest.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=36335#p36335,browse,
+.browse,v1.2,SpecNext only,SpecNext only/Requires NextZXOS,,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/tree/master/dot,,"BROWSE [OPTION]... VARIABLE$
+OPTIONS:
+-h, --help
+Display this help
+-t, --type EXT
+Add EXT to selectable types
+Wildcards * or ? allowed
+Multiple -t options allowed
+-p, --prompt PROMPT
+Custom help prompt
+Can include:
+\i inverse on
+\o inverse off
+-s, --save
+Ask for new filename
+-e, --edit PROMPT
+Custom prompt for edit/save
+-8, --8.3
+Return short name (not LFN)
+-r, --rename
+Allow rename with R key
+-d, --delete
+Allow erase with E key
+-k, --mkdir
+Allow mkdir with K key
+-m, --remount
+Allow remount with M key
+-u, --unmount
+Allow unmount with U key
+-c, --copy
+Allow copy/paste with C/P","Uses Browser to select filename
+"
+.brwsfont,v0.01,,"Part of Package ""New File Browser for ZX-UNO"" (which can also be used on non-ZX-Uno-devices) up from v0.23-Test5. Helptext of .brwsfont from v0.23-Test4 package shows typo in commandname with incorrect: .brwsfnt instead of correct: .brwsfont",,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/BROWSE_TEST023-5.zip,https://www.spectrumcomputing.co.uk/forums/viewtopic.php?p=97819#p97819,"brwsfont -l
+to list the available fonts for the browser
+brwsfont BOLD
+installs BOLD Font
+brwsfont -r
+restores default font
+
+Hint from User ""Chris23235"":
+Options only work when written lowercase!",
+.cd,,,Different from ESXDOS 0.7.3 Public BETA,ESXDOS 0.8.0 Public BETA,,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,,Change directory
+.cd (Older),,,,ESXDOS 0.7.3 Public BETA,,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,,Change directory
+.ch8show,v0.5.0b,SpecNext only,, ---,"Stale Pixels
+( https://www.stalepixels.com/ )",https://github.com/StalePixels/D3,https://www.stalepixels.com/software/D3/#ch8show,"Show a font file
+CH8SHOW /path/to/file.ch8",".CH8SHOW - View 768b/1k 1bit font files in ROM/UDG format inspired by Damien Guard's zx-origins project.
+
+We define ROM format fonts as:
+
+    1bit per pixel
+    8×8 fixed size
+    Breadth first
+
+A common file format for a collection 96 of these is a CH8 file – 768bytes long.
+
+Damien Guard maintains the most awesome ZX-Origins collection, and is a great place to get yourself some CH8 files if you ever find the need.
+.CH8SHOW previewing Damien’s super-cool Cinema font.
+
+The display will automatically adjust if passed a 128character long font-file, instead of a 96 character one – these are detected by the 1k, instead of usual 768byte, file-length.
+
+Internally, we developed .CH8SHOW as a companion for FoaK – as part of the promised open source support commands that the released app came with.
+
+The 1k (files with UDG extension) exports also work with .CH8SHOW perfectly."
+.checkerb, v1.0,,,,Luzie,https://www.magentacloud.de/lnk/O8gGDSLV,http://board.esxdos.org/viewtopic.php?pid=1410#p1410,"Without Parameters: Displays Checkerboard
+
+With Parameters: Displays help-screen. Press any key to quit!",Display a Checkerboard of Attributes over your Screen. Helps you to find hidden content in loading screens like those on: http://www.worldofspectrum.org/equinox/eggs/screens.php
+.chmod,,,,ESXDOS 0.8.0 Public BETA,,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,"chmod opmode file
+
+op: +|- mode: rwxash",
+.clear,v1.1,SpecNext only,"SpecNext only
+
+.clear dot command to free all currently-allocated resources
+
+Updated .clear to v1.1: restore default interrupt modes", ---,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/raw/d874b9425373f93e67b82470c369c90db9289a95/dot/CLEAR,https://gitlab.com/thesmog358/tbblue/-/commit/d874b9425373f93e67b82470c369c90db9289a95,clear,"CLEAR v1.1 by Garry Lancaster
+Releases all allocated resources
+leaving maximum available memory
+
+NOTE: Uses integer register %a
+
+SYNOPSIS:
+.CLEAR"
+.cls,,SpecNext only,Maybe SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",,
+.cotton,,SpecNext only,"A Spectrum Next tribute to the late, great June Brown / A silly little submission to the ZX Spectrum Next DotJam contest. Just a little play on the name of command line executables - 'dot' cotton.",---,Adam Ainsworth,https://adam-ainsworth.itch.io/cotton,https://itch.io/jam/dotjam,.cotton,
+.cowsay,,SpecNext only,"The one from SpecNext-Distro seems to be SpecNext only, as it doesn´t work on esxDOS 0.8.7 and in code this can be found: ""Requires NextZX""
+
+The other from Authors Homepage seems to run on esxDOS 0.8.7",System-Next v.1.03 Distro - this version is other size than the one from https://retrobits.altervista.org/blog/2017/11/dot-command-fun/,The Fuchsia Authors,http://somebitsofme.altervista.org/misc/spectrum/dotCommands/cowsay.zip,https://retrobits.altervista.org/blog/2017/11/dot-command-fun/,.cowsay [message],
+.cp,,,Different from ESXDOS 0.7.4 Public BETA (bugfix release),ESXDOS 0.8.0 Public BETA,,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,cp source target,
+.cp (Older),v0.1,,,ESXDOS 0.7.4 Public BETA (bugfix release),(c) ub880d (aka Dusky),http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,cp <filename> <filename>,
+.d80,v0.7f,Warning: Do not use the old esxDOS v.0.8.8 (eg. in the the Omni computer). You may corrupt files or your SD card !,Version limitations: 0.7f  not tested with MDOS3 disk images. Developed and tested on: eLeMeNt ZX computer and MB03+ interface,,SCjoe / eZX / MB,https://zxfiles.net/esxdos/D80.TAR,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=192319#p192319,"D80 image[.ext]  directory list
+
+D80 [switches] image[.ext]
+
+If no extension is given, the
+command tries appending .D80
+first, then .D40. If neither
+exists, an error is reported.
+
+Accepted filename variants:
+  FLOPPY
+  FLOPPY.
+  FLOPPY.D80
+  FLOPPY.D40","SWITCHES
+================================
+-x  Export files from image to SD card.
+-c  Create a new blank disk image file (.D80 only).
+-n  No Scroll? disables the prompt after printing the entire page.
+-d  Write directory listing to a file instead of screen.
+  Output filename:
+    FLOPPY       -> FLOPPY.DIR
+    FLOPPY.      -> FLOPPY.DIR
+    FLOPPY.EXT   -> FLOPPY.EXT
+      (EXT is any other extension, LST,PRN,OUT, except the D80,D40)
+If the file already exists, you will be asked: Overwrite? Y/N
+-i  Display disk image info: format, capacity, FAT statistics and directory slot counts by file type."
+.date,,,Source-Code is available,---,Victor Trucco,https://gitlab.com/victor.trucco/RTC/raw/master/commands/DATE,https://gitlab.com/victor.trucco/RTC,"date <ENTER> show current date
+date DD/MM/YYYY <ENTER>
+set the date
+Date must be greater than 01/01/2000",Date and Time for RTC / Realtime-Clock / ZX Spectrum Next / TBBlue 
+.dfwload,v0.1,,"Don´t know, what this is used for. Has asked about it here: http://board.esxdos.org/viewtopic.php?pid=1371#p1371 - Added Info thankfully to SCjoe on: http://board.esxdos.org/viewtopic.php?pid=1976#p1976",ESXDOS 0.8.7 Final,(c) ub880d,http://www.esxdos.org/files/esxdos087.zip,http://board.esxdos.org/viewtopic.php?pid=1233#p1233,dfwload <filename>,".dfwload v0.1 (c) 2015 ub880d. .DFWLOAD is used to upload other firmware to the so-called ""mapram"". Mapram is suitable e.g. for testing firmware without the need to re-flash divide/divmmc."
+.displayedge,,SpecNext only,Also part of the official SpecNext distribution,,Peter Ped Helcmanovsky (ped7g),https://github.com/ped7g/ZXSpectrumNextMisc,https://github.com/ped7g/ZXSpectrumNextMisc,.displayedge,"dot command .displayedge to check visible area of your ZX Next display, storing the information into global config file + runtime library to read the config and use user's values in your own SW to narrow down used screen space by your SW."
+.divideo,,,Also part of the official SpecNext distribution,ESXDOS 0.8.5 Final,Matt Westcott (Gasman),http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,divideo [dvofile],"Play a DivIDEo video stream file (.dvo)
+divideo - ESXDOS command for playing .dvo video files
+1. Copy the file 'divideo' to the /bin directory of your ESXDOS drive.
+2. Copy some .dvo files there too (see http://divideo.zxdemo.org/).
+3. Boot up ESXDOS, and run:
+        .divideo my_video.dvo
+NB: The .dvo files must be fully unfragmented on disk to work correctly... 
+
+Remarks: Seems only to run with divIDE and not divMMC?!
+
+DivIDEo Website"" DivIDEo: Streaming video for the ZX Spectrum"": http://divideo.zxdemo.org/"
+.dmaplayw,,ZX-Uno only,ZX-UNO only,---,mcleod_ideafix,"Source and examples at: 
+http://svn.zxuno.com/svn/zxuno/software/dma/dmaplayw",http://board.esxdos.org/viewtopic.php?pid=774#p774,.dmaplayw,.dmaplayw : (ZX-UNO only). Plays an audio WAV file using Specdrum (for 8 bit sound output) and ZX-UNO DMA. WAV file needs to be encoded as 8 bit unsigned samples and 15625 Hz sampling frequency. 
+.dotjam,,SpecNext only,"DOTJAMMIN / Emulator breaking, VGA50! :P / update for all screen modes & forgot some assets, now works in Cspect.",---,em00k,https://em00k.itch.io/dotjammin,https://itch.io/jam/dotjam,.dotjam,
+.dotsdir,v1.0 (/BIN/-Version),,".DOTSDIR (/BIN/-Version) v1.00
+by Luzie67@gmx.de
+
+Help: This one should tell you
+the path /BIN/ or /DOT/
+to see which is processed first
+
+There are two versions, of
+.DOTSDIR - one comes to:
+/BIN/DOTSDIR (this one)
+and the other comes to:
+/DOT/DOTSDIR
+
+",,Luzie67@gmx.de,https://forum.tlienhard.com/phpBB3/download/file.php?id=19964,,Usage: .DOTSDIR without argument,
+.dotsdir,v1.0 (/DOT/-Version),,".DOTSDIR (/DOT/-Version) v1.00
+by Luzie67@gmx.de
+
+Help: This one should tell you
+the path /BIN/ or /DOT/
+to see which is processed first
+
+There are two versions, of
+.DOTSDIR - one comes to:
+/DOT/DOTSDIR (this one)
+and the other comes to:
+/BIN/DOTSDIR",,Luzie67@gmx.de,https://forum.tlienhard.com/phpBB3/download/file.php?id=19964,,.DOTSDIR without argument,
+.drives,v0.2,,,ESXDOS 0.8.6 Final,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/fanj6y3ka769lct/drives?dl=0,http://board.esxdos.org/viewtopic.php?pid=721#p721,".drives v0.2 By Dr. Slump 2018
+
+Usage: drives [args]
+
+-1 use M_DRIVEINFO syscall (*)
+-2 use M_GETSETDRV syscall
+-3 use DISK_INFO syscall
+* default option
+
+-? this help info","New release of dot command, drives, v0.2:
+Corrected problem with File System and Volume Label
+Source-Code released on 2023-03-21 at: 
+https://github.com/dr-slump-0/esxDOS-NMI-Navigator"
+.drives (Older),v0.1,,,,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/x8o8zd5pdbbvfv9/hexview_v0.1.zip?dl=0,http://board.esxdos.org/viewtopic.php?pid=571#p571,".drives [args]
+-1 use M_DRIVEINFO syscall (*)
+-2 use M_GETSETDRV syscall
+-3 use DISK_INFO syscall
+* default option
+-? this help info","It show all detected drives/devices by esxDOS, using various methods."
+.drives (Older),,,,,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/5gwq5vrzzz97zo7/drives?dl=0,http://board.esxdos.org/viewtopic.php?pid=551#p551,,Display list of detected drives
+.dskprobe,v0.2ro,,,ESXDOS 0.8.5 Final,(c) 2009-12 Papaya Labz,http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,,Disk Probe / View blocks / View sectors
+.dskprobe (Older),v0.1ro alpha ,,,ESXDOS 0.7.3 Public BETA,(c) 2009 Papaya Labz,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,,Disk Probe / View blocks / View sectors
+.dumpmem,v0.3,,,ESXDOS 0.8.7 Final,(c) ub880d,http://www.esxdos.org/files/esxdos087.zip,http://board.esxdos.org/viewtopic.php?pid=1233#p1233,".dumpmem [params] <fname>
+-s<start>: addr (default 32768)
+-l<len>  : size (default 512)
+-a       : append to file
+-f       : force overwrite
+switches -a and -f are mutually
+exclusive",
+.dumpmem (Older),v0.2,,,ESXDOS 0.7.4 Public BETA (bugfix release),(c) ub880d,http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,.dumpmem [params] <fname> -s<start>: addr (default 32768) -l<len> : size (default 512) -f : force overwrite,
+.dt,v0.1.1,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",http://iki.fi/sol,".dt  INTVAR
+
+where INTVAR is one letter
+eg, DT X will use %X(n)
+x(0)=minutes, x(1)=seconds",Time delta calculator
+.dzx7,,,,---,"Alcoholics Anonymous (=
+aralbrec)","As postet 2017-11-11 on: http://board.esxdos.org/viewtopic.php?pid=555#p555 this can now be found on:
+https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command",http://board.esxdos.org/viewtopic.php?pid=308#p308,,dzx7 is a decompressor for .zx7 compressed files
+.ear2tap,,,,---,rkd77 / Witold Filipczyk,https://github.com/rkd77/ear2tap/archive/refs/heads/main.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=195130,.ear2tap file.tap,"ear2tap for esxdos
+Usage: .ear2tap file.tap
+
+It creates new file file.tap and loads from the real tape (EAR socket). Similar in effect to the COPY-COPY program. Green border means saving to a disk or a SD card. You can pause tape if the green border is shown longer. Press BREAK when playing tape finished. It will restart Spectrum."
+.echo,,,Sourcecode-File in Zeus/.GOD available incl. Description on: http://simon.mooli.org.uk/nextech/z80n/index.html,,Simon N Goodwin,http://simon.mooli.org.uk/nextech/z80n/ECHO,http://simon.mooli.org.uk/nextech/z80n/index.html,ECHO string,
+.editor,v0.9b,,esxDOS hex monitor/editor,,namco/nexgen software,https://esxdos.zxfiles.net/#dotcmds,https://esxdos.zxfiles.net/#dotcmds,editor <filename>,"Use cursor keys to move on
+screen, TRUE/INV video to move
+through file blocks and menu
+shortcuts for more actions"
+.espbaud,v1.1,SpecNext only,"Included in Package ""Next ZXDB-dl search"" from: https://github.com/em00k/next-zxdb-downloader",,,https://github.com/em00k/next-zxdb-downloader,,"ESPBAUD V1.1 (zx next)
+
+-R  = ESP Hard Reset
+
+-d  = Detect ESP bps
+bps = Set bps and finetune
+-v  = ESP version test
+
+-p  = ESP bps change permanent
+-f  = Set bps exactly
+-q  = quiet mode",Also found on SpecNext Master at: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/ESPBAUD
+.espreset,v1.4,SpecNext only,ESP8266-01 reset dot command for the ZX Spectrum Next,,Robin Verhagen-Guest (Threetwosevensixseven),https://github.com/Threetwosevensixseven/espreset/blob/master/dot/ESPRESET,https://github.com/Threetwosevensixseven/espreset,,
+.evas10n.ras,v0.1,SpecNext only,"Extremely simple breakout game. Source colde included. / A Turbo Rascal Syntax Error   rewrite of the Turbo Pascal   rewrite of Evas10n, a BASIC  10-Liner breakout game for the         ZX Spectrum.  **** 32 COLUMNS MODE ONLY!! ****    Control keys:    q:         quit    z:         move bat left    x:         move bat right    any other: stop bat  ",,marco's retrobits,https://retrobits.itch.io/,https://itch.io/jam/dotjam,.evas10n.ras,
+.every,v0.5.0b,SpecNext only,,,"Stale Pixels
+( https://www.stalepixels.com/ )",https://github.com/StalePixels/D3,https://www.stalepixels.com/software/D3/#every,"Name: default, ""True"" every 10th
+.EVERY 10
+
+Name: ESP, ""True"" every 5th
+.EVERY ESP 5
+
+NextReg 0x7F is 1 on True else 0","A scheduling tool designed to keep count of events, and trigger periodically.
+
+.EVERY needs to be started with at-least one parameter, the schedule interval – which must be a number greater than one.
+
+You can also pass an optional second parameter, this is the name of the schedule when you wish to maintain more than one.
+
+In the below example we’ll use .EVERY to set the RTC every 10th execution.
+
+.EVERY 10 : IF % REG 127 THEN .NXTP time.nxtel.org 12300
+
+For advanced users, you can run more than one schedule concurrently, but independently of each other.
+
+.EVERY 2 EveryTwo : IF % REG 127 THEN PRINT ""Twice""
+.EVERY 3 ThreeTimes : IF % REG 127 THEN PRINT ""Thrice""
+
+The default schedule is called “default”, and the schedule data is stored in /sys/every.cfg. This is a “simple INI file” and is suitable for manipulation with .INI (in fact, it uses the same code path for both apps)
+
+Internally, the network time example is exactly how it is used – and that function was our motivation behind this tool!"
+".extract (newer, but -m Parameter don´t work anymore)",v1.1,,"Standard esxDOS (=ZX) Version. No more working -m functionality as long, as I´ve tested it (tried to load something to Screen-Memory with -m 16384).",---,"Alcoholics Anonymous (=
+aralbrec)",https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zx/dot-command/extract,http://board.esxdos.org/viewtopic.php?id=106,".extract file [+off][-off][len]
+ [-f] [-o outfile] [-a outfile]
+ [-m address]
+
+input:
+  file = input filename
+  +off = byte offset from start
+  -off = byte offset from end
+   len = length in bytes
+
+output:
+  -f  = overwrite permitted
+  -o  = write to output file
+  -a  = append to output file
+  -m  = copy to 64k mem address
+
+no -o,-a,-m generates hexdump","Extracts parts of file and display them as hex or save them as files.
+
+Programming sample for .DOT-commands.
+
+Dave Sonic ClarkeBASIC on the FV-Group ""ZX Spectrum Next""
+SOLVED. Everything after 'extract' needed to be in the string variable."
+".extract (older, but -m Parameter works)",v1.0,,"Standard esxDOS (=ZX) Version. This one has working -m functionality as long, as I´ve tested it (tried to load something to Screen-Memory with -m 16384).",---,"Alcoholics Anonymous (=
+aralbrec)",,,"extract file [+off][-off][len]
+ [-f] [-o outfile] [-a outfile]
+ [-m address]
+
+input:
+  file = input filename
+  +off = byte offset from start
+  -off = byte offset from end
+   len = length in bytes
+
+output:
+  -f  = overwrite permitted
+  -o  = write to output file
+  -a  = append to output file
+  -m  = copy to 64k mem address
+
+no -o,-a,-m generates hexdump","Extracts parts of file and display them as hex or save them as files.
+
+Programming sample for .DOT-commands."
+.extract,v1.3,SpecNext only,ZX Next (=ZXN) Version,---,"Alcoholics Anonymous (=
+aralbrec)",https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command/extract,http://board.esxdos.org/viewtopic.php?id=106,"extract file [+off][-off][len]
+ [-f] [-o file] [-a file]
+ [-m addr] [-ml linaddr]
+ [-mp pnum] [-mb bnum]
+
+input:
+  file = input file
+  +off = byte offset from start
+  -off = byte offset from end
+   len = length in bytes
+
+output:
+  -f  = overwrite permitted
+  -o  = write to out file
+  -a  = append to out file
+  -m  = copy to 64k addr
+  -ml = copy to linear addr
+  -mp = copy to start of page
+  -mb = copy to start of bank
+
+no -o,-a,-m* generates hexdump","Extracts parts of file and display them as hex or save them as files.
+
+Programming sample for .DOT-commands.
+
+Many Examples (from .EXTRACTs README file) can be found here: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+
+This utility reads some portion of a file and either:
+saves that portion to another file
+appends that portion to another file
+loads that portion into the zx-next's memory
+prints that portion in a hexdump"
+.flipscr,,,.ASM-Demo: Compiled with SjASMPlus,Not in esxDOS-Release. Just a compiled .ASM-example as demo-file,,http://forum.tlienhard.com/phpBB3/download/file.php?id=6574,http://www.retroprogramming.com/2014/12/z80-size-programming-challenge-2_15.html,Without Parameters,"Flips Screen-Content
+"
+.file,"v0.1
+",,Different from ESXDOS 0.7.3 Public BETA,ESXDOS 0.8.0 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,file <file>,I think that FILE command looks like linux command. It determines type by content of file. http://board.esxdos.org/viewtopic.php?id=37
+.file (Older),"v0.1
+",,,ESXDOS 0.7.3 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,file <file>,I think that FILE command looks like linux command. It determines type by content of file. http://board.esxdos.org/viewtopic.php?id=37
+.fsize,v1.1,SpecNext only,Download-Package contains commented .ASM-Sourcecode,,David Saphier (em00k),https://github.com/em00k/nextbasic-dotcommands/archive/refs/heads/main.zip,https://github.com/em00k/nextbasic-dotcommands,fsize,fsize = returns file size in variable for NextBasic  
+.gramon,v0.1 (green border),,,ESXDOS 0.8.5 Final,"Original author MS-CID SOFTWARE 1990
+Small modifications and port to ESXDOS by VELESOFT 2013",http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,"Manual:
+\ESXDOS 0.85 FINAL\DOCS\GRAMON.TXT
+","Gramon is graphic monitor for finding graphic,sprites,character fonts and screens in ZX memory."
+.GO3E,,For DivTIESUS interface,DivTIESUS utilities (dot commands for ESXDOS),,Miguel Angel Rodríguez Jódar (mcleod-ideafix),https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/GO3E?raw=true,https://github.com/mcleod-ideafix/divtiesus_utils,GO3E,"This dot command has no parameters. It loads a +3E ROM image from the BIN directory of the SD card and installs it as the new system ROM, at the same time as the automapping feature of DivMMC is disabled. So, a +2A/B/3 computer becomes a full featured +2E/+3E machine without the needing of opening and physically changing the ROM chips. GO3E needs any of dvmen3eE.rom or dvmes3eE.rom (just one of them) to be present in the /BIN directory. Such files can be get from the The ZX Spectrum +3E Homepage (https://worldofspectrum.org/zxplus3e/) . To return to ESXDOS mode, you must press NMI+RESET."
+.gpiotest,,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",,gpiotest,
+.guide,v1.0a,SpecNext only,NEXTGUIDE CLIENT (Displays .GDE SpexNext Guide-Files),,Matt Davies,,,,"Matt Davies on Facebook: ""I just like to remind people that there is a documentation system distributed with NextZXOS called NextGuide.  If you type `.guide` on the command line it will open the NextGuide's manual (which can be found at `/docs/guides/NextGuide.gde`.  This will instruct you how to use NextGuide and how to author guides.  The NextGuide's manual itself showcases all the features.
+If you decide to author guides (perhaps tutorials, game manuals etc), please consider sharing here or on the FB group dedicated to it: https://www.facebook.com/groups/538507240421861"""
+.hexdump,v0.2,,,ESXDOS 0.7.4 Public BETA (bugfix release),(c) ub880d,http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,hexdump [filename],
+.hexview,v0.3,,,ESXDOS 0.8.6 Final,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/no71yzhxrn9ejzs/hexview_v0.3.zip?dl=0,http://board.esxdos.org/viewtopic.php?pid=632#p632,hexview [filename],"It shows a hexadecimal dump of a file.  Cursor up and cursor down moves to previous and next screen, and BREAK exit. v0.3 adds operation via Cursor (0 to exit) & Kempston Joystick.
+Source-Code released on 2023-03-21 at: 
+https://github.com/dr-slump-0/esxDOS-NMI-Navigator"
+.hexview (Older),v0.2,,, ---,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/rzoqhs56m0lxz4d/hexview_v0.2.zip?dl=0,http://board.esxdos.org/viewtopic.php?pid=610#p610,hexview [filename],"It shows a hexadecimal dump of a file.  Cursor up and cursor down moves to previous and next screen, and BREAK exit."
+.hexview (Older),v0.1,,, ---,Dr. Slump (=david_ps) (aka David Pesqueira Souto),,http://board.esxdos.org/viewtopic.php?pid=571#p571,hexview [filename],"It shows a hexadecimal dump of a file.  Cursor up and cursor down moves to previous and next screen, and BREAK exit."
+.http,v1.0.1 (Bugfix: Reset lower word of 32bit timeout to $FFFF when upper word ro… by @Threetwosevensixseven in #4),SpecNext only,"http - for the Spectrum Next
+
+A utility for application developers to talk to web servers to exchange blocks of data, such as high scores, game progress. The .http dot command can also download and save to files over the web.", ---,Remy Sharp (remy),https://github.com/remy/next-http/releases/download/1.0.1/http,https://github.com/remy/next-http,https://github.com/remy/next-http#using-from-nextbasic,https://github.com/remy/next-http#testing
+.http,v1.0.0,SpecNext only,"http - for the Spectrum Next
+
+A utility for application developers to talk to web servers to exchange blocks of data, such as high scores, game progress. The .http dot command can also download and save to files over the web.
+
+.http is used in Application ""Next ZXDB-dl search"" (""Search and download files from the ZXDB Spectrum database using your ZX Next"") from: https://github.com/em00k/next-zxdb-downloader", ---,Remy Sharp (remy),https://github.com/remy/next-http/releases/tag/1.0.0,https://github.com/remy/next-http,"Usage
+
+; Send 1024 bytes from bank 22 to http://192.168.1.100:8080/send
+.http post -b 22 -l 1024 -h 192.168.1.100 -p 8080 -u /send
+
+; Download and save Manic Miner http://zxdb.remysharp.com/get/18840
+.http -h zxdb.remysharp.com -u /18840 -f manic.tap
+
+; Load http://data.remysharp.com/1 directly into bank 26 and flash border red (2)
+.http get -b 26 -h data.remysharp.com -u /1 -v 2
+
+Options:
+
+    -b bank number in 16K blocks
+    -f filename (only available in get and cannot be used with -b)
+    -h host address
+    -p port number (defaults to 80)
+    -u url (defaults to /)
+    -l length of bytes to POST
+    -o address offset (defaults to 0)
+    -v flash the border to n 0-7 (defaults to no flashing) and restores original border on exit
+    -7 enabled base64 decoding (useful for supporting Cspect and 7-bit binary exchange*)
+    -r disable rolling banks (see rolling banks)
+    -x disable uart init - only use this if you know what you're doing!
+
+Note that by default a GET request will empty out the bank selected. If you want to preserve the data in the bank, use a negative value for the offset, i.e. -b 5 -o -0 will load the http request into bank 5, preserving the RAM and inserting at memory position 0 (in fact, $4000 in RAM).","
+
+Run with no arguments to see the help.
+
+*Cpsect's emulated ESP support used 7-bit, which means if you want to send binary data, you will need to base64 encode your payload. Using the -7 flag with http will support decoding and support Cpsect. This is not required if you only plan to exchange 7-bit data (like readable text) or support hardware. See the example folder for a server returning binary using base64 encoding.
+
+Using from NextBASIC: https://github.com/remy/next-http"
+.http-debug,v1.0.1,SpecNext only,, ---,Remy Sharp (remy),https://github.com/remy/next-http/raw/main/http-debug.dot,https://github.com/remy/next-http/blob/main/http-debug.dot,https://github.com/remy/next-http#debugging-and-problems,https://github.com/remy/next-http#notes-on-http-debugdot
+.http-debug,,SpecNext only,Comes with .http-Package,,Remy Sharp (remy),https://github.com/remy/next-http/releases/tag/1.0.0,https://github.com/remy/next-http,,
+.inkey,v0.5.0b,SpecNext only,,,"Stale Pixels
+( https://www.stalepixels.com/ )",https://github.com/StalePixels/D3,https://github.com/StalePixels/D3,,"INKEY echoer
+
+.INKEY - View keycodes as returned for keys & combos from z88dk built for lazy developers who need a handy guide."
+.ini,v0.5.0b,SpecNext only,,,"Stale Pixels
+( https://www.stalepixels.com/ )",https://github.com/StalePixels/D3,https://www.stalepixels.com/software/D3/#ini,"GET a value:
+
+INI /path/file.ini key
+
+SET a value
+
+INI /path/file.ini key value","INI/CFG tool
+
+.INI - Command-line INI editor for simple, programmable edits to INI or INI style config files
+
+.INI is designed to perform a specific tasks with a minimum fuss – manipulate ini files from BASIC without the need to write a whole file handler.
+
+.INI needs to be started with (at least) two arguements.
+
+The first is a path to a INI file to use, the second is the name (commonly known as ‘key’) to retrieve.
+The second, optional, parameter (commonly known as ‘value’) is the item to save in the INI file.
+
+The following example would retrieve the current video mode timing – this is a number between 0 and 7, and is covered extensively in the Next’s wonderful manual.
+
+.INI /MACHINES/NEXT/CONFIG.INI timing
+
+And for setting a value, it’s as follows:
+
+.INI /SYS/ENV.INI edge_zx128p3_50 0,0,0,0
+
+In this example it’s resetting the “noted visible screen” to be full frame – this config file entry itself is maintained by Ped7g’s very helpful .DISPLAYEDGE, part of the default NextZXOS system distribution.
+
+Hopefully as you can see, .INI by itself is not of a lot of use, but when used with system config files, or with other apps (e.g., .EVERY, or .DISPLAYEDGE as in the example above) it becomes a building block in a very powerful config system.
+
+Internally, one of the most common uses is to reset parameters in INI files when developing our own apps."
+.joyconf,,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/joyconf/,http://board.esxdos.org/viewtopic.php?pid=774#p774,,"Tests and configures joystick interface on ZX-UNO. This dot command is interesting because it is not written in ASM, but in C. Source available."
+.KeyJoyN,v005.049,"SpecNext for Megadrive 1/2 Joypad-Tests, but also runs in 48k/128k Personality of Next","Program to check for ""Ghosting of  ZX Spectrum Keyboard"" https://spectrumcomputing.co.uk/forums/viewtopic.php?p=50786#p50786",---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19868,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69370#p69370,keyjoyn,"Without Parameters:
+Starts KeyJoyN
+
+With (any) Parameter:
+Displays help-screen."
+".KeyJoyTest
+",v003.029,,"Also shorter renamed to: .KeyJoy
+
+Program to check for ""Ghosting of  ZX Spectrum Keyboard"" https://spectrumcomputing.co.uk/forums/viewtopic.php?p=50786#p50786",---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19866,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69367#p69367,keyjoytest,"Without Parameters:
+Starts KeyJoyTest
+
+With (any) Parameter:
+Displays help-screen.
+
+There is also SpecNext-Version
+called .KeyJoyN which supports
+Megadrive 1/2 (MD1/MD2) Joypads."
+.keyhelp,v1.1,,,,David Saphier (em00k2018),https://www.specnext.com/latestdistro/,https://gitlab.com/thesmog358/tbblue/-/commit/65114b5d75be28ddbc60d95283262c9cc2178deb,keyhelp,"This shows file: ""/dot/keyboard.scr"".
+Was included in older verrsion of SpecNext Latest Distro, which can be found on: https://www.specnext.com/latestdistro/ until Version ""System/Next v1.3.2"". Was removed on 2021-10-06 with the following notes: ""Garry Lancaster: Removed .KEYHELP dot command.
+No longer felt to be useful as shows only a 48K keymap regardless of
+whether in NextBASIC or 48K BASIC mode etc. The NMI button can now be used to quickly show a context-sensitive keymap."""
+.keymap,,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/keymap,http://board.esxdos.org/viewtopic.php?pid=774#p774,,Small utility to load a keyboard map from a file into the ZX-UNO.
+.killserver,,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",,killserver,
+.kzx,,,,,SCjoe,https://mega.nz/folder/r4F0SD4D#qgGXYASGym-8gcSMrF-wdA,http://board.esxdos.org/viewtopic.php?pid=1959#p1959,,Displays Screen with Keyboard Help (Keywords)
+.launcher,v0.3,,,ESXDOS 0.8.9 Final,(c) 2021 ub880d,http://www.esxdos.org/files/esxdos089.zip,http://board.esxdos.org/viewtopic.php?id=1021,"launcher add <name> <tap|bas>
+launcher upd <name> <tap|bas>
+launcher del <name>
+launcher list","  .launcher add <name> <tap>
+    - creates a new launcher with name <name>. it will autoload tape <tap>
+
+  .launcher upd <name> <tap>
+    - change launcher <name> to autoload tape <tap>
+
+  .launcher del <name>
+    - delete launcher <name>
+
+  .launcher list
+    - lists all created (and recognized) launchers
+
+launcher name <name> must be a plain filename, not containing '/'
+tap name <tap> must be a fullpath name, so it must start with '/'
+
+launchers are created in the system's bin path where are all external commands so more commands/launchers you have 'list' will run longer.
+
+also, keep in mind that esxdos for now supports only 8+3 format of names, so every component of path (for tap) must be in this format as well as the launcher name."""
+.launcher,v0.1,,,ESXDOS 0.8.6 Final,(c) 2016 ub880d,http://sindik.at/~ub880d/2016/10/8-nove-utilitky-pre-esxdos-strings-a-launcher/,http://board.esxdos.org/viewtopic.php?pid=233#p233,"launcher add <name> <tap>
+launcher upd <name> <tap>
+launcher del <name>
+launcher list
+
+Example:
+.launcher add pariboro /soft/games/taps/zeroteam/Pariboro.tap
+.launcher upd pariboro /soft/games/taps/48k/p/Pariboro.tap
+.launcher del pariboro
+.launcher list
+","  .launcher add <name> <tap>
+    - creates a new launcher with name <name>. it will autoload tape <tap>
+
+  .launcher upd <name> <tap>
+    - change launcher <name> to autoload tape <tap>
+
+  .launcher del <name>
+    - delete launcher <name>
+
+  .launcher list
+    - lists all created (and recognized) launchers
+
+launcher name <name> must be a plain filename, not containing '/'
+tap name <tap> must be a fullpath name, so it must start with '/'
+
+launchers are created in the system's bin path where are all external commands so more commands/launchers you have 'list' will run longer.
+
+also, keep in mind that esxdos for now supports only 8+3 format of names, so every component of path (for tap) must be in this format as well as the launcher name."""
+.less,v0.5.0b,SpecNext only,"A compliment, not replacement, for .more",---,Marco Varesio,https://github.com/StalePixels/D3,http://svn.zxuno.com/svn/zxuno/software/loadpzx/user:guest password: zxuno,"-x Start in HEX mode
+
+Show a text file
+.LESS /path/to/file.txt
+
+Show a binary file
+.LESS -X /path/to/file.bin",".LESS - Less is not more. A plain text pager with extra features, a compliment, not replacement, for MORE"
+loadtap,?,ZX-UNO only (And you need to use a Specrum core of mcleod_ideafix with .PZX file loading support.),ZX-UNO only (And you need to use a Specrum core of mcleod_ideafix with .PZX file loading support.),,mcleod_ideafix,"http://svn.zxuno.com/svn/zxuno/software/loadpzx/
+user:guest password: zxuno",https://spectrumcomputing.co.uk/forums/viewtopic.php?p=122797#p122797,".LOADTAP [-n][-p] file.tap
+
+Loads a TAP file into the PZX
+player.
+-n : do not autoplay.
+-p : do not insert pauses
+     between blocks.","A few days ago, in the ZX-Uno Telegram group, mcleod_ideafix shared the LOADTAP command for esxDOS which is used to load .TAP files at normal speed. The operation is like LOADPZX, although only these keys are useful:
+F7: PLAY/PAUSE of the virtual player.
+F9: STOP of the player (PLAY start from the beginning)."
+.loadpzx,Newer?=zxuno - Revision 1583,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,"http://svn.zxuno.com/svn/zxuno/software/loadpzx/LOADPZX
+zxuno - Revision 1583",https://spectrumcomputing.co.uk/forums/viewtopic.php?p=122797#p122797,"LOADTAP [-n][-p] file.tap
+
+Loads a TAP file into the PZX
+player.
+-n : do not autoplay.",
+.loadpzx,Older?,ZX-UNO only,ZX-UNO only,---,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/loadpzx,http://board.esxdos.org/viewtopic.php?pid=774#p774,,"PZX loader for the ZX-UNO. Loads a PZX into memory (to be later played from the ZX-UNO itself) and directs execution to the LOAD routine. This command is interesting because it is written in C, and has some assembler bits to instruct ESXDOS to detach any .TAP file from input and perform a pure LOAD """" automatically."
+.loadrom,,DivTIESUS ( http://www.zxprojects.com/divtiesus/ ) SoftROM mode only?,DivTIESUS ( http://www.zxprojects.com/divtiesus/ ) SoftROM mode only?,---,mcleod_ideafix (Miguel Angel Rodriguez),http://www.zxprojects.com/divtiesus/docs/LOADROM,http://www.zxprojects.com/divtiesus/,"loadrom name_of_the_rom_file
+
+To use it, just type .loadrom name_of_the_rom_file from the BASIC prompt and press ENTER. The ROM file must have 16K in length. Once it is loaded, it becomes the system ROM for all purposes and effects. Even pressing RESET will take you again to this new ROM. To exit SoftROM mode and go back to ESXDOS, press RESET+NMI.
+While the loaded ROM is executing, the machine behaves as a 48K Spectrum, disabling 128K paging and shadow screen. This is to ensure that Ultimate ROM cartridges will work without problems.","SoftROM mode
+SoftROM is available in all versions of DivTIESUS. Unlike the +3E mode, which needs a +2A/B/3 computer, the softROM mode can work on any Spectrum, provided it has at least 48K RAM.
+The SoftROM feature uses a dot command: LOADROM. If you followed the instructions in the Quick Start section, you already have it.
+To use it, just type .loadrom name_of_the_rom_file from the BASIC prompt and press ENTER. The ROM file must have 16K in length. Once it is loaded, it becomes the system ROM for all purposes and effects. Even pressing RESET will take you again to this new ROM. To exit SoftROM mode and go back to ESXDOS, press RESET+NMI.
+While the loaded ROM is executing, the machine behaves as a 48K Spectrum, disabling 128K paging and shadow screen. This is to ensure that Ultimate ROM cartridges will work without problems.
+NOTE: Bob Fossil's NMI browser has a built-in feature to load ROM files, but it doesn't work with all ROMs. This is mainly because it uses the standard MAPRAM feature present in all DivMMC devices, which does not disable DivMMC. Besides, the loaded ROM cannot survive a RESET.
+
+From: https://github.com/mcleod-ideafix/divtiesus_utils :
+LOADROM . This dot command has one mandatory parameter: the file name of the ROM image to use. LOADROM loads a 16K ROM image and installs it such it becomes the new system ROM for all effects and purposes. To return to ESXDOS, press NMI+RESET. Visit this section from the Paul Farrow website (http://www.fruitcake.plus.com/Sinclair/Interface2/Cartridges/Interface2_RC_Cartridges.htm) to download and test some of them."
+.ls,(Filedate: 2018-03-09),,,ESXDOS 0.8.6 Final,,http://board.esxdos.org/viewtopic.php?pid=834#p834,http://www.esxdos.org/files/esxdos086.zip,,
+.ls (Older),,,Adds e.g. sorting depending on date.,---,ub880d,http://sindik.at/~ub880d/download/article_11/ls,"http://sindik.at/~ub880d/2017/09/11-stara-utilita-v-novom-sate-ls/
+","http://sindik.at/~ub880d/2017/09/11-stara-utilita-v-novom-sate-ls/
+and Textfile in: http://forum.tlienhard.com/phpBB3/download/file.php?id=6635",Please note that Author ub (aka ub880d) mentions the limitation of .ls to sort max. 256 files (mainly due to memory constraints).
+.ls (Older),,,Different from ESXDOS 0.7.4 Public BETA (bugfix release),ESXDOS 0.8.5 Final,,http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,,List Directory content
+.ls (Older),,,,ESXDOS 0.7.4 Public BETA (bugfix release),,http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,,List Directory content
+.lsTAP,"v0.1
+",,Different from ESXDOS 0.7.3 Public BETA,ESXDOS 0.8.0 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,".lstap [params] [tapfile]
+
+-i: List INPUT file
+-o: List OUTPUT file",
+.lsTAP (Older),"v0.1
+",,,ESXDOS 0.7.3 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,".lstap [params] [tapfile]
+
+-i: List INPUT file
+-o: List OUTPUT file",
+.makerun,v1.1,SpecNext only,"SpecNext only.
+
+v1.1 Fixed .MAKERUN to deal with new browser.cfg system directory shortcut code",---,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/raw/eb4a0da3a36756061c109a69c1d33b9df5971ef8/dot/MAKERUN,https://gitlab.com/thesmog358/tbblue/-/commit/eb4a0da3a36756061c109a69c1d33b9df5971ef8,"SYNOPSIS:
+MAKERUN targetfile",".MAKERUN v1.1 by Garry Lancaster. Converts the current directory into a runnable directory.
+
+A RUN.BAS file that loads the target file (any supported by the Browser) is created and the directory is renamed with a .run extension.
+
+Any file with the same name and a .gde, .txt, .doc or .md extension will be copied to a RUN.GDE file as documentation."
+.mc,,ZX-UNO only,ZX-UNO only,---,Antonio Villena,https://github.com/zxdos/zxuno/blob/master/SD/BIN/MC,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=101384#p101384,".mc corefile.zx1
+
+Loads and executes a core","Antonio Villena has created a new esxDOS command, mc (multicore), which is used to boot cores from the SD card.
+
+It works as follows: .mc corefile.zx1 (Loads and executes a core)
+
+What it does is to install the core in slot 9 if a 4MB SPI Flash is used - up to 9 cores - or in slot 45 if a 16 MB SPI Flash is used - up to 45 cores -, and once loaded it executes it. Spectrum core needs to be booted in ""rooted"" mode for to work.
+
+According to the specifications of the SPI flash memory, it can be written without problems up to 100,000 times, so there is no great risk of damaging it."
+.mcat,v0.4,SpecNext only,MCAT command / MCAT a Microdrive CAT for Next DOTJAM 2022,---,Timbucus and his live posse,https://timbucus.itch.io/dotjam2022,https://itch.io/jam/dotjam,".mcat
+
+MCAT V0.4 usage: 
+mcat {-i}
+mcat {-e} drive<ENTER>
+Functions need CLEAR 61439",
+.md1md2,v1.00,SpecNext only,Also works under 48k/128k Personality of Next,---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19871,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372,.md1md2,"Without Parameters:
+
+Sets Joystick Port 1 to MD1 and Joystick Port 2 to MD2
+on Spectrum Next
+
+With (any) Parameter: Displays help-screen"
+.mdx,v0.1,,"MGT Microdrive file extractor
+.MDX - an esxDOS dot-command parser for MGT ""MD.FILE"" Microdrive-type files.
+These files are created by (e.g. a PlusD disk interface with G+DOS) using Interface 1 hook codes (but seem to be quite rare). They are different from the more common ""OPENTYPE"" files.",---,"Robert Morrison
+( flatduckrecords )",https://github.com/flatduckrecords/mdx,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=193069#p193069,mdx input [output],"The input file should be the correct type, the Microdrive header checksum will be tested and an esxDOS File type error will be thrown if the value is incorrect.
+
+The data payload also has its own checksum; if that is found to be incorrect then an esxDOS I/O error will be thrown.
+
+If provided, the output filename will be used to save the output. Otherwise the file name in the Microdrive header will be used instead.
+
+Note: To extract MDX files from an MGT disk image, please see SamC's .MGT dot command first!"
+.memdump,v1.0,,,,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://mb-maniax.cz/wp-content/uploads/2026/04/memdump.zip,https://mb-maniax.cz/2026/04/22/memdump-1-0/,"Usage:
+.memdump <address>
+
+Example: .memdump 32768",
+.memdump,v0.8,,v0.8: new control 5/6/7/8,---,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/memdump/releases/tag/0.8,,"Usage:
+.memdump <address>
+
+Example: .memdump 32768",
+.mgt,v0.6,Warning: Do not use the old esxDOS v.0.8.8 (eg. in the the Omni computer). You may corrupt files or your SD card !,"Version limitations: 0.6 UniDOS directories skipped Files in MasterDOS directories handled, but directory structure is not followed MasterBASIC files may be uncompressed Microdrive files exported as raw sector files Developed and tested on: eLeMeNt ZX computer and MB03+ interface",,SCjoe / eZX / MB,https://zxfiles.net/esxdos/MGT.TAR,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=192319#p192319,"MGT image[.ext]     show disk image directory listing
+MGT [switches] image[.ext]","MGT - esxDOS dot command for the ZX Spectrum and compatibles file listing and export tool for disk images. Supported disk formats: GDOS, G+DOS, BetaDOS, SAMDOS, MasterDOS
+
+SWITCHES
+--------
+  -n   No Scroll? prompt
+       Suppresses the ""Scroll?"" pause by setting the scroll
+       counter before every new line. The directory listing
+       runs to completion without interruption.
+  -x   Export files to SD card
+       Exports files from the disk image to the current
+       directory on the SD card. A root folder named after
+       the disk image file is created. If the folder already
+       exists, you are prompted: Overwrite? Y/N
+  -d   Directory listing to file
+       Writes the directory listing to a file. The output
+       filename is derived from the image name:
+         .MGT -d IMAGE         output: IMAGE.DIR
+         .MGT -d IMAGE.LST     output: IMAGE.LST
+         .MGT -d IMAGE.TXT     output: IMAGE.TXT
+         .MGT -d IMAGE.PRN     output: IMAGE.PRN
+       Any extension is accepted except .MGT and .DSK.
+       The disk image is always located by auto-detecting the
+       image name + MGT/DSK, regardless of the extension
+       given. If the output file already exists: Overwr.? Y/N
+  -i   Disk image info
+       Displays disk parameters: geometry, used/free space,
+       slot count, and counts of file types present.
+  -t   Transform IMG to MGT
+       Converts a disk image from IMG format (side-track-
+       sector layout) to MGT format (track-side-sector
+       layout). Input must be a .IMG file. Output is a new
+       file with the same name but with extension .MGT.
+       If the output file already exists: Overwrite? Y/N
+"
+.midipanic,,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",,midipanic,
+.midisend,v0.1,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",,"midisend
+
+where command bytes are
+triplets of values and/or
+intvars, eg.
+.midisend 144 a 70
+sends channel 1 note on for
+note in intvar a at volume 70
+
+-s to skip gpio setup
+-i to move to idle after send
+-q to suppress printouts",
+.mktrd,"v0.1
+",,Old Download-Link: http://www.esxdos.org/beta/mktrd.zip - same version in v0.8.6 Final!,ESXDOS 0.8.6 Final,LaesQ / Papaya Dezign - 15/04/2014,http://www.esxdos.org/files/esxdos086.zip,http://board.esxdos.org/viewtopic.php?id=24,".mktrd trdname.trd [disklabel]
+
+trdname.trd is the name of the image file to create.
+disklabel is optional. It will be used as the disk label used by TR-DOS.","Creates a blank double sided, 80 track TRD disk image.
+
+Please use with esxdos 0.8.x."
+.mkdir,,,,ESXDOS 0.8.0 Public BETA,,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,.mkdir dirname,Make Directory
+.modp,v1.0 (25/07/20),SpecNext only,"Amiga Module Player dotcommand for the ZX Spectrum Next - NO pi0 required
+
+Requires modvol.dat file in /SYS, this has been included. modp should be placed in to your /DOT folder
+
+If you want to suppress the text set reg 127 to something other than 255. Please note not every module will work at this time so you may be better writing one within the limits of the current player - the following modules stay within these limits.
+
+mods included
+
+    complications by Tomas Danko
+    feel by firefox
+    jagtitle by nuke
+    axelf by unknown
+    macrocosm by firefox
+    belevme by bbd
+    saturation by uncle ben
+    quadrangular_ball by uncle ben
+    jarresque by heatbeat
+    Monty-Hiscore.mod cover by romeo knight original by Rob Hubbard",,.modp by David Saphier (em00k) - ModPlayer by Mike Dailly (c)2020 Mike's git here : https://github.com/mikedailly/mod_player,https://github.com/em00k/modp-zxnext?,https://github.com/em00k/modp-zxnext?,.modp mymodule.mod,"Amiga Module Player dotcommand for the ZX Spectrum Next - NO pi0 required
+
+As always best results on hardware.
+
+.modp by David Saphier (em00k) - ModPlayer by Mike Dailly (c)2020 Mike's git here : https://github.com/mikedailly/mod_player
+
+https://www.youtube.com/watch?v=Xo5NORTXqXs
+
+Note playback rate is 12750 mono, samples will be ""resampled""
+
+.modp will play Amiga MOD files, currently not all effects are supported. Effects 1,2,B,C,D,F are supported. Some MODs will require adjustments.
+
+requires modvol.dat file in /SYS, this has been included. modp should be placed in to your /DOT folder
+
+Please note that banks 16 onwards are used depending on the size of the module. Banks 16-17 are backed up and restored on exit. Next Basic should assign banks from the end of RAM, this should help avoid bank clashing.
+
+run the demo modp-example.bas
+
+Usage :
+
+From NextBasic
+
+.modp mymodule.mod"
+.more,v0.9,SpecNext only,"Maybe SpecNext only
+
+System-Next v.1.03 Distro - There are v0.9 files with different sizes in this distro (one in \DOT\ and one in \DOT\extra\. The one from \DOT\seems to run on Non-SpecNext machines (but without the 64/85/128 column feature) as well?!",System-Next v.1.03 Distro - There are v0.9 files with different sizes in this distro (one in \DOT\ and one in \DOT\extra\,Marco Varesio,https://gitlab.com/thesmog358/tbblue,https://retrobits.altervista.org/blog/2018/09/more-and-more/,"more [-64|-85|-128] <FILE>
+ ","OPTIONS:
+  -64  force  64 columns mode
+  -85  force  85 columns mode
+  -128 force 128 columns mode
+ 
+COMMANDS:
+  8/RIGHT/ENTER:   next page
+  5/LEFT/0/DELETE: previous page
+  Q/SPACE:         exit
+
+ Displays <FILE> one screen at a time"
+.more,v0.2,,,ESXDOS 0.8.7 Final,,http://www.esxdos.org/files/esxdos087.zip,http://board.esxdos.org/viewtopic.php?pid=1233#p1233,"more [-a] <filename>
+   -a: print file as is
+       (no translate new lines)",
+.more (Older),v0.1,,,ESXDOS 0.7.4 Public BETA (bugfix release),(c) ub880d,http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,more <filename>,
+.mon,,,,---,Velesoft,http://velesoft.speccy.cz/other/mon_esxdos.zip,http://board.esxdos.org/viewtopic.php?id=3,,Monitor / Debugger for esxDOS Can also be used to enter POKEs on running Snapshots
+.MOUSE,,For DivTIESUS interface,DivTIESUS utilities (dot commands for ESXDOS),,Miguel Angel Rodríguez Jódar (mcleod-ideafix),https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/MOUSE?raw=true,https://github.com/mcleod-ideafix/divtiesus_utils,MOUSE,"MOUSE . This dot command is used to query/modify the configuration of the Kempston mouse emulation mode. Invoked with no arguments, it will show the current state of Kempston mouse emulation and the syntax for parameters."
+.mv,,,,ESXDOS 0.8.0 Public BETA,,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,mv source target,Move / Rename file
+.NBNGET,v0.2.0,SpecNext only,SpecNext only,---,"D. ""Xalior"" Rimron-Soutter / StalePixels",https://github.com/StalePixels/NBNtools/releases,https://www.stalepixels.com/software/nbnget/,"nbnget [OPTIONS] FILE
+
+NextBestNetwork CDN File Fetcher
+
+options:
+ -h      Show this help screen
+ -s xxxx Alternative Server *
+ -p xxxx Alternative Port
+ -r      Reset WiFi connection
+ -v      Verbose AT protocol log
+
+* WARNING
+ -s changes remote file-source,
+use caution on untrusted servers","""Installing CP/M with NBNGET"": 
+https://www.youtube.com/watch?v=sJcBsT5RBLk
+That magic command...
+.NBNGET install/cpm.bas:load""cpm.bas"""
+.nextgrab,,SpecNext only,SpecNext only,---,Alcoholics Anonymous (The PC version was written by Jim Bagley).,"As postet 2017-11-11 on: http://board.esxdos.org/viewtopic.php?pid=555#p555 this has be removed at the moment: "".bmp2next & .nextgrab I've removed as the Next has changed its colour scheme to rgb333 from rgb332.  Those programs will still work with the default palette but it can be better so replacements will come later.""",http://board.esxdos.org/viewtopic.php?pid=308#p308,,nextgrab extracts tiles and sprites from a bitmap.
+.nextpimidi,,SpecNext only,SpecNext only,---,Jari Komppa (jarikomppa),"Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0), part 2: sending midi"" / """" from: https://solhsa.com/#SENDINGMIDIDATAONZXSPECTRUMNEXT / Youtube: https://www.youtube.com/watch?v=nRYQnVuJxJ8",,nextpimidi,
+.NextPiUI,v1.92D,SpecNext only,SpecNext only,,"D. ""Xalior"" Rimron-Soutter / StalePixels",https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/NextPiUI,https://www.stalepixels.com/categories/nextpi/nextpiui/,NextPiUI,"NextPiUI v0.11 demo: https://www.youtube.com/watch?v=j6N8DSYxB_g
+
+Media Playback with NextPiUI / ""NextPi 0.99E - Media Preview UI"" / ""This time showing you the media playback interface for NextPiUI"":  https://www.youtube.com/watch?v=3UhaXTfah6k
+
+x"
+.nextver,v1.0,SpecNext only,"Robin Verhagen-Guest:
+""If you want to restrict your NextBASIC program to a particular version then you can use .nextver to query it.
+Unfortunately “.nextver h” only sets h to 2.06.
+It is likely that Garry will increase the numeric version when there is another formal release, so I would hold off doing your checks until then.""",,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/NEXTVER,,"NEXTVER v1.0 by Garry Lancaster
+Set variable to NextZXOS version
+
+SYNOPSIS:
+ .NEXTVER [OPTION]... VARIABLE
+OPTIONS:
+ -h, --help       Display this help
+ -v, --verbose       Display the version
+INFO:
+Returns 0 if not NextZXOS mod",
+.nget,v1.8,SpecNext only,Package manager server and client for the ZX Spectrum Next,,Robin Verhagen-Guest (Threetwosevensixseven),https://github.com/Threetwosevensixseven/nget/blob/master/dot/NGET,https://github.com/Threetwosevensixseven/nget,,
+.NTPDATE,,For DivTIESUS interface,DivTIESUS utilities (dot commands for ESXDOS),,Miguel Angel Rodríguez Jódar (mcleod-ideafix),https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/NTPDATE?raw=true,https://github.com/mcleod-ideafix/divtiesus_utils,NTPDATE,"NTPDATE This dot command is a STNP (simple Time Netowork Protocol) client. With no parameters, it queries time.google.com for the current UTC date and time and updates PCF8563 RTC chip registers accordingly. PCF8563 access is done via bit banged I2C protocol. It can accept up to two parameters: a number precedded by + or - changes timezone (e.g. +2 means GMT+2) . An IP address or domain name for a NTP server quries that server instead of time.google.com"
+.nxtp,v1.79.3a0609c (Build 08 Feb 2026 18:07:01),SpecNext only,Network neXt Time Protocol Client for ZX Spectrum Next,,Robin Verhagen-Guest (Threetwosevensixseven),https://gitlab.com/thesmog358/tbblue/-/commit/fc845e5424398dec3951d9ad4c92cc1526b931d9,https://gitlab.com/thesmog358/tbblue/-/commits/master,"NXTP
+Set date/time from internet
+
+nxtp
+Show help
+
+nxtp SERVER PORT [OPTIONS [...]]
+Lookup and set current date/time
+
+SERVER
+Hostname or IP of time server
+List of public servers at:
+https://tinyurl.com/nxtpsrv
+
+PORT
+Network port of time server
+
+OPTIONS
+  -z=TIMEZONECODE
+  Your current timezone code
+  If omitted, uses UK time
+  List of timezone codes at:
+  https://tinyurl.com/tznxtp",Older versions on: https://github.com/Threetwosevensixseven/nxtp/releases
+.nxtp,v1.69 (08 Apr 2020),SpecNext only,Network neXt Time Protocol Client for ZX Spectrum Next,,Robin Verhagen-Guest (Threetwosevensixseven),https://gitlab.com/thesmog358/tbblue/-/tree/master/dot,https://github.com/Threetwosevensixseven/nxtp/wiki/FAQ,"NXTP
+Set date/time from internet
+
+nxtp
+Show help
+
+nxtp SERVER PORT [OPTIONS [...]]
+Lookup and set current date/time
+
+SERVER
+Hostname or IP of time server
+List of public servers at:
+https://tinyurl.com/nxtpsrv
+
+PORT
+Network port of time server
+
+OPTIONS
+  -z=TIMEZONECODE
+  Your current timezone code
+  If omitted, uses UK time
+  List of timezone codes at:
+  https://tinyurl.com/tznxtp",Older versions on: https://github.com/Threetwosevensixseven/nxtp/releases
+.odin,"Version Dev.2h
+(Downloaded 2021-12-26 from discord-Channel)",SpecNext only,"Assembler for the ZX Spectrum Next heavily inspired by Zeus.
+Installation instructions:
+1) Copy ""odin"" to ""/dot""
+2) Copy ""odin.gde"" to ""/docs/guides""
+3) To run type "".odin"" from the command line",,Matt Davies (and Peter Helcmanovsky (Ped7g)),https://discord.com/invite/Kn33JQkCbz (Pinned at #odin (click on Pin)),https://specnext.dev/blog/2020/07/15/odin-the-expressive-assembler/,odin,Older version on: https://gitlab.com/next-tools/odin/-/releases
+.ownrom,,,Seems divIDE/divMMC NMI not working anymore with ROM loaded until Hardreset.,---,Velesoft,http://velesoft.speccy.cz/other/own_roms.zip,,"10 CLEAR 49151
+15 REM Line 20 is esxDOS Syntax
+16 REM with this you can load
+17 REM each file e.g. .bin,
+18 REM .txt etc. into memory
+20 LOAD *""ROMNAME.ROM"" CODE 49152
+30 .ownrom","ZX-Diagnostics running on a DivMMC using .ownrom: https://www.youtube.com/watch?v=wiPi8fVeYN8
+
+Additional info for .OWNROM command from Author Velesoft:
+rom images must contain fixed zx rom without rewriting low 16kB. As I know then rom files in ZIP archive need one fix:
+after load 48rom image to address 49152 use POKE 52524,23. This poke fix bug in scroll routine (original scroll rewrite part of zx font)"
+.partinfo,,,(Filedate: 2018-03-10),ESXDOS 0.8.6 Final,ub880d,http://www.esxdos.org/files/esxdos086.zip,http://board.esxdos.org/viewtopic.php?pid=834#p834,,
+.partinfo (Older),,,Patched/Bugfixed version,---,ub880d,http://forum.tlienhard.com/phpBB3/download/file.php?id=6633,http://forum.tlienhard.com/phpBB3/viewtopic.php?f=6&t=2436#p31823,partinfo,"Was temporarily called .partinf2 by author, but, should be named .partinfo"
+.partinfo (Older),,,,ESXDOS 0.7.3 Public BETA,,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,,Show Partition Information
+.ping,v0.2,SpecNext only,,,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/Ping-for-ZX-Spectrum-Next/releases/tag/0.2,https://github.com/perrada69/Ping-for-ZX-Spectrum-Next,,
+.play,,,"Version ""Name your own price"" - as described in column ""Function:"".  An external command for UnoDOS that replaces the PLAY command from 128 BASIC. For example: 10 LET a$=""T180O6(CDEC)(5EF7G)(3GAGF5EC)5Cg7C9CgC"" 20 LET b$=""O4(CDEC)(5EF7G)(3GAGF5EC)5Eb7E9EbE"" 30 LET c$=""O3(7CG)(7CG)(7CG)5GD7G9GDG"" 40 PLAY a$,b$,c$ Requires a 128K Spectrum or an external AY sound interface. ",---,"Source Solutions, Inc. (Aowen)",http://board.esxdos.org/viewtopic.php?id=356,https://zx.itch.io/play,,"The .PLAY command for esxDOS wasn't exactly a huge seller, and with Derby++ it's kind of redundant (except for people who don't want to change their ROMs). So I'm making it available at ""name your own price"". Also, I am happy for it to be included in official esxDOS distributions, providing it is made clear that it's third-party software that is not covered by esxDOS's ""copyleft"" statement. This is not a transferable right and applies only to downloads from esxDOS.org (I need to protect myself from the unscrupulous people who exploit my work for their own profit while seeking to tarnish my reputation)."
+.play,,,An external command for UnoDOS (or esxDOS) that replicates the PLAY command from 128 BASIC. Not free! (Sold for 5 US Dollar). Update May 2020: Maybe will be integrated free with esxDOS 0.8.8 package: http://board.esxdos.org/viewtopic.php?pid=987#p987,---,"Source Solutions, Inc. (Aowen)",https://zx.itch.io/play,https://zx.itch.io/play,,"Requires 128k or AY-Interface. Info on alternate MCode Version ""SoftPlay"" on: https://www.worldofspectrum.org/forums/discussion/45259/softplay-use-the-play-command-from-48-basic/p1"
+.playay,v0.05,,".ay file player for DivMMC devices running esxdos with 128k of extra memory and from v0.05 for divIDE without the addional memory
+Issues and limitations:
+Only supports EMUL .ay file type.
+Sections of the .ay file that load to ROM are ignored. This shouldn't be a problem as we have the real ROM available for .ay files that rely on ROM data.
+Some .ay files can draw to or change the screen. This wasn't an issue with a PC just emulating the Z80 and AY chip as they didn't bother emulating the screen. (Manic Miner)
+Some beeper .ay files play until they stop (Sabre Wulf), use a different key to stop playback (Mikie uses ENTER) or can't be stopped once started (The Great Escape).",,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/playay_005.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=88213#p88213,.playay music.ay,.ay file player for DivMMC devices running esxdos with 128k of extra memory and from v0.05 for divIDE without the addional memory
+.playay,v0.03,,".ay file player for DivMMC devices running esxdos with 128k of extra memory.
+Issues and limitations:
+Only supports EMUL .ay file type.
+Sections of the .ay file that load to ROM are ignored. This shouldn't be a problem as we have the real ROM available for .ay files that rely on ROM data.
+Some .ay files can draw to or change the screen. This wasn't an issue with a PC just emulating the Z80 and AY chip as they didn't bother emulating the screen. (Manic Miner)
+Some beeper .ay files play until they stop (Sabre Wulf), use a different key to stop playback (Mikie uses ENTER) or can't be stopped once started (The Great Escape).",,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/playay.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?f=9&t=3580,.playay music.ay,.ay file player for DivMMC devices running esxdos with 128k of extra memory.
+.PLAYMID,,,,,Miguel Angel Rodríguez Jódar (mcleod-ideafix),http://svn.zxuno.com/svn/zxuno/software/midi/playmid/PLAYMID,,.playmid,PLAYMID is a dot command to play MIDI Format 0 files using the MIDI out connector in 128K machines.
+.playpt3,,,(Filedate: 2018-03-04),ESXDOS 0.8.6 Final,,http://www.esxdos.org/files/esxdos086.zip,http://board.esxdos.org/viewtopic.php?pid=834#p834,,From http://board.esxdos.org/viewtopic.php?pid=834#p834: [07/03/2018] Commands: Added .playpt3 (replaces old command since this one also plays 6 channel tunes)
+.playpt3 (Older),,,,ESXDOS 0.8.0 Public BETA,Gasman (Matt Westcott),http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,playpt3 [pt3file],Play a Protracker 3 music file (.pt3)
+.playrmov,,,,---,mcleod_ideafix,"https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+
+Also mcleod_ideafix wrote: .playrmov is from the ZX-UNO repository. Source is available there.
+http://svn.zxuno.com/svn/zxuno
+user: guest
+password: zxuno
+Directory /software/modo_radastan/videos_radastanianos","Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+.",playrmov moviefile.rdm,"Plays a video file encoded for the ""Radastan"" video mode."
+.playsqt,,,,ESXDOS 0.8.0 Public BETA,Gasman (Matt Westcott),http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,playsqt [sqtfile],Play an SQ Tracker music file (.sqt)
+.playstc,,,,ESXDOS 0.8.0 Public BETA,Gasman (Matt Westcott),http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,playstc [stcfile],Play a Soundtracker music file (.stc)
+.playtfm,,,,ESXDOS 0.8.6 Final,tygrys (Krystian Wlosek) - https://www.pouet.net/user.php?who=15369,http://www.esxdos.org/files/esxdos086.zip,http://board.esxdos.org/viewtopic.php?pid=834#p834,playtfm [file.tfc],
+.playwav,,,,ESXDOS 0.8.5 Final,Gasman (Matt Westcott),http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,playwav [wavfile],"playwav - ESXDOS command for playing .wav audio files
+1. Copy the file 'playwav' to the /bin directory of your ESXDOS drive.
+2. Copy some .wav files there too - they need to be 44100Hz unsigned 8-bit mono.
+   If you have SoX <http://sox.sourceforge.net/> installed, you can convert
+   pretty much any audio file into the appropriate format with the command line:
+   sox input.wav -u -b 8 -c 1 -r 44100 --norm output.wav
+3. Boot up ESXDOS, and run:
+        .playwav foo.wav
+NB: The .wav files must be fully unfragmented on disk to work correctly..."
+.playzxm,,,,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/playzxm,http://board.esxdos.org/viewtopic.php?pid=774#p774,.PLAYZXM,"(Spectrum 128K). Plays video (just video, not audio) using the standard Spectrum screen. It can play B&W and color videos. Needs 128K (two videorams). Source and examples included.
+
+PLAYZXM and PLYZXM48 are two versions (for 128K and 48K respectively) of a dot command to play ZXM movies. A ZXM movie is just a collection of 6144-byte B/W frames, or a collection of 7168-byte bitmap+attribute frames. For the last case, a 256-byte padding is added at the beginning of each frame to keep all multiple of 512 byte, so each frame uses an integral number of sectors, to help for faster reads. Details about the ZXM format in the source code comments. No special hardware (besides a suitable ESXDOS compatible device) is needed to play the movie files."
+.PLYZXM48,,,,,Miguel Angel Rodríguez Jódar (mcleod-ideafix),http://svn.zxuno.com/svn/zxuno/software/playzxm,,.PLYZXM48,"PLAYZXM and PLYZXM48 are two versions (for 128K and 48K respectively) of a dot command to play ZXM movies. A ZXM movie is just a collection of 6144-byte B/W frames, or a collection of 7168-byte bitmap+attribute frames. For the last case, a 256-byte padding is added at the beginning of each frame to keep all multiple of 512 byte, so each frame uses an integral number of sectors, to help for faster reads. Details about the ZXM format in the source code comments. No special hardware (besides a suitable ESXDOS compatible device) is needed to play the movie files."
+.qe,v11h2 (Build 20201013),SpecNext only,A port of David Given’s Vi Adjacent editor.,,D. Rimron-Soutter (Xalior),https://github.com/StalePixels/QEtoo,https://www.stalepixels.com/software/qe/,qe,"""Fonts, and Text (editing) + Introducing .QE"" :
+https://youtu.be/lScmPy4BA3s"
+.readme,v0.1,,"Hint: As written on: https://retrobits.altervista.org/blog/2018/09/more-and-more/ this .readme v0.1 is replaced by .more v0.5 (SpecNext)
+
+.README is a simple text file viewer for the Sinclair ZX Spectrum Next.
+Backwards scroll is supported, with some limitations. Percentage of file is shown near file name.
+
+.readme v0.1 seems to run too on Non-SpecNext Hardware",,"Marco Varesio
+http://retrobits.altervista.org",http://somebitsofme.altervista.org/misc/spectrum/dotCommands/readme_bin_01.zip,https://retrobits.altervista.org/blog/2017/12/readme-dot-command/,readme [FileName],"Commands:
+ ENTER:    show next page
+ 0/DELETE: show previous page
+ SPACE:    exit
+
+If you want to set it as the default text file viewer in NextOS file browser, simply change the following line:
+TXT:copy""|""to screen$
+to:
+TXT:.readme |
+in “browser.cfg” file, located in “NEXTOS” directory."
+.readspi,,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/spiflashutils/,http://board.esxdos.org/viewtopic.php?pid=774#p774,,".readspi and .writespi (ZX-UNO only): small utilities to make backup and restore copies of the SPI Flash inside ZX-UNO. Illustrate in a simple way how to open, read and write files in ESXDOS, and how to handle SPI Flash commands."
+.recolor,v1.1,SpecNext only,"RECOLOR ULA palette loader
+Loads a 512 B .NXP palette into
+the ULA first palette.
+INK/PAPER/BORDER update at once.",,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/recolor/archive/refs/tags/1.1.zip,https://github.com/perrada69/recolor,"recolor
+
+Usage:
+  .recolor file.nxp
+  .recolor ""my palette.nxp""
+  .recolor -h
+
+NXP format:
+  512 B binary
+  0..255   palLo RRRGGGBB
+  256..511 palHi bit0 = blue LSB",
+.recolor,v1.0,SpecNext only,"RECOLOR ULA palette loader
+Loads a 512 B .NXP palette into
+the ULA first palette.
+INK/PAPER/BORDER update at once.",,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/recolor/releases/tag/1.0,https://mb-maniax.cz/2026/04/17/recolor/,"recolor
+
+Usage:
+  .recolor file.nxp
+  .recolor ""my palette.nxp""
+  .recolor -h
+
+NXP format:
+  512 B binary
+  0..255   palLo RRRGGGBB
+  256..511 palHi bit0 = blue LSB","
+
+           "
+.rm,v0.2,,,,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/tm1dm75q0az04qt/rm?dl=0,http://board.esxdos.org/viewtopic.php?pid=720#p720,"rm v0.2 By Dr. Slump 2018
+
+Usage: rm [OPTIONS]... [FILE]...
+
+Remove the FILE(s)
+
+-f ignore nonexistent files and
+   arguments, never prompt
+-i prompt before every removal
+-r remove directories and their
+   contents recursively
+-d remove empty directories
+-v explain what is being done
+-? display this help and exit","New release of dot command, rm, v0.2:
+Corrected a bug that did not allow deleting files with hyphens in the name.
+Source-Code released on 2023-03-21 at: 
+https://github.com/dr-slump-0/esxDOS-NMI-Navigator"
+.rm (Older),v0.1,,,,Dr. Slump (=david_ps) (aka David Pesqueira Souto),https://www.dropbox.com/s/b9cna3nwn8286ix/rm_v0.1.zip?dl=0,http://board.esxdos.org/viewtopic.php?pid=581#p581,"rm [OPTIONS]... [FILE]...
+Remove the FILE(s)
+-f ignore nonexistent files and
+   arguments, never prompt
+-i prompt before every removal
+-r remove directories and their
+   contents recursively
+-d remove empty directories
+-v explain what is being done
+-? display this help and exit","Deletes files and directoroes.
+Hint: If you have problems, always specify -v to display (error-) messages!"
+.run,,,"Design of ""Application Package Format"" by aowen as described here:
+http://board.esxdos.org/viewtopic.php?pid=1220#p122
+",,"Source Solutions, Inc. (Aowen)","Base64 encoded the command can be found here: http://board.esxdos.org/viewtopic.php?pid=1247#p1247
+Example ZXSHOW.PRG (SCREEN$ slideshow app) (to compile yourself with PASMO) can be found here: http://board.esxdos.org/viewtopic.php?pid=1249#p1249",http://board.esxdos.org/viewtopic.php?pid=1220#p1220,"run appname
+
+(Hint: Without parameter the .run-command shows only this: ""Nonsense in ESXDOS, 0:1"")","Info about ""ZXPROG"" (=Example SCREEN$ slideshow app):
+Compile the source to ZXSHOW.PRG and put it in: /PROGRAMS/ZXSHOW/PRG/
+Put the .SCR files you want to display in: /PROGRAMS/ZXSHOW/RSC/
+Launch the app with: .RUN ZXSHOW
+
+Scroll through ZXSHOW to next screen with ""SPACE""-key."
+.sc2,,"Xela on Spectrum Computing Forum: ""I think that, first and foremost, .sc2 needs support for Timex graphics mode to work, and only then does it require ULA+ as an additional feature.""
+SamC: ""Works on eZX/MB"".",Display MSX1 SC2 screenshot,,Daniel A. Nagy / nagydani,https://spectrumcomputing.co.uk/forums/download/file.php?id=4147,GitHub - nagydani/dot-commands: Dot commands for esxDOS and UnoDOS3 · GitHub,".sc2 [-{tsmh}] source.sc2
+-t Timex 20xx mode, no palette
+   overrides s and m
+-s ZX Spectrum approx. palette
+   overrides m
+-m MSX1 default palette
+Without ULAplus, -t is default","Hint from Leonis:
+In general, the SC2 utility supports 3 display options: Times mode (default), Spectrum mode, and a palette close to MSX. When integrating into the ZX Spectrum Next system, you can specify the corresponding keys: -t, -s, -m
+Example (add to browser.cfg)
+Code: Select all
+SC2<cls:.sc2 -m |"
+.scandoff,v1.00,SpecNext only,Also works under 48k/128k Personality of Next,---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19871,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372,.scandoff,"Without Parameters:
+Disables Scandoubler of SpecNext
+
+With (any) Parameter: Displays help-screen"
+.scandon,v1.00,SpecNext only,Also works under 48k/128k Personality of Next,---,Luzie,https://forum.tlienhard.com/phpBB3/download/file.php?id=19871,https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372,.scandon,"Without Parameters:
+Enables Scandoubler of SpecNext
+
+With (any) Parameter: Displays help-screen"
+.scl2trd,v1.0.0,,Converts .SCL-Diskimages to .TRD-Diskimages,"Should be in esxDOS 0.8.7 Final, but isn´t yet?!",anihirash (A. Nihirash) (Alexander Sharikhin),https://github.com/nihirash/esxdos-scl2trd-dot/releases/download/1.0.0/SCL2TRD,http://board.esxdos.org/viewtopic.php?pid=1199#p1199,".scl2trd f file.scl -- for full TRD (=write-enabled, full 640k size)
+.scl2trd file.scl -- for cutted TRD (=read-only)",There´s also a GUI/.TAP-Version of SCL2TRD - have a look at: https://github.com/nihirash/esxdos-scl2trd/releases
+.scrolldn,,,".ASM-Demo: Compiled with SjASMPlus
+
+Old name was: .scrolldwn - renames to shorter: .scrolldn",Not in esxDOS-Release. Just a compiled .ASM-example as demo-file,,http://forum.tlienhard.com/phpBB3/download/file.php?id=6574,http://www.users.globalnet.co.uk/~jg27paw4//pourri/0-surc-contents.htm,Without Parameters,Vertical Downward Character WrapScroll
+.scrolldwn (renamed to shorter: .scrolldn),,,".ASM-Demo: Compiled with SjASMPlus
+",Not in esxDOS-Release. Just a compiled .ASM-example as demo-file,,http://forum.tlienhard.com/phpBB3/download/file.php?id=6574,http://www.users.globalnet.co.uk/~jg27paw4//pourri/0-surc-contents.htm,Without Parameters,Vertical Downward Character WrapScroll
+.sercp,v0.3,,,ESXDOS 0.8.7 Final,Pavel Vymetalek (=pvym),http://www.esxdos.org/files/esxdos087.zip,http://board.esxdos.org/viewtopic.php?pid=1233#p1233,".sercp [params] <filename>
+filename: send file
+-r      : receive file
+-h      : help","Serial copy for ZX128/+2/+2A/+3
+Transfer possible: ZX-ZX,PC-ZX
+Speed: 38400Bd, 8N1, RTS/CTS
+Block size: 16kB RAM C000-FFFF
+More info: https://vym.cz/sercp"
+.sheet,v0.3,"SpecNext only ""Requires NextZXOS 128k""",Sheet (ZX Spectrum Next Spreadsheet),,Chris Taylor/taylorza,https://taylorza.itch.io/zxnsheet,https://taylorza.itch.io/zxnsheet,.sheet,
+.shownxi,v1.1,SpecNext only,SHOWNXI — NXI Viewer Dot Command for ZX Spectrum Next v1.1 Fix for the ZX magenta (bright) display,,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/shownxi/releases/tag/1.1,"""Facebook-Group ZX Spectrum Next"" on 2026-04-12",".shownxi screen.nxi
+.shownxi ""screen.nxi""
+.shownxi -h 
+=(help)","Miroslav Bursa:
+.shownxi
+I wrote a new SHOWNXI dot command for the ZX Spectrum Next, mainly because I wanted a simple way to test NXI file export from ZX Pixel Paste and I could not find anything suitable at the time.
+It supports both common NXI variants:
+    49152 bytes – image only
+    49664 bytes – image with embedded palette
+Along the way I also had to solve a few tricky details around file size detection, palette handling, and returning cleanly back to BASIC after a key press.
+And, to be honest, only later did I discover that showsimg already exists on GitHub. But since I had already written and finished this one, I decided to publish it anyway."
+.shownxi,v1.0,SpecNext only,SHOWNXI — NXI Viewer Dot Command for ZX Spectrum Next,,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/shownxi,"""Facebook-Group ZX Spectrum Next"" on 2026-04-09",".shownxi screen.nxi
+.shownxi ""screen.nxi""
+.shownxi -h 
+=(help)","Miroslav Bursa:
+.shownxi
+I wrote a new SHOWNXI dot command for the ZX Spectrum Next, mainly because I wanted a simple way to test NXI file export from ZX Pixel Paste and I could not find anything suitable at the time.
+It supports both common NXI variants:
+    49152 bytes – image only
+    49664 bytes – image with embedded palette
+Along the way I also had to solve a few tricky details around file size detection, palette handling, and returning cleanly back to BASIC after a key press.
+And, to be honest, only later did I discover that showsimg already exists on GitHub. But since I had already written and finished this one, I decided to publish it anyway."
+.SIDPLAY,,SpecNext only,"SpecNext only - Never completely released and hardware-implemented into SpecNext. Was just a study in 2017 of what can be made with the SpecNext Hardware. Dating Sept 2019 not further implemented, and there are other solutions on the way for playing .SID-File on the SpecNext via the Raspberry Pi add-on.",,(Maybe Victor Trucco ?),,https://www.facebook.com/groups/specnext/permalink/446917585665567/,.SIDPLAY <filename> to PLAY A SIDDUMP FILE ,Demo-Video on: https://youtu.be/8fusdhM082E
+".SNAPload
+",v0.3.13,,,ESXDOS 0.8.5 Final,"Code by Baze, port by Phoenix Patched by Velesoft",http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,".snapload [-l] <file>
+
+-l: load in 48kB mode(LOCK 7FFD)
+-u: ignore 48kB LOCK in snapshot
+
+Hold SHIFT during loading snap
+jump to user menu where you can
+use new features.
+
+You can during loading snapshot hold SHIFT and in menu change state of port 7FFD, hold NMI + press ENTER = start snapshot with jump to FILE BROWSER. Here is possible save snapshot with modified port 7FFD, if you need (after spress key ""s"")","Load Snapshots
+
+Controll in menu:
+=================
+L=start snap with set lock bit
+U=start snap and ignore lock bit
+V=start snap with videoram 1
+W=start snap with videoram 2
+0-7=start snap with ram page 0-7
+R=start snap with rom0(128basic)
+B=start snap with rom1(48 basic)
+SPACE=cancel changes+start snap
+ENTER=apply changes +start snap
+
+Border area show 4 color lines:
+-line 1 = ram 0-7 as color 0-7
+-line 2 = rom  0(black)/1(blue)
+-line 3 = vram 0(black)/1(blue)
+-line 4 = lock 0(black)/1(red)
+
+Blue flashing border sign 48ram
+and 128kB features are disable.
+Z80 SNA"
+".SNAPload
+ (Older)",v0.3,,,ESXDOS 0.8.0 Public BETA,"Code by baze, port by phoenix Patched by Velesoft",http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,"snapload [-l] <file>
+-l: load in 48kB mode
+ Z80 SNA",Load Snapshots
+".SNAPload
+ (Older)",v0.2,,,ESXDOS 0.7.3 Public BETA,"Code by baze, port by phoenix",http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,"snapload [-l] <file>
+-l: lock paging for 48K snaps
+ Z80 SNA",Load Snapshots
+.SPEAKCZ,v0.1 (Czech version),,,ESXDOS 0.8.5 Final,"Author unknown
+Disassembly by Cygnus
+ESXDOS port by VELESOFT",http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,".speakcz ""TEXT""
+
+Accept only upper case chars","SPEAKCZ is command for speak text in Czech pronunciation.
+(In future will exist also command SPEAKENG with correct english pronunciation)"
+.spui,v0.3.0,SpecNext only,Stale Pixels User Interface tools (aka SPUI),,D. Rimron-Soutter (Xalior),https://github.com/StalePixels/SPUI/releases/tag/v0.3.0,https://www.stalepixels.com/software/spui/,,"Stale Pixels User Interface tools (aka SPUI)
+--
+
+Abstract
+==
+SPUI is a DotCommand for the ZX Spectrum Next. It's primary (sole?) purpose is to make the creation of User Interaction 
+flows from NextBASIC (a) easier; (b) less ugly; (c) less effort; (d) consistent.
+
+Quick Start
+==
+.SPUI -h  will get you the built-in help.
+
+When building GUIs the parameter <TYPE> is compulsory. 
+
+Setup
+==
+ To prevent unexpected side-effects, unless instructed, you should pre-load Register 0x7F with 0."
+.ssx,v1.0,SpecNext only,"Display SAM Coupe SCREEN$ (
+.ssx File) SAM Mode 3, Mode 4",---,Robert Morrison,https://github.com/flatduckrecords/ssx/releases/download/v1.0/ssx,https://github.com/flatduckrecords/ssx,".ssx FILESPEC [MODE]
+MODES:
+ 3   SAM Mode 3
+ 4   SAM Mode 4
+
+The viewer can also be invoked from the command line with .ssx example.ss4. Note that quote marks around the file name are not accepted. To use the viewer in a program use .$, as follows:
+
+10 a$=""example.ss4""
+20 .$ ssx a$","Display SAM Coupe SCREEN$ (.ssx File) SAM Mode 3, Mode 4. This DOT-command was an entry in ""White Next Contest"" ( https://www.specnext.com/white-next-contest/ )
+
+Sample Files can be downloaded fom on: 
+https://github.com/simonowen/ssxview/blob/main/samples/mode3.ssx?raw=true
+and:
+https://github.com/simonowen/ssxview/blob/main/samples/mode4.ssx?raw=true"
+.strings,v0.1,,,---,"(c) 2016 ub880d
+",http://sindik.at/~ub880d/download/article_8/strings,http://sindik.at/~ub880d/2016/10/8-nove-utilitky-pre-esxdos-strings-a-launcher/," strings [-n len] <filename>
+  -n: print strings of at least
+      len characters instead of
+      default 4 (but max 32)",
+.strings,v1.0,SpecNext only,SpecNext only (? Completely Untested),,Alcoholics Anonymous,https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command/strings,https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command/strings,.strings entered on its own at the basic prompt will print help.,"
+
+This utility searches for ascii text strings stored in files. Results can be printed to screen or saved to an output file."
+.tap2mic,,,".tap2mic for ESXDOS. Plays a tape file to MIC
+It is similar in effect to ZX Spectrum's SAVE command.",,rkd77 / Witold Filipczyk,https://web.archive.org/web/20190921075120/http://nihirash.net/tap2mic,https://github.com/rkd77/tap2mic,.tap2mic file.tap,"It make possible write TAP-image to real tape(plays it to ""MIC"" output)."
+.tapeIN,v0.3,,,---,"(c) phoenix,ub880d",http://sindik.at/~ub880d/download/article_3/tapein,http://sindik.at/~ub880d/2016/03/3-drobna-uprava-prikazov-tapein-a-tapeout/,"tapein [args] [tapfile]
+
+-c: Close file
+-p: Toggle SCREEN$ pause
+-a: Fast-reset and LOAD
+-r: Rewind
+-s <ptr>: Set pointer
+-i: Print tapepath
+
+ SCREEN$ pause is now  OFF ON",
+.tapeIN (Older),v0.2,,,ESXDOS 0.8.0 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,"tapein [args] [tapfile]
+
+-c: Close file
+-p: Toggle SCREEN$ pause
+-a: Fast-reset and LOAD
+-r: Rewind
+-s <ptr>: Set pointer
+
+SCREEN$ pause is now  OFF ON",
+.tapeIN (Older),"v0.1
+",,,ESXDOS 0.7.3 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,"tapin [params] [tapfile]
+
+-c: Close file
+-p: Toggle SCREEN$ pause
+
+SCREEN$ pause is now  OFF ON",
+.tapeIN (Older),v0.1,,Also v0.1 as in 0.7.3 Public BETA but Usage-Description changed / corrected from tapin zu tapein within binary code,ESXDOS 0.7.4 Public BETA (bugfix release),(c) phoenix,http://www.esxdos.org/files/esxdos074.zip,http://www.esxdos.org/index.html,"tapein [args] [tapfile]
+
+-c: Close file
+-p: Toggle SCREEN$ pause
+
+SCREEN$ pause is now  OFF ON",
+.tapeOUT,v0.2,,,---,"phoenix,ub880d",http://sindik.at/~ub880d/download/article_3/tapeout,http://sindik.at/~ub880d/2016/03/3-drobna-uprava-prikazov-tapein-a-tapeout/,"tapeout [args] [tapfile]
+
+-c: Close file
+-o: Overwrite file
+-i: Print tapepath",
+.tapeOUT (Older),v0.1,,Different from ESXDOS 0.7.3 Public BETA,ESXDOS 0.8.0 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos080.zip,http://www.esxdos.org/index.html,"tapeout [args] [tapfile]
+-c: Close file
+-o: Overwrite file",
+.tapeOUT (Older),v0.1,,,ESXDOS 0.7.3 Public BETA,(c) phoenix,http://www.esxdos.org/files/esxdos073.zip,http://www.esxdos.org/index.html,tapeout [args] [tapfile] -c: Close file -o: Overwrite file,
+.tar,v0.4 (2022),,,,ub880d,https://zxfiles.net/download/TAR http://zxfiles.samcoupe.cz/download/TAR ,https://zxfiles.net/zxtar.php https://zxfiles.samcoupe.cz/zxtar.php,"Usage: tar <function> [options] <archive> ...
+
+functions:
+  -c : create archive
+  -t : list archive
+  -x : extract archive
+options:
+  -v  : verbose
+  -vv : verbose (no scroll)",
+.tar,v0.3 (2021),,,ESXDOS 0.8.9 Final,ub880d,http://oldcomp.cz/download/file.php?id=13205,http://board.esxdos.org/viewtopic.php?id=1022,"Usage: tar <function> [options] <archive> ...
+
+functions:
+  -c : create archive
+  -t : list archive
+  -x : extract archive
+options:
+  -v  : verbose
+  -vv : verbose (no scroll)","TAR is a new dot-command for esxDOS, now in the basic set of commands in the version 0.8.9.
+The author of this treasure is ub880d. Thanks a lot!
+
+TAR creates archives, which we will read with any universal archiver on the PC (try winrar or 7zip),
+and on the contrary we will, in the esxDOS, unpack the tar-archive made on the PC.
+
+Without having to increase the memory of your ZX Spectrum, you can eg. pack the entire directory on the card into one multi-megabytes file, directly to this card (20 MB is OK, I haven't tried hundreds of megabytes, with respect to time).
+
+TAR is so far minimalist, with basic functions, but fully usable, it uses basic switches identical to the PC world,
+ie. for the creation of a tar-archive, its extraction and listing of content.
+
+The only difference is in the preview of operation logs.
+If you do not want to be bothered by the SCROLL? query,
+enter two ´v´ switches in a row.
+
+.TAR -cvv bin.tar bin"
+.tcpping,,SpecNext only,,,Johan Engdahl,https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/TCPPING,https://gitlab.com/thesmog358/tbblue/-/blob/master/src/c/DotCommands/tcpping/tcpping.c,"TCPPING [IP|FQDN] [Port]
+
+TCPPING bps",TCPPING bps = Setting uart to x bps
+.term0,,SpecNext only,Simple raw bidirectional communication with Raspberry Pi-Zero,---,Term Zero / mattsteel,https://mattsteel.itch.io/term0,https://itch.io/jam/dotjam,.term0,"Term0
+This tool starts a bi-directional communication stream with the Raspberry Pi-Zero accelerator.
+
+[BREAK] quits to Basic with L BREAK into program.
+
+[TRUE VIDEO] produces EOT or ^D  (0x04) that normally produces a 'normal exit' from whatever you where in.
+
+[DELETE] produces BS or ^H (0x08) and it is the normal back-space key.
+
+[>=] produces ETX or ^C (0x03) that helps to emulate CTRL-C key-press.
+
+~ | \ [ ] { }  are produced via SYMBOL-SHIFT 
+
+
+
+The rationale is as follows. The main loop continuosly polls the keyboard and polls PI0 UART: Any key pressed is immediately transmitted, any byte read from PI0 is immediately sent to screen, which is notoriously slow.
+[ENTER] key has a peculiar behavior and, once 0x0D is transmitted to PI0, up to 8000 bytes are ""fast read"" from UART and - only then - slowly sent to screen. This allows collecting long output from PI0, but only after you hit [ENTER]."
+.testram,,,,---,VELESOFT 2013,http://velesoft.speccy.cz/other/esxdos_testram_command.zip,http://zx-pk.ru/threads/21032-tr-dos-support-in-system-esxdos/page3.html?s=613495175880b9d09291f5835f4bc125,"Please see file ""info_testram.txt"" included in Download",TESTRAM is tester of ZX ram memory 48/128kB. Including Tapetester
+.testspr2,,SpecNext only,Maybe SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",,
+.time,,,Source-Code is available,---,Victor Trucco,https://gitlab.com/victor.trucco/RTC/raw/master/commands/TIME,https://gitlab.com/victor.trucco/RTC,"time <ENTER>
+show current time
+time HH:MM:SS <ENTER>
+set the time
+Time is in 24 Hour mode",Date and Time for RTC / Realtime-Clock / ZX Spectrum Next / TBBlue 
+.tosprram,,SpecNext only,SpecNext only,---,,https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download,"Included in bin directory of \ZEsarUX\extras\media\disk_images\tbblue.mmc Image-File
+",TOSPRRAM <filename> to load sprite images to sprite VRAMT,
+.trd,Posting in esxDOS Forum on: 2019-05-01 16:22:58,,,---,zxy,,http://board.esxdos.org/viewtopic.php?pid=1191#p1191,,"New version/modification of .TRD command :
+.trd [TR-DOS command]
+assumes mounted TRD image by vdisk command
+or
+.trd ! <TRD image>
+does :
+- mounting TRD image as unit 0
+- executing TR-DOS command RUN"
+.trd,Posting in esxDOS Forum on: 2018-08-27 06:36:25 (edited by zxy 2018-08-27 06:39:03),,,---,zxy,,http://board.esxdos.org/viewtopic.php?pid=1003#p1003,,".trd is equivalent to RANDOMIZE USR 15616
+.trd <some TRD-DOS command> is equivalent to RANDOMIZE USR 15619:REM:<some TR-DOS command>"
+.tsplay,,,"This text is from binary code file: ""Vortex Tracker II 1.0 moduleUniPT2/PT3/TS-Player""",ESXDOS 0.8.7 Final,,http://www.esxdos.org/files/esxdos087.zip,http://board.esxdos.org/viewtopic.php?pid=1976#p1976,tsplay [file],"Successfully tried playing this Turbo Sound file from:
+https://zxart.ee/eng/authors/m/mmcm/spring-warm-day-for-dizzy-game/
+Direct .TS-File-Download-Link:
+https://zxart.ee/file/id:85719/filename:MmcM_-_Spring_Warm_Day_for_Dizzy_Game_%282013%29.ts"
+.txt2bas,v1.6,SpecNext only,Dot command to convert plain text .TXT files to BASIC .BAS format,---,Garry Lancaster,https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/TXT2BAS,https://gitlab.com/thesmog358/tbblue/-/blob/ef6dc4fd0f684349d16354d67d4f756db2994fdb/src/asm/dot_commands/txt2bas.asm,"SYNOPSIS:
+.TXT2BAS [OPT] TXTFILE [BASFILE]
+
+OPTIONS:
+ -v, --verbose     Show lines during processing
+ -a, --always-write     Write even if syntax errors
+ -h, --help     Display this help
+
+Supported directives in text:
+
+ #program PRGNAME     Start of main BASIC code
+   (file is PRGNAME.BAS)
+
+ #bank BNKNAME     Start of banked section
+   (file is PRGNAME-BNKNAME.BNK)
+
+ #bankfile BNKFILENAME     Start of banked section
+   (file is BNKFILENAME)
+
+ #autostart LINE     Program autostarts at LINE
+
+ #autostart     Autostarts at following line
+
+ #autoline LINE,STEP     Start auto-numbering
+
+ #autoline LINE     Start auto-numbering(step=10)
+
+ #autoline     Stop auto-numbering
+
+(Other lines starting # ignored)",Convert text file to BASIC
+.txt2bas,v1.2,SpecNext only,Dot command to convert plain text .TXT files to BASIC .BAS format,---,Garry Lancaster,Next SD card Original Copy Files from Distro that comes with SpecNext (2B Board) from Kickstarter 1,Mentioned on: https://github.com/remy/txt2bas,"SYNOPSIS:
+.TXT2BAS [OPT] TXTFILE [BASFILE]
+
+OPTIONS:
+ -v, --verbose     Show lines during processing
+ -h, --help     Display this help
+
+Supported directives in text:
+
+ #program PRGNAME     Start of main BASIC code
+   (file is PRGNAME.BAS)
+
+ #bank BNKNAME     Start of banked section
+   (file is PRGNAME-BNKNAME.BNK)
+
+ #bankfile BNKFILENAME     Start of banked section
+   (file is BNKFILENAME)
+
+ #autostart LINE     Program autostarts at LINE
+
+ #autostart     Autostarts at following line
+
+ #autoline LINE,STEP     Start auto-numbering
+
+ #autoline LINE     Start auto-numbering(step=10)
+
+ #autoline     Stop auto-numbering
+
+(Other lines starting # ignored)",Convert text file to BASIC
+.tzx2tap,v1.3,SpecNext only,"TZX to TAP dot command for ZX Spectrum Next (NextZXOS) 
+
+To install:
+copy TZX2TAP to c:/dot copy tzxconv.bas
+to c:/nextzxos In c:/nextzxos/browser.cfg,
+add a new TZX line: 
+TZX<.tzx2tap -b ""|"":load ""c:/nextzxos/tzxconv.bas"":let f$=""|"":goto 9000",,Chris Young (chris-y),https://github.com/chris-y/tzx2tap/releases,https://github.com/chris-y/tzx2tap,"Full usage:
+
+TZX2TAP [-l|-v|-b] IN.TZX [OUT.TAP]
+
+.TZX2TAP with no options will convert IN.TZX to OUT.TAP. Without the output filename, the resulting file will be named IN.TAP.
+
+-v Verbose mode
+
+This prints more information whilst the file is being converted.","TZX to TAP file conversion for the ZX Spectrum Next (NextZXOS) as a dot command.
+
+Based on ZXTape Utilities TZX to TAP Converter v0.13b by Tomaz Kac.
+
+To install
+
+    copy TZX2TAP to c:/dot
+    copy tzxconv.bas to c:/nextzxos
+
+In c:/nextzxos/browser.cfg, add a new TZX line:
+
+TZX<.tzx2tap -b ""|"":load ""c:/nextzxos/tzxconv.bas"":let f$=""|"":goto 9000
+
+Put this either before or after the existing line. If it is before, you can convert TZX files by pressing Enter from the browser. If it is after, you will need to press Symbol Shift+Enter to do the conversion. The original TZX loader will be on the other combination. It is recommended to put it before on a non-accelerated Next, and after on an accelerated Next.
+
+Selecting a TZX file in the browser will convert the file, and then ask if you want to load it (similar to how the disk mounter works). If no warnings are displayed it is highly likely the file will open fine on a basic Next.
+
+The resulting TAP (named the same but with a .tap extension) will remain available to open as usual afterwards. If the file already exists it will print an error but will return OK as it assumes the file has already been converted.
+
+This allows you to easily open TZX files on an unexpanded Spectrum Next, provided no custom loader is present in the file.
+
+This program supports v1.20 of the TZX specification. Normal and custom loader blocks below 64K are converted. Most other blocks are skipped over (loops are supported as they were trivial to add)."
+.uart,v2.2e,,,---,Tim Gilberts,Downloaded from SpecNext FB-Group: https://www.facebook.com/groups/specnext/,,,
+.untar,v0.5.0b,SpecNext only,,,"Stale Pixels
+( https://www.stalepixels.com/ )",https://github.com/StalePixels/D3,https://www.stalepixels.com/software/D3/#untar,"Usage examples
+
+Extract a file
+
+.UNTAR /path/to/file.tar",".UNTAR - POSIX compliant ESXDOS version of UNTAR, super easy to embed in other apps.
+
+A reduced tar extractor. Supports POSIX compliant TAR archives, but only Files (the default) and Directories (type: 5).
+
+Files that include:
+
+    hardlinks (type: 1);
+    symlinks (type: 2);
+    character or block devices (types 3 & 4 respectively); or
+    FIFOs (type: 6)
+
+will have a graceful error message printed, and the extraction will continue.
+
+Internally, since most of our development takes place on MacOS or Linux, TAR archives are the natural way to manage collections of files, and extracting one directly upon the next (being also then validated with Tar’s internal checksum system) a great way to ensure all “Test Data” for an application is correct before we begin testing."
+.up,v1.10,SpecNext only,NextZXOS v2.02+ needed,,johnnyo (Janko Stamenović),https://gitlab.com/jankos-projects/Jankos_UP/-/blob/main/release/jankos_up_1_10.zip?ref_type=heads,https://www.specnext.com/forum/viewtopic.php?t=2545,UP [-o..] fname [srv [port]],"Upload a file via HTTP PUT
+
+Usage:
+
+  .UP [-o..] fname [srv [port]]
+
+Options:
+  -b border effects
+  -p show progress
+  -q quiet
+  -r allow ESP restart
+  -t double timeout
+  -v verbose
+  -x never init UART
+ Use /apps/wifi/up/config-up.bas
+ to change the default server
+ or see other options."
+.upconfig,v1.10,SpecNext only,NextZXOS v2.02+ needed,,johnnyo (Janko Stamenović),https://gitlab.com/jankos-projects/Jankos_UP/-/blob/main/release/jankos_up_1_10.zip?ref_type=heads,https://www.specnext.com/forum/viewtopic.php?t=2545,UPCONFIG server port,".UPCONFIG server port
+   Sets server and port for UP
+"
+.vdisk,,,,ESXDOS 0.8.5 Final,,http://www.esxdos.org/files/esxdos085.zip,http://www.esxdos.org/index.html,vdisk unit <filename>,"How to use the TR-DOS emulator:
+Either use the NMI browser to attach/auto-LOAD .TRDs, or use the .vdisk command:
+.vdisk unit <filename>
+Unit 0 = Drive A, Unit 1 = Drive B, etc. If you specify just the unit, it will eject the virtual drive. You can use .dskprobe to check the contents of the vdisk."
+.wc,v2.2,SpecNext only,"WC - Wifi Connect
+
+For now only for ZX Spectrum Next and ESP01 Wifi module.",,Miroslav Bursa (perrada69) / Programmed by: Shrek/MB Maniax,https://github.com/perrada69/wc/releases,https://github.com/perrada69/wc,"Usage:
+
+wc status - show status on wifi connection
+
+wc - run gui to connect ;)",Copy file of wc to directory /dot/
+.WCONF,,For DivTIESUS interface,DivTIESUS utilities (dot commands for ESXDOS),,Miguel Angel Rodríguez Jódar (mcleod-ideafix),https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/WCONF?raw=true,https://github.com/mcleod-ideafix/divtiesus_utils,WCONF,"WCONF . This dot command has no parameters. It enters an interactive mode to configure the wifi module of DivTIESUS, prompt the user for an access point to connect to, and the password for it. After succesfully configured, AP data is stored within non volatile memory in the wifi module and doesn't need to be entered again."
+.whitenoi,,,.ASM-Demo: Compiled with SjASMPlus,Not in esxDOS-Release. Just a compiled .ASM-example as demo-file,"Kai Weber from Computer Choice, March 1984",http://forum.tlienhard.com/phpBB3/download/file.php?id=6574,"http://www.users.globalnet.co.uk/~jg27paw4/type-ins/compchoi/cc_names.htm
+",,"White Noise Generator
+ - Plays White Noise"
+.writespi,,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/spiflashutils/,http://board.esxdos.org/viewtopic.php?pid=774#p774,,".readspi and .writespi (ZX-UNO only): small utilities to make backup and restore copies of the SPI Flash inside ZX-UNO. Illustrate in a simple way how to open, read and write files in ESXDOS, and how to handle SPI Flash commands."
+.zxcircle,,,.ASM-Demo: Compiled with SjASMPlus,Not in esxDOS-Release. Just a compiled .ASM-example as demo-file,Ibán Cereijo Graña,http://forum.tlienhard.com/phpBB3/download/file.php?id=6574,http://icereijo.com/a-circle-algorithm-for-zx-spectrum/,,ZXCircle - Fast circle drawing algorithm
+.zxunocfg,,ZX-UNO only,ZX-UNO only,,mcleod_ideafix,http://svn.zxuno.com/svn/zxuno/software/zxunocfg/,http://board.esxdos.org/viewtopic.php?pid=774#p774,Example here: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=55584#p55584,Main configuration utility for ZX-UNO. Illustrates how to read parameterse for a dot command using assembler.
+.zxzvm,v0.03,Need 128k / +2 or +2A machine with a divIDE or divMMC,Works with esxDOS 0.8.9 to 0.8.7.,,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/ZXZVM_test2.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=84540#p84540,".zxzvm for esxDOS v0.03
+
+Original code by John Elliott
+esxDOS port by bob_fossil
+
+Usage:
+.zxzvm <flags> <story file>
+
+Flags:
+
+-c1|2
+ text size 1 (32), 2 (64)",Example File can be found here: http://nothings.org/games/if/heroes/
+.zxzvm,v0.02,Need 128k / +2 or +2A machine with a divIDE or divMMC,"Works with esxDOS 0.8.9. Seems not to be working with esxDOS v.0.8.7 and esxDOS v0.8.8. (Trying on these reports ""Invalid PATH"" or ""No such COMMAND, 0:1"").",,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/zxzvm_latest.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=84706#p84706,".zxzvm for esxDOS v0.02
+
+Original code by John Elliott
+esxDOS port by bob_fossil
+
+Usage:
+.zxzvm <flags> <story file>
+
+Flags:
+
+-c1|2
+ text size 1 (32), 2 (64)",Example File can be found here: http://nothings.org/games/if/heroes/
+.zxzvm,v0.01,Need 128k / +2 or +2A machine with a divIDE or divMMC,"Works with esxDOS 0.8.9. Seems not to be working with esxDOS v.0.8.7 and esxDOS v0.8.8. (Trying on these reports ""Invalid PATH"" or ""No such COMMAND, 0:1"").",,bob_fossil,http://www.thefossilrecord.co.uk/wp-content/uploads/zx/zxzvm_latest.zip,https://spectrumcomputing.co.uk/forums/viewtopic.php?p=83636#p83636,"Example:
+.zxzvm -c1 heroes.z5",Example File can be found here: http://nothings.org/games/if/heroes/
+,,,,,,,,,
+For any comments / additions / corrections please write to: esxDOS.commands-List@gmx-topmail.de,,,,,,,,,
+#TODO: Add commands from https://github.com/SM7I/ZX-Spectrum-Next-Dev e.g. another .PING command for SpecNext,,,,,,,,,
+#TODO: Add examples for .ls v1.0 for SpecNext like e.g.: .ls --time-style=long-iso,,,,,,,,,
+,,,,,,,,,
+#TODO: - Add .zed (Editor for SpecNext from Chris Taylor/taylorza) etc. https://taylorza.itch.io/,,,,,,,,,
+#TODO: Maybe add .DOT-Command from: https://luckyredfish.com/spectrum-next-viewer/,,,,,,,,,
+#TODO: Add .run v1.4 (ZX Next version) - Info on: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html,,,,,,,,,
+#TODO: Add .run from https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zxn/dot-command/run incl. Information about PATH,,,,,,,,,
+"#TODO: Add .nbnshell from ""NextBestNetwork Tools"" https://github.com/StalePixels/NBNtools",,,,,,,,,
+"#TODO: Add Pi Tools for the Spectrum Next (.CRC32, .PIPUT etc.) https://github.com/StalePixels/PiTools",,,,,,,,,
+#TODO: Add commands from https://github.com/jarikomppa/specnext / https://github.com/jarikomppa/specnext/tree/master/dot_test,,,,,,,,,
+#TODO: Program myself these DOT-Commands: .trdinfo and/or .trdinfo like described on: http://board.esxdos.org/viewtopic.php?pid=1336#p1336,,,,,,,,,
+Version History of this file / Last changes:,,,,,,,,,
+"V026 NOT RELEASED YET: Added .mdx v0.1, added .sc2, added .ear2tap",,,,,,,,,
+"V025 2026-05-01: Added .playay v0.05 which also runs on divIDE and not only on divMMC with addional memory, added .up v1.10, .upconfig v1.10, .nxtp v1.79.3a0609c, .sheet v0.3, shownxi v1.0, .shownxi v1.1, .memdump v1.0, .recolor v1.0, .recolor v1.1, .d80 v0.7f, .mgt v0.6",,,,,,,,,
+"V024 2026-01-04 Added .editor v0.9b (esxDOS hex monitor/editor), .ssx v1.0, .NBNGET v0.2.0, .NextPiUI v1.92D, .KeyJoyTest v003.029, .KeyJoyN v005.049, .50hz v1.00, .60hz v1.00, .scandoff v1.00, scandon v1.00, .md1md2 v1.00",,,,,,,,,
+"V023 2025-04-21 Added .dt v0.1.1 .gpiotest,.killserver, .midipanic, .midisend v0.1.nextpimidi (all these six commands from Part of Package ""Using USB MIDI with the ZX Sectrum Next (via raspberry pi 0)""), added .GO3E, additional Comments for .LOADROM, .MOUSE, .WCONF and .NTPDATE (from DivTIESUS utilities (dot commands for ESXDOS)), added additional Comments for PLAYZXM, added .PLYZXM48 and .PLAYMID",,,,,,,,,
+"V022 2023-09-12 Added .memdump v0.8, added .txt2bas v1.2, added .txt2bas v1.6, added .$ v1.3, .mc (ZX-Uno only), Added all Entries to cthutu´s SpecNext DotJam (https://itch.io/jam/dotjam): (All SpecNext only): .cotton, .7gfx_fo v0.1, .evas10n.ras v0.1, .dotjam, .mcat v0.4, .term0. .loadtap (ZX-Uno only) and .loadpzx (Version newer?=zxuno - Revision 1583) (ZX-Uno only)",,,,,,,,,
+"V021 2022-08-14 Added .echo, added .zxzvm v0.01, added .zxzvm v0.02,, added .zxzvm v0.03, added .brwsfont v0.01, added .nxtp v1.69, added .tar v0.3, added .tar v0.4, added .makerun v1.1, added .loadrom, added .http v1.0.1, added .http-debug v1.0.0, added .clear v1.1",,,,,,,,,
+"V020 2021-12-26 Added .fsize v1.1, .odin Version Dev.2h, .qe v11h2 (Build 20201013), .modp v1.0 (25/07/20), .tzx2tap v1.3, .spui v0.3.0, .wc v2.2, .tcpping, .ping v0.2, .espreset v1.4, .nget v1.8, .http v1.0.0, .http-debug v1.0.0, .esp-baud v1.1, .associate, .nextver v1.0, .guide v1.0a",,,,,,,,,
+"V019 2021-12-25 Added .2browse v0.01a1. .launcher v0.3 from esxDOS 0.8.9 Final, .keyhelp v1.1 (e.g. included in SpecNext Distro ""System/Next v1.3.2""), .ini v0.5.0b, .every v0.5.0b, .ch8show v0.5.0b., .untar v0.5.0b, .inkey v0.5.0b, .less v0.5.0b, .displayedge. Inserted Column for ""Special Hardware required?"".",,,,,,,,,
+"V018 2021-01-16: Added Usage example for .zxunocfg. Added .browse v1.2 from Garry Lancaster (for SpecNext), .browse from bob_fossil/""New File Browser for ZX-UNO""-Package v0.13 and .playay v0.03 by bob_fossil",,,,,,,,,
+"V017 2021-01-11: Added info about .dfwload. Added .kzx, .tsplay and .checkerb commands.",,,,,,,,,
+"V016 2019-09-25: Added updated .dumpmem v0.3 and updated .more v0.2, .dfwload v0.1, .sercp v0.3 (all from esxDOS 0.8.7.), .128 (Fixed for esxDOS 0.8.7) and note on .SIDPLAY (never completely implemented) for SpecNext, .readme v0.1 and .more v0.9 (SpexNext)",,,,,,,,,
+"V015 2019-09-24: Added .run, .tap2mic, .dotsdir and missing infos of .extract (which should be in this list from version V007) (.extract v1.0 and v1.1 (ZX) and v1.3 (ZXN)",,,,,,,,,
+"V014 2019-05-17: Added .uart v2.2e, .scl2trd v1.0.0 and new version of .trd (Posting in esxDOS Forum on: 2019-05-01 16:22:58)",,,,,,,,,
+"V013 2018-09-17: Added: .play ""Version ""Name your own price"""", and .trd",,,,,,,,,
+"V012 2018-05-20: Added updated .ls (Filedate: 2018-03-09), .128 and .playtfm (from esxDOS v0.8.6 Final) and updated Infos on .partinfo and playpt3 which are included in v0.8.6 Final)",,,,,,,,,
+"V011 2018-05-13: Added updated .playpt3 and .partInfo (from esxDOS v0.8.6-RC3), .drives v0.2 and .rm v0.2 by Dr. Slump (=david_ps), .playzxm, .dmaplayw (ZX-Uno only), .joyconf (ZX-Uno only), .keymap (ZX-Uno only), .loadpzx (ZX-Uno only), .readspi (ZX-Uno only), .writespi (ZX-Uno only), zxunocfg (ZX-Uno only) and Infos on .playrmov froms mcleod_ideafix",,,,,,,,,
+V010 2018-01-05: Added: .hexview v0.3 by Dr. Slump (=david_ps),,,,,,,,,
+V009 2017-12-28: Added: .hexview v0.2 by Dr. Slump (=david_ps),,,,,,,,,
+"V008 2017-12-13: Added: .hexview v0.1, .drives v0.1 and .rm v0.1 by Dr. Slump (=david_ps)",,,,,,,,,
+"V007 2017-11-11: Added: .strings v1.0 (Version from Alcoholics Anonymous/z88dk.org) and .drives from Dr. Slump (=david_ps). Changes: Added Infos on: .dzx7, .extract, .bmp2next and .nextgrab",,,,,,,,,
+V006 2017-09-10: Added: New versions of .ls and .partinfo (aka .partinf2),,,,,,,,,
+"V005 2017-09-09: Added: .ownrom, .testram",,,,,,,,,
+V004 2017-09-08: Added: .play,,,,,,,,,
+"V003 2017-09-07: Added: .launcher, .strings, .tapeIN v0.3, .tapeOUT v0.2",,,,,,,,,
+"V002 2017-08-20: Correction: .scrolldwn (renamed to shorter: .scrolldn), Added: .bmp2next, nextgrab, dzx7, backoff, backon, .BMPLOAD, .CLS, .playrmov, .testspr2, .tosprram",,,,,,,,,
+"V001 Initial Version 2017-08-15, includes data entries from these esxDOS-Versions: ESXDOS 0.7.3 Public BETA, ESXDOS 0.7.3 Public BETA with MAPRAM fix, ESXDOS 0.7.4 Public BETA (bugfix release),
+ESXDOS 0.8.0 Public BETA, ESXDOS 0.85 FINAL, ESXDOS 0.86 Beta 2, ESXDOS 0.86 Beta 3, ESXDOS 0.86 Beta 4 (=First Version with Realtime-Clock-/RTC-Support, Download: http://esxdos.org/beta/esxdos086-BETA4.zip)",,,,,,,,,
+,,,,,,,,,
+Additional Links:,,,,,,,,,
+List of .DOT-Commands e.g. DOT-commands for specific hardware like MB03+ at: http://esxdos.samcoupe.cz/,,,,,,,,,
+Limits in ESXDOS system: http://board.esxdos.org/viewtopic.php?id=2,,,,,,,,,
+"List ""Spectrum Next Dot Commands"" at: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html",,,,,,,,,
+,,,,,,,,,
+Additional Infos for ZX Next (ZXN) as posted by colonel32 on: https://www.worldofspectrum.org/forums/discussion/comment/945740/#Comment_945740,,,,,,,,,
+"colonel32
+September 2018 edited September 2018 Thanks
+We have quite a few Next-specific dot commands now, including rewritten replacements for esxDOS commands there are no distribution permissions for.
+Some of the commands have enhanced behaviour over esxDOS in their 128K and NextZXOS versions, as they can be larger than 7KB/8KB.
+https://gitlab.com/thesmog358/tbblue/tree/master/dot
+https://gitlab.com/thesmog358/tbblue/tree/master/docs/dotcommands
+https://gitlab.com/thesmog358/tbblue/tree/master/src/asm/dot_commands
+https://gitlab.com/thesmog358/tbblue/tree/master/src/c/DotCommands",,,,,,,,,
+,,,,,,,,,
+"Alcoholics Anonymous: ""Generating Huge Dot Commands with Z88DK"":
+Special extended .DOT-command (DOTN) for ZX Next (ZXN) and on extended (DOTX) commands which can be bigger than about 7k size:
+https://www.specnext.com/forum/viewtopic.php?f=13&t=1227&p=7837",,,,,,,,,
+,,,,,,,,,
+"Robin Verhagen-Guest on Facebook-Group ""Spectrum Next Dev"" on 2025-01-01:
+Dot commands can run under all the basic layers (ULA, timex hires, timex hicolor, lores radastan, lores jimistan and layer 2), and the memory arrangement is different for all of these. You are not really expected to directly write screen memory inside a dot command. Think of it more like writing to stdout in a pc program - you just write text and let the OS worry about displaying it.
+There are a limited number of control characters but even these behave differently in different LAYERs. Most of them don’t even have a lower screen, and intersperse the text printed to both channels on the main screen.
+Of course you can write any code you like for your own programs, but a dot command released to the public should behave properly in all the LAYERs.
+There is some info in Garry’s docs about reading the current screen mode or setting it, and about the extended control codes. There are codes for filling windows with a byte and attribute that can be used in all layers apart from layer 0. It’s also possible to use IDE_TOKENISER and IDE_BASIC to directly execute a basic CLS statement, which should work in any layer.
+Also consider that a stream might be redirected to another channel - you don’t really want to print an entire screenful of spaces to a printer, serial port or file, for example.
+Of course anything you change should be undone before exiting, because users expect dot commands to be like this, and to not corrupt their basic program. And Next dot command should really do some checks ;wirh M_DOSVERSION) to see if they are running on vanilla esxDOS or NextZXOS 48K mode, and either exit gracefully or do different behavior that doesn’t call any Next- or NextZXOS specific features that won’t work under those other environments.
+All in all, doing dot commands properly is quite a deep subject. Before going any further, think about whether you really need to clear the screen at all, because it’s not a standard thing, and trying to do it is going against the grain, both technically and with user expectations.",,,,,,,,,
+,,,,,,,,,
+*END of Sheet*,,,,,,,,,

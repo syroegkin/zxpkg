@@ -1,0 +1,2659 @@
+# Light catalog seed derived from portal/seed/dot-commands.csv (esxDOS DOT-commands sheet V025).
+# METADATA + LINK-ONLY: each entry is a browsable package with its original download URL
+# preserved; NOT signed and NOT in the device index until a binary is uploaded/crawled.
+#
+# BEST-EFFORT MAPPING — please review/edit:
+#  - machine defaults to [48k,128k] for plain esxDOS rows (only next/zxuno are auto-detected)
+#  - type defaults to 'dot' (some are game/util/demo)
+#  - version/name are sanitized from free-text and may need fixing
+# Regenerate: npx tsx src/scripts/catalog-seed.ts   (latest-per-command; 26 older rows skipped)
+packages:
+  - name: "128"
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1244#p1244
+    description: "Fixed for esxDOS 0.8.7 as described here by nagydani:
+      http://board.esxdos.org/viewtopic.php?pid=1244#p1244"
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=8847
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: 2browse
+    version: 0.01a1
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divmmc
+    author: bob_fossil
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?f=9&t=6049
+    description: "Copy the contents of the 2browse BIN folder to the /BIN folder on
+      your SD Card. To run, from BASIC enter: .2browse or if you want to start
+      browsing from a specific folder, in this case the /BIN folder: .2browse
+      /bin 2browse supports browser"
+    download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/2BROWSE_001-1.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: 50hz
+    version: "1.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372
+    description: "Without Parameters: Sets Display to 50Hz on Spectrum Next With
+      (any) Parameter: Displays help-screen"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19871
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: 60hz
+    version: "1.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372
+    description: "Without Parameters: Sets Display to 60Hz on Spectrum Next With
+      (any) Parameter: Displays help-screen"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19871
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: 7gfx_fo
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Ped7g / Peter Helcmanovsky (Ped)
+    homepage: https://itch.io/jam/dotjam
+    description: "### what it does and how to use it Fades out selected palette
+      `<pal>` until all is black, in 7 steps. The speed of the fade can be
+      adjusted by `<delay>` option, default delay is 6 frames per step, that is
+      6 * 7 = 42 frames in total, ~0.84s "
+    download: https://itch.io/jam/dotjam/rate/1571495
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: associate
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/commit/070e329cc8d0db28add56364154963a09fe6b80e
+    description: 'Was removed from SpecNext Master with comment: "Remove .ASSOCIATE
+      (deprecated)"'
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: backoff
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: backon
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: bmp2next
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=308#p308
+    description: bmp2next converts standard 256-colour bitmaps to bitmaps using the
+      Next's RRRGGGBB palette.
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: bmpload
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: Maybe SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: browse
+    version: "0.13"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: bob_fossil
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=36335#p36335
+    description: Some people rename this .browse to .b so it can be started faster
+      with this shorter name
+    download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/BROWSE_latest.zip
+    repo: null
+    bundled_in: esxdos included in package "new file browser for zx-uno" (which can
+      also be used on non-zx-uno-devices)
+    redistributable: true
+  - name: brwsfont
+    version: "0.01"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: bob_fossil
+    homepage: https://www.spectrumcomputing.co.uk/forums/viewtopic.php?p=97819#p97819
+    description: 'Part of Package "New File Browser for ZX-UNO" (which can also be
+      used on non-ZX-Uno-devices) up from v0.23-Test5. Helptext of .brwsfont
+      from v0.23-Test4 package shows typo in commandname with incorrect:
+      .brwsfnt instead of correct: .brwsfon'
+    download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/BROWSE_TEST023-5.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: cd
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: Change directory
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: ch8show
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.stalepixels.com/software/D3/#ch8show
+    description: ".CH8SHOW - View 768b/1k 1bit font files in ROM/UDG format inspired
+      by Damien Guard's zx-origins project. We define ROM format fonts as: 1bit
+      per pixel 8×8 fixed size Breadth first A common file format for a
+      collection 96 of these is a CH8 f"
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: checkerb
+    version: "1.0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Luzie
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1410#p1410
+    description: "Display a Checkerboard of Attributes over your Screen. Helps you
+      to find hidden content in loading screens like those on:
+      http://www.worldofspectrum.org/equinox/eggs/screens.php"
+    download: https://www.magentacloud.de/lnk/O8gGDSLV
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: chmod
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: ""
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: clear
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://gitlab.com/thesmog358/tbblue/-/commit/d874b9425373f93e67b82470c369c90db9289a95
+    description: "CLEAR v1.1 by Garry Lancaster Releases all allocated resources
+      leaving maximum available memory NOTE: Uses integer register %a SYNOPSIS:
+      .CLEAR"
+    download: https://gitlab.com/thesmog358/tbblue/-/raw/d874b9425373f93e67b82470c369c90db9289a95/dot/CLEAR
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: cls
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: Maybe SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: cotton
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Adam Ainsworth
+    homepage: https://itch.io/jam/dotjam
+    description: A Spectrum Next tribute to the late, great June Brown / A silly
+      little submission to the ZX Spectrum Next DotJam contest. Just a little
+      play on the name of command line executables - 'dot' cotton.
+    download: https://adam-ainsworth.itch.io/cotton
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: cowsay
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: The Fuchsia Authors
+    homepage: https://retrobits.altervista.org/blog/2017/11/dot-command-fun/
+    description: 'The one from SpecNext-Distro seems to be SpecNext only, as it
+      doesn´t work on esxDOS 0.8.7 and in code this can be found: "Requires
+      NextZX" The other from Authors Homepage seems to run on esxDOS 0.8.7'
+    download: http://somebitsofme.altervista.org/misc/spectrum/dotCommands/cowsay.zip
+    repo: null
+    bundled_in: system-next v.1.03 distro - this version is other size than the one
+      from https://retrobits.altervista.org/blog/2017/11/dot-command-fun/
+    redistributable: true
+  - name: cp
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: Different from ESXDOS 0.7.4 Public BETA (bugfix release)
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: d80
+    version: 0.7f
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+      - ezx
+    author: SCjoe / eZX / MB
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=192319#p192319
+    description: SWITCHES ================================ -x Export files from
+      image to SD card. -c Create a new blank disk image file (.D80 only). -n No
+      Scroll? disables the prompt after printing the entire page. -d Write
+      directory listing to a file inste
+    download: https://zxfiles.net/esxdos/D80.TAR
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: date
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Victor Trucco
+    homepage: https://gitlab.com/victor.trucco/RTC
+    description: Date and Time for RTC / Realtime-Clock / ZX Spectrum Next / TBBlue
+    download: https://gitlab.com/victor.trucco/RTC/raw/master/commands/DATE
+    repo: https://gitlab.com/victor.trucco/RTC
+    bundled_in: null
+    redistributable: true
+  - name: dfwload
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) ub880d
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1233#p1233
+    description: .dfwload v0.1 (c) 2015 ub880d. .DFWLOAD is used to upload other
+      firmware to the so-called "mapram". Mapram is suitable e.g. for testing
+      firmware without the need to re-flash divide/divmmc.
+    download: http://www.esxdos.org/files/esxdos087.zip
+    repo: null
+    bundled_in: esxdos 0.8.7 final
+    redistributable: true
+  - name: displayedge
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Peter Ped Helcmanovsky (ped7g)
+    homepage: https://github.com/ped7g/ZXSpectrumNextMisc
+    description: dot command .displayedge to check visible area of your ZX Next
+      display, storing the information into global config file + runtime library
+      to read the config and use user's values in your own SW to narrow down
+      used screen space by your SW.
+    download: https://github.com/ped7g/ZXSpectrumNextMisc
+    repo: https://github.com/ped7g/ZXSpectrumNextMisc
+    bundled_in: null
+    redistributable: true
+  - name: divideo
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Matt Westcott (Gasman)
+    homepage: http://www.esxdos.org/index.html
+    description: Play a DivIDEo video stream file (.dvo) divideo - ESXDOS command
+      for playing .dvo video files 1. Copy the file 'divideo' to the /bin
+      directory of your ESXDOS drive. 2. Copy some .dvo files there too (see
+      http://divideo.zxdemo.org/). 3. Boot
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: dmaplayw
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: ".dmaplayw : (ZX-UNO only). Plays an audio WAV file using Specdrum
+      (for 8 bit sound output) and ZX-UNO DMA. WAV file needs to be encoded as 8
+      bit unsigned samples and 15625 Hz sampling frequency."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: dotjam
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: em00k
+    homepage: https://itch.io/jam/dotjam
+    description: DOTJAMMIN / Emulator breaking, VGA50! :P / update for all screen
+      modes & forgot some assets, now works in Cspect.
+    download: https://em00k.itch.io/dotjammin
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: dotsdir
+    version: "1.0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Luzie67@gmx.de
+    homepage: https://forum.tlienhard.com/phpBB3/download/file.php?id=19964
+    description: ".DOTSDIR (/BIN/-Version) v1.00 by Luzie67@gmx.de Help: This one
+      should tell you the path /BIN/ or /DOT/ to see which is processed first
+      There are two versions, of .DOTSDIR - one comes to: /BIN/DOTSDIR (this
+      one) and the other comes to: /DOT"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19964
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: drives
+    version: "0.2"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=721#p721
+    description: "New release of dot command, drives, v0.2: Corrected problem with
+      File System and Volume Label Source-Code released on 2023-03-21 at:
+      https://github.com/dr-slump-0/esxDOS-NMI-Navigator"
+    download: https://www.dropbox.com/s/fanj6y3ka769lct/drives?dl=0
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: dskprobe
+    version: 0.2ro
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) 2009-12 Papaya Labz
+    homepage: http://www.esxdos.org/index.html
+    description: Disk Probe / View blocks / View sectors
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: dumpmem
+    version: "0.3"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) ub880d
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1233#p1233
+    description: ""
+    download: http://www.esxdos.org/files/esxdos087.zip
+    repo: null
+    bundled_in: esxdos 0.8.7 final
+    redistributable: true
+  - name: dt
+    version: 0.1.1
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: http://iki.fi/sol
+    description: Time delta calculator
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: dzx7
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Alcoholics Anonymous (= aralbrec)
+    homepage: http://board.esxdos.org/viewtopic.php?pid=308#p308
+    description: dzx7 is a decompressor for .zx7 compressed files
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: ear2tap
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: rkd77 / Witold Filipczyk
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=195130
+    description: "ear2tap for esxdos Usage: .ear2tap file.tap It creates new file
+      file.tap and loads from the real tape (EAR socket). Similar in effect to
+      the COPY-COPY program. Green border means saving to a disk or a SD card.
+      You can pause tape if the gree"
+    download: https://github.com/rkd77/ear2tap/archive/refs/heads/main.zip
+    repo: https://github.com/rkd77/ear2tap
+    bundled_in: null
+    redistributable: true
+  - name: echo
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Simon N Goodwin
+    homepage: http://simon.mooli.org.uk/nextech/z80n/index.html
+    description: "Sourcecode-File in Zeus/.GOD available incl. Description on:
+      http://simon.mooli.org.uk/nextech/z80n/index.html"
+    download: http://simon.mooli.org.uk/nextech/z80n/ECHO
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: editor
+    version: 0.9b
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: namco/nexgen software
+    homepage: https://esxdos.zxfiles.net/#dotcmds
+    description: Use cursor keys to move on screen, TRUE/INV video to move through
+      file blocks and menu shortcuts for more actions
+    download: https://esxdos.zxfiles.net/#dotcmds
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: espbaud
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://github.com/em00k/next-zxdb-downloader
+    description: "Also found on SpecNext Master at:
+      https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/ESPBAUD"
+    download: https://github.com/em00k/next-zxdb-downloader
+    repo: https://github.com/em00k/next-zxdb-downloader
+    bundled_in: null
+    redistributable: true
+  - name: espreset
+    version: "1.4"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: Robin Verhagen-Guest (Threetwosevensixseven)
+    homepage: https://github.com/Threetwosevensixseven/espreset
+    description: ESP8266-01 reset dot command for the ZX Spectrum Next
+    download: https://github.com/Threetwosevensixseven/espreset/blob/master/dot/ESPRESET
+    repo: https://github.com/Threetwosevensixseven/espreset
+    bundled_in: null
+    redistributable: true
+  - name: evas10n.ras
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: marco's retrobits
+    homepage: https://itch.io/jam/dotjam
+    description: "Extremely simple breakout game. Source colde included. / A Turbo
+      Rascal Syntax Error rewrite of the Turbo Pascal rewrite of Evas10n, a
+      BASIC 10-Liner breakout game for the ZX Spectrum. **** 32 COLUMNS MODE
+      ONLY!! **** Control keys: q: quit "
+    download: https://retrobits.itch.io/
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: every
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.stalepixels.com/software/D3/#every
+    description: A scheduling tool designed to keep count of events, and trigger
+      periodically. .EVERY needs to be started with at-least one parameter, the
+      schedule interval – which must be a number greater than one. You can also
+      pass an optional second para
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: extract
+    version: "1.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Alcoholics Anonymous (= aralbrec)
+    homepage: http://board.esxdos.org/viewtopic.php?id=106
+    description: Extracts parts of file and display them as hex or save them as
+      files. Programming sample for .DOT-commands. Dave Sonic ClarkeBASIC on the
+      FV-Group "ZX Spectrum Next" SOLVED. Everything after 'extract' needed to
+      be in the string variable.
+    download: https://github.com/z88dk/z88dk/tree/master/libsrc/_DEVELOPMENT/EXAMPLES/zx/dot-command/extract
+    repo: https://github.com/z88dk/z88dk
+    bundled_in: null
+    redistributable: true
+  - name: flipscr
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.retroprogramming.com/2014/12/z80-size-programming-challenge-2_15.html
+    description: Flips Screen-Content
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
+    repo: null
+    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    redistributable: true
+  - name: file
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) phoenix
+    homepage: http://www.esxdos.org/index.html
+    description: I think that FILE command looks like linux command. It determines
+      type by content of file. http://board.esxdos.org/viewtopic.php?id=37
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: fsize
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: David Saphier (em00k)
+    homepage: https://github.com/em00k/nextbasic-dotcommands
+    description: fsize = returns file size in variable for NextBasic
+    download: https://github.com/em00k/nextbasic-dotcommands/archive/refs/heads/main.zip
+    repo: https://github.com/em00k/nextbasic-dotcommands
+    bundled_in: null
+    redistributable: true
+  - name: gramon
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: Gramon is graphic monitor for finding graphic,sprites,character
+      fonts and screens in ZX memory.
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: go3e
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divtiesus
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: https://github.com/mcleod-ideafix/divtiesus_utils
+    description: This dot command has no parameters. It loads a +3E ROM image from
+      the BIN directory of the SD card and installs it as the new system ROM, at
+      the same time as the automapping feature of DivMMC is disabled. So, a
+      +2A/B/3 computer becomes a fu
+    download: https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/GO3E?raw=true
+    repo: https://github.com/mcleod-ideafix/divtiesus_utils
+    bundled_in: null
+    redistributable: true
+  - name: gpiotest
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: null
+    description: SpecNext only
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: guide
+    version: 1.0a
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Matt Davies
+    homepage: null
+    description: "Matt Davies on Facebook: \"I just like to remind people that there
+      is a documentation system distributed with NextZXOS called NextGuide. If
+      you type `.guide` on the command line it will open the NextGuide's manual
+      (which can be found at `/do"
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: hexdump
+    version: "0.2"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) ub880d
+    homepage: http://www.esxdos.org/index.html
+    description: ""
+    download: http://www.esxdos.org/files/esxdos074.zip
+    repo: null
+    bundled_in: esxdos 0.7.4 public beta (bugfix release)
+    redistributable: true
+  - name: hexview
+    version: "0.3"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=632#p632
+    description: "It shows a hexadecimal dump of a file. Cursor up and cursor down
+      moves to previous and next screen, and BREAK exit. v0.3 adds operation via
+      Cursor (0 to exit) & Kempston Joystick. Source-Code released on 2023-03-21
+      at: https://github.com/dr"
+    download: https://www.dropbox.com/s/no71yzhxrn9ejzs/hexview_v0.3.zip?dl=0
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: http
+    version: 1.0.1
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Remy Sharp (remy)
+    homepage: https://github.com/remy/next-http
+    description: https://github.com/remy/next-http#testing
+    download: https://github.com/remy/next-http/releases/download/1.0.1/http
+    repo: https://github.com/remy/next-http
+    bundled_in: null
+    redistributable: true
+  - name: http-debug
+    version: 1.0.1
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Remy Sharp (remy)
+    homepage: https://github.com/remy/next-http/blob/main/http-debug.dot
+    description: https://github.com/remy/next-http#notes-on-http-debugdot
+    download: https://github.com/remy/next-http/raw/main/http-debug.dot
+    repo: https://github.com/remy/next-http
+    bundled_in: null
+    redistributable: true
+  - name: inkey
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://github.com/StalePixels/D3
+    description: INKEY echoer .INKEY - View keycodes as returned for keys & combos
+      from z88dk built for lazy developers who need a handy guide.
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: ini
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.stalepixels.com/software/D3/#ini
+    description: INI/CFG tool .INI - Command-line INI editor for simple,
+      programmable edits to INI or INI style config files .INI is designed to
+      perform a specific tasks with a minimum fuss – manipulate ini files from
+      BASIC without the need to write a whole
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: joyconf
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: Tests and configures joystick interface on ZX-UNO. This dot command
+      is interesting because it is not written in ASM, but in C. Source
+      available.
+    download: http://svn.zxuno.com/svn/zxuno/software/joyconf/
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: keyjoyn
+    version: "005.049"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69370#p69370
+    description: "Without Parameters: Starts KeyJoyN With (any) Parameter: Displays
+      help-screen."
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19868
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: keyjoytest
+    version: "003.029"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69367#p69367
+    description: "Without Parameters: Starts KeyJoyTest With (any) Parameter:
+      Displays help-screen. There is also SpecNext-Version called .KeyJoyN which
+      supports Megadrive 1/2 (MD1/MD2) Joypads."
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19866
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: keyhelp
+    version: "1.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: David Saphier (em00k2018)
+    homepage: https://gitlab.com/thesmog358/tbblue/-/commit/65114b5d75be28ddbc60d95283262c9cc2178deb
+    description: 'This shows file: "/dot/keyboard.scr". Was included in older
+      verrsion of SpecNext Latest Distro, which can be found on:
+      https://www.specnext.com/latestdistro/ until Version "System/Next v1.3.2".
+      Was removed on 2021-10-06 with the following n'
+    download: https://www.specnext.com/latestdistro/
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: keymap
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: Small utility to load a keyboard map from a file into the ZX-UNO.
+    download: http://svn.zxuno.com/svn/zxuno/software/keymap
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: killserver
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: null
+    description: SpecNext only
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: kzx
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: SCjoe
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1959#p1959
+    description: Displays Screen with Keyboard Help (Keywords)
+    download: https://mega.nz/folder/r4F0SD4D#qgGXYASGym-8gcSMrF-wdA
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: launcher
+    version: "0.3"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) 2021 ub880d
+    homepage: http://board.esxdos.org/viewtopic.php?id=1021
+    description: .launcher add <name> <tap> - creates a new launcher with name
+      <name>. it will autoload tape <tap> .launcher upd <name> <tap> - change
+      launcher <name> to autoload tape <tap> .launcher del <name> - delete
+      launcher <name> .launcher list - list
+    download: http://www.esxdos.org/files/esxdos089.zip
+    repo: null
+    bundled_in: esxdos 0.8.9 final
+    redistributable: true
+  - name: less
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Marco Varesio
+    homepage: "http://svn.zxuno.com/svn/zxuno/software/loadpzx/user:guest password:
+      zxuno"
+    description: .LESS - Less is not more. A plain text pager with extra features, a
+      compliment, not replacement, for MORE
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: loadtap
+    version: "?"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=122797#p122797
+    description: "A few days ago, in the ZX-Uno Telegram group, mcleod_ideafix
+      shared the LOADTAP command for esxDOS which is used to load .TAP files at
+      normal speed. The operation is like LOADPZX, although only these keys are
+      useful: F7: PLAY/PAUSE of the v"
+    download: "http://svn.zxuno.com/svn/zxuno/software/loadpzx/ user:guest password:
+      zxuno"
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: loadpzx
+    version: Newer?=zxuno
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=122797#p122797
+    description: ZX-UNO only
+    download: http://svn.zxuno.com/svn/zxuno/software/loadpzx/LOADPZX zxuno -
+      Revision 1583
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: loadrom
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divtiesus
+    author: mcleod_ideafix (Miguel Angel Rodriguez)
+    homepage: http://www.zxprojects.com/divtiesus/
+    description: "SoftROM mode SoftROM is available in all versions of DivTIESUS.
+      Unlike the +3E mode, which needs a +2A/B/3 computer, the softROM mode can
+      work on any Spectrum, provided it has at least 48K RAM. The SoftROM
+      feature uses a dot command: LOADRO"
+    download: http://www.zxprojects.com/divtiesus/docs/LOADROM
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: ls
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/files/esxdos086.zip
+    description: ""
+    download: http://board.esxdos.org/viewtopic.php?pid=834#p834
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: lstap
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) phoenix
+    homepage: http://www.esxdos.org/index.html
+    description: Different from ESXDOS 0.7.3 Public BETA
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: makerun
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://gitlab.com/thesmog358/tbblue/-/commit/eb4a0da3a36756061c109a69c1d33b9df5971ef8
+    description: .MAKERUN v1.1 by Garry Lancaster. Converts the current directory
+      into a runnable directory. A RUN.BAS file that loads the target file (any
+      supported by the Browser) is created and the directory is renamed with a
+      .run extension. Any file wit
+    download: https://gitlab.com/thesmog358/tbblue/-/raw/eb4a0da3a36756061c109a69c1d33b9df5971ef8/dot/MAKERUN
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: mc
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: Antonio Villena
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=101384#p101384
+    description: "Antonio Villena has created a new esxDOS command, mc (multicore),
+      which is used to boot cores from the SD card. It works as follows: .mc
+      corefile.zx1 (Loads and executes a core) What it does is to install the
+      core in slot 9 if a 4MB SPI Fla"
+    download: https://github.com/zxdos/zxuno/blob/master/SD/BIN/MC
+    repo: https://github.com/zxdos/zxuno
+    bundled_in: null
+    redistributable: true
+  - name: mcat
+    version: "0.4"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Timbucus and his live posse
+    homepage: https://itch.io/jam/dotjam
+    description: MCAT command / MCAT a Microdrive CAT for Next DOTJAM 2022
+    download: https://timbucus.itch.io/dotjam2022
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: md1md2
+    version: "1.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372
+    description: "Without Parameters: Sets Joystick Port 1 to MD1 and Joystick Port
+      2 to MD2 on Spectrum Next With (any) Parameter: Displays help-screen"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19871
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mdx
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Robert Morrison ( flatduckrecords )
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=193069#p193069
+    description: The input file should be the correct type, the Microdrive header
+      checksum will be tested and an esxDOS File type error will be thrown if
+      the value is incorrect. The data payload also has its own checksum; if
+      that is found to be incorrect th
+    download: https://github.com/flatduckrecords/mdx
+    repo: https://github.com/flatduckrecords/mdx
+    bundled_in: null
+    redistributable: true
+  - name: memdump
+    version: "1.0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://mb-maniax.cz/2026/04/22/memdump-1-0/
+    description: ""
+    download: https://mb-maniax.cz/wp-content/uploads/2026/04/memdump.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mgt
+    version: "0.6"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+      - ezx
+    author: SCjoe / eZX / MB
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=192319#p192319
+    description: 'MGT - esxDOS dot command for the ZX Spectrum and compatibles file
+      listing and export tool for disk images. Supported disk formats: GDOS,
+      G+DOS, BetaDOS, SAMDOS, MasterDOS SWITCHES -------- -n No Scroll? prompt
+      Suppresses the "Scroll?" pause'
+    download: https://zxfiles.net/esxdos/MGT.TAR
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: midipanic
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: null
+    description: SpecNext only
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: midisend
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: null
+    description: SpecNext only
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mktrd
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: LaesQ / Papaya Dezign - 15/04/2014
+    homepage: http://board.esxdos.org/viewtopic.php?id=24
+    description: Creates a blank double sided, 80 track TRD disk image. Please use
+      with esxdos 0.8.x.
+    download: http://www.esxdos.org/files/esxdos086.zip
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: mkdir
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: Make Directory
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: modp
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - rpi0
+    author: null
+    homepage: https://github.com/em00k/modp-zxnext?
+    description: "Amiga Module Player dotcommand for the ZX Spectrum Next - NO pi0
+      required As always best results on hardware. .modp by David Saphier
+      (em00k) - ModPlayer by Mike Dailly (c)2020 Mike's git here :
+      https://github.com/mikedailly/mod_player https"
+    download: https://github.com/em00k/modp-zxnext?
+    repo: https://github.com/em00k/modp-zxnext
+    bundled_in: null
+    redistributable: true
+  - name: more
+    version: "0.9"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Marco Varesio
+    homepage: https://retrobits.altervista.org/blog/2018/09/more-and-more/
+    description: "OPTIONS: -64 force 64 columns mode -85 force 85 columns mode -128
+      force 128 columns mode COMMANDS: 8/RIGHT/ENTER: next page 5/LEFT/0/DELETE:
+      previous page Q/SPACE: exit Displays <FILE> one screen at a time"
+    download: https://gitlab.com/thesmog358/tbblue
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: system-next v.1.03 distro - there are v0.9 files with different
+      sizes in this distro (one in \dot\ and one in \dot\extra\
+    redistributable: true
+  - name: mon
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Velesoft
+    homepage: http://board.esxdos.org/viewtopic.php?id=3
+    description: Monitor / Debugger for esxDOS Can also be used to enter POKEs on
+      running Snapshots
+    download: http://velesoft.speccy.cz/other/mon_esxdos.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mouse
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divtiesus
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: https://github.com/mcleod-ideafix/divtiesus_utils
+    description: MOUSE . This dot command is used to query/modify the configuration
+      of the Kempston mouse emulation mode. Invoked with no arguments, it will
+      show the current state of Kempston mouse emulation and the syntax for
+      parameters.
+    download: https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/MOUSE?raw=true
+    repo: https://github.com/mcleod-ideafix/divtiesus_utils
+    bundled_in: null
+    redistributable: true
+  - name: mv
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: Move / Rename file
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: nbnget
+    version: 0.2.0
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: D. "Xalior" Rimron-Soutter / StalePixels
+    homepage: https://www.stalepixels.com/software/nbnget/
+    description: '"Installing CP/M with NBNGET":
+      https://www.youtube.com/watch?v=sJcBsT5RBLk That magic command... .NBNGET
+      install/cpm.bas:load"cpm.bas"'
+    download: https://github.com/StalePixels/NBNtools/releases
+    repo: https://github.com/StalePixels/NBNtools
+    bundled_in: null
+    redistributable: true
+  - name: nextgrab
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=308#p308
+    description: nextgrab extracts tiles and sprites from a bitmap.
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: nextpimidi
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa (jarikomppa)
+    homepage: null
+    description: SpecNext only
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: nextpiui
+    version: 1.92D
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: D. "Xalior" Rimron-Soutter / StalePixels
+    homepage: https://www.stalepixels.com/categories/nextpi/nextpiui/
+    description: 'NextPiUI v0.11 demo: https://www.youtube.com/watch?v=j6N8DSYxB_g
+      Media Playback with NextPiUI / "NextPi 0.99E - Media Preview UI" / "This
+      time showing you the media playback interface for NextPiUI":
+      https://www.youtube.com/watch?v=3UhaXTfah'
+    download: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/NextPiUI
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: nextver
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/NEXTVER
+    description: 'Robin Verhagen-Guest: "If you want to restrict your NextBASIC
+      program to a particular version then you can use .nextver to query it.
+      Unfortunately “.nextver h” only sets h to 2.06. It is likely that Garry
+      will increase the numeric version w'
+    download: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/NEXTVER
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: nget
+    version: "1.8"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Robin Verhagen-Guest (Threetwosevensixseven)
+    homepage: https://github.com/Threetwosevensixseven/nget
+    description: Package manager server and client for the ZX Spectrum Next
+    download: https://github.com/Threetwosevensixseven/nget/blob/master/dot/NGET
+    repo: https://github.com/Threetwosevensixseven/nget
+    bundled_in: null
+    redistributable: true
+  - name: ntpdate
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divtiesus
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: https://github.com/mcleod-ideafix/divtiesus_utils
+    description: NTPDATE This dot command is a STNP (simple Time Netowork Protocol)
+      client. With no parameters, it queries time.google.com for the current UTC
+      date and time and updates PCF8563 RTC chip registers accordingly. PCF8563
+      access is done via bit b
+    download: https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/NTPDATE?raw=true
+    repo: https://github.com/mcleod-ideafix/divtiesus_utils
+    bundled_in: null
+    redistributable: true
+  - name: nxtp
+    version: 1.79.3a0609c
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Robin Verhagen-Guest (Threetwosevensixseven)
+    homepage: https://gitlab.com/thesmog358/tbblue/-/commits/master
+    description: "Older versions on: https://github.com/Threetwosevensixseven/nxtp/releases"
+    download: https://gitlab.com/thesmog358/tbblue/-/commit/fc845e5424398dec3951d9ad4c92cc1526b931d9
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: odin
+    version: ersion
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Matt Davies (and Peter Helcmanovsky (Ped7g))
+    homepage: https://specnext.dev/blog/2020/07/15/odin-the-expressive-assembler/
+    description: "Older version on: https://gitlab.com/next-tools/odin/-/releases"
+    download: "https://discord.com/invite/Kn33JQkCbz (Pinned at #odin (click on Pin))"
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: ownrom
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divmmc
+      - divide
+    author: Velesoft
+    homepage: http://velesoft.speccy.cz/other/own_roms.zip
+    description: "ZX-Diagnostics running on a DivMMC using .ownrom:
+      https://www.youtube.com/watch?v=wiPi8fVeYN8 Additional info for .OWNROM
+      command from Author Velesoft: rom images must contain fixed zx rom without
+      rewriting low 16kB. As I know then rom file"
+    download: http://velesoft.speccy.cz/other/own_roms.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: partinfo
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: ub880d
+    homepage: http://board.esxdos.org/viewtopic.php?pid=834#p834
+    description: "(Filedate: 2018-03-10)"
+    download: http://www.esxdos.org/files/esxdos086.zip
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: ping
+    version: "0.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://github.com/perrada69/Ping-for-ZX-Spectrum-Next
+    description: ""
+    download: https://github.com/perrada69/Ping-for-ZX-Spectrum-Next/releases/tag/0.2
+    repo: https://github.com/perrada69/Ping-for-ZX-Spectrum-Next
+    bundled_in: null
+    redistributable: true
+  - name: play
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Source Solutions, Inc. (Aowen)
+    homepage: https://zx.itch.io/play
+    description: The .PLAY command for esxDOS wasn't exactly a huge seller, and with
+      Derby++ it's kind of redundant (except for people who don't want to change
+      their ROMs). So I'm making it available at "name your own price". Also, I
+      am happy for it to be i
+    download: http://board.esxdos.org/viewtopic.php?id=356
+    repo: null
+    bundled_in: null
+    redistributable: false
+  - name: playay
+    version: "0.05"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divmmc
+      - divide
+    author: bob_fossil
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=88213#p88213
+    description: .ay file player for DivMMC devices running esxdos with 128k of
+      extra memory and from v0.05 for divIDE without the addional memory
+    download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/playay_005.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: playmid
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: http://svn.zxuno.com/svn/zxuno/software/midi/playmid/PLAYMID
+    description: PLAYMID is a dot command to play MIDI Format 0 files using the MIDI
+      out connector in 128K machines.
+    download: http://svn.zxuno.com/svn/zxuno/software/midi/playmid/PLAYMID
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: playpt3
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=834#p834
+    description: "From http://board.esxdos.org/viewtopic.php?pid=834#p834:
+      [07/03/2018] Commands: Added .playpt3 (replaces old command since this one
+      also plays 6 channel tunes)"
+    download: http://www.esxdos.org/files/esxdos086.zip
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: playrmov
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: null
+    description: Plays a video file encoded for the "Radastan" video mode.
+    download: "https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_ver\
+      sions/ZEsarUX_extras-5.1.zip/download Also mcleod_ideafix wrote: .playrmov
+      is from the ZX-UNO repository. Source is available there.
+      http://svn.zxuno.com/svn/zxuno user: guest password: zxuno Directory
+      /software/modo_radastan/videos_radastanianos"
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: playsqt
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Gasman (Matt Westcott)
+    homepage: http://www.esxdos.org/index.html
+    description: Play an SQ Tracker music file (.sqt)
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: playstc
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Gasman (Matt Westcott)
+    homepage: http://www.esxdos.org/index.html
+    description: Play a Soundtracker music file (.stc)
+    download: http://www.esxdos.org/files/esxdos080.zip
+    repo: null
+    bundled_in: esxdos 0.8.0 public beta
+    redistributable: true
+  - name: playtfm
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=834#p834
+    description: ""
+    download: http://www.esxdos.org/files/esxdos086.zip
+    repo: null
+    bundled_in: esxdos 0.8.6 final
+    redistributable: true
+  - name: playwav
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Gasman (Matt Westcott)
+    homepage: http://www.esxdos.org/index.html
+    description: playwav - ESXDOS command for playing .wav audio files 1. Copy the
+      file 'playwav' to the /bin directory of your ESXDOS drive. 2. Copy some
+      .wav files there too - they need to be 44100Hz unsigned 8-bit mono. If you
+      have SoX <http://sox.source
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: playzxm
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: (Spectrum 128K). Plays video (just video, not audio) using the
+      standard Spectrum screen. It can play B&W and color videos. Needs 128K
+      (two videorams). Source and examples included. PLAYZXM and PLYZXM48 are
+      two versions (for 128K and 48K res
+    download: http://svn.zxuno.com/svn/zxuno/software/playzxm
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: plyzxm48
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: http://svn.zxuno.com/svn/zxuno/software/playzxm
+    description: "PLAYZXM and PLYZXM48 are two versions (for 128K and 48K
+      respectively) of a dot command to play ZXM movies. A ZXM movie is just a
+      collection of 6144-byte B/W frames, or a collection of 7168-byte
+      bitmap+attribute frames. For the last case, a "
+    download: http://svn.zxuno.com/svn/zxuno/software/playzxm
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: qe
+    version: 11h2
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: D. Rimron-Soutter (Xalior)
+    homepage: https://www.stalepixels.com/software/qe/
+    description: '"Fonts, and Text (editing) + Introducing .QE" :
+      https://youtu.be/lScmPy4BA3s'
+    download: https://github.com/StalePixels/QEtoo
+    repo: https://github.com/StalePixels/QEtoo
+    bundled_in: null
+    redistributable: true
+  - name: readme
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://retrobits.altervista.org/blog/2017/12/readme-dot-command/
+    description: 'Commands: ENTER: show next page 0/DELETE: show previous page
+      SPACE: exit If you want to set it as the default text file viewer in
+      NextOS file browser, simply change the following line: TXT:copy"|"to
+      screen$ to: TXT:.readme | in “browser.cfg'
+    download: http://somebitsofme.altervista.org/misc/spectrum/dotCommands/readme_bin_01.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: readspi
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: ".readspi and .writespi (ZX-UNO only): small utilities to make
+      backup and restore copies of the SPI Flash inside ZX-UNO. Illustrate in a
+      simple way how to open, read and write files in ESXDOS, and how to handle
+      SPI Flash commands."
+    download: http://svn.zxuno.com/svn/zxuno/software/spiflashutils/
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: recolor
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://github.com/perrada69/recolor
+    description: RECOLOR ULA palette loader Loads a 512 B .NXP palette into the ULA
+      first palette. INK/PAPER/BORDER update at once.
+    download: https://github.com/perrada69/recolor/archive/refs/tags/1.1.zip
+    repo: https://github.com/perrada69/recolor
+    bundled_in: null
+    redistributable: true
+  - name: rm
+    version: "0.2"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=720#p720
+    description: "New release of dot command, rm, v0.2: Corrected a bug that did not
+      allow deleting files with hyphens in the name. Source-Code released on
+      2023-03-21 at: https://github.com/dr-slump-0/esxDOS-NMI-Navigator"
+    download: https://www.dropbox.com/s/tm1dm75q0az04qt/rm?dl=0
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: run
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Source Solutions, Inc. (Aowen)
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1220#p1220
+    description: 'Info about "ZXPROG" (=Example SCREEN$ slideshow app): Compile the
+      source to ZXSHOW.PRG and put it in: /PROGRAMS/ZXSHOW/PRG/ Put the .SCR
+      files you want to display in: /PROGRAMS/ZXSHOW/RSC/ Launch the app with:
+      .RUN ZXSHOW Scroll through ZXS'
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: sc2
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - ezx
+    author: Daniel A. Nagy / nagydani
+    homepage: null
+    description: "Hint from Leonis: In general, the SC2 utility supports 3 display
+      options: Times mode (default), Spectrum mode, and a palette close to MSX.
+      When integrating into the ZX Spectrum Next system, you can specify the
+      corresponding keys: -t, -s, -m"
+    download: https://spectrumcomputing.co.uk/forums/download/file.php?id=4147
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: scandoff
+    version: "1.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372
+    description: "Without Parameters: Disables Scandoubler of SpecNext With (any)
+      Parameter: Displays help-screen"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19871
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: scandon
+    version: "1.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Luzie
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?p=69372#p69372
+    description: "Without Parameters: Enables Scandoubler of SpecNext With (any)
+      Parameter: Displays help-screen"
+    download: https://forum.tlienhard.com/phpBB3/download/file.php?id=19871
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: scl2trd
+    version: 1.0.0
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: anihirash (A. Nihirash) (Alexander Sharikhin)
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1199#p1199
+    description: "There´s also a GUI/.TAP-Version of SCL2TRD - have a look at:
+      https://github.com/nihirash/esxdos-scl2trd/releases"
+    download: https://github.com/nihirash/esxdos-scl2trd-dot/releases/download/1.0.0/SCL2TRD
+    repo: https://github.com/nihirash/esxdos-scl2trd-dot
+    bundled_in: should be in esxdos 0.8.7 final, but isn´t yet?!
+    redistributable: true
+  - name: scrolldn
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.users.globalnet.co.uk/~jg27paw4//pourri/0-surc-contents.htm
+    description: Vertical Downward Character WrapScroll
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
+    repo: null
+    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    redistributable: true
+  - name: scrolldwn
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.users.globalnet.co.uk/~jg27paw4//pourri/0-surc-contents.htm
+    description: Vertical Downward Character WrapScroll
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
+    repo: null
+    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    redistributable: true
+  - name: sercp
+    version: "0.3"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Pavel Vymetalek (=pvym)
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1233#p1233
+    description: "Serial copy for ZX128/+2/+2A/+3 Transfer possible: ZX-ZX,PC-ZX
+      Speed: 38400Bd, 8N1, RTS/CTS Block size: 16kB RAM C000-FFFF More info:
+      https://vym.cz/sercp"
+    download: http://www.esxdos.org/files/esxdos087.zip
+    repo: null
+    bundled_in: esxdos 0.8.7 final
+    redistributable: true
+  - name: sheet
+    version: "0.3"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Chris Taylor/taylorza
+    homepage: https://taylorza.itch.io/zxnsheet
+    description: Sheet (ZX Spectrum Next Spreadsheet)
+    download: https://taylorza.itch.io/zxnsheet
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: shownxi
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: "Miroslav Bursa: .shownxi I wrote a new SHOWNXI dot command for the
+      ZX Spectrum Next, mainly because I wanted a simple way to test NXI file
+      export from ZX Pixel Paste and I could not find anything suitable at the
+      time. It supports both commo"
+    download: https://github.com/perrada69/shownxi/releases/tag/1.1
+    repo: https://github.com/perrada69/shownxi
+    bundled_in: null
+    redistributable: true
+  - name: sidplay
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - rpi0
+    author: (Maybe Victor Trucco ?)
+    homepage: https://www.facebook.com/groups/specnext/permalink/446917585665567/
+    description: "Demo-Video on: https://youtu.be/8fusdhM082E"
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: snapload
+    version: 0.3.13
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: "Load Snapshots Controll in menu: ================= L=start snap
+      with set lock bit U=start snap and ignore lock bit V=start snap with
+      videoram 1 W=start snap with videoram 2 0-7=start snap with ram page 0-7
+      R=start snap with rom0(128basic) B"
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: speakcz
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: SPEAKCZ is command for speak text in Czech pronunciation. (In
+      future will exist also command SPEAKENG with correct english
+      pronunciation)
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: spui
+    version: 0.3.0
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: D. Rimron-Soutter (Xalior)
+    homepage: https://www.stalepixels.com/software/spui/
+    description: Stale Pixels User Interface tools (aka SPUI) -- Abstract == SPUI is
+      a DotCommand for the ZX Spectrum Next. It's primary (sole?) purpose is to
+      make the creation of User Interaction flows from NextBASIC (a) easier; (b)
+      less ugly; (c) less eff
+    download: https://github.com/StalePixels/SPUI/releases/tag/v0.3.0
+    repo: https://github.com/StalePixels/SPUI
+    bundled_in: null
+    redistributable: true
+  - name: ssx
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Robert Morrison
+    homepage: https://github.com/flatduckrecords/ssx
+    description: 'Display SAM Coupe SCREEN$ (.ssx File) SAM Mode 3, Mode 4. This
+      DOT-command was an entry in "White Next Contest" (
+      https://www.specnext.com/white-next-contest/ ) Sample Files can be
+      downloaded fom on: https://github.com/simonowen/ssxview/blo'
+    download: https://github.com/flatduckrecords/ssx/releases/download/v1.0/ssx
+    repo: https://github.com/flatduckrecords/ssx
+    bundled_in: null
+    redistributable: true
+  - name: strings
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) 2016 ub880d
+    homepage: http://sindik.at/~ub880d/2016/10/8-nove-utilitky-pre-esxdos-strings-a-launcher/
+    description: ""
+    download: http://sindik.at/~ub880d/download/article_8/strings
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tap2mic
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: rkd77 / Witold Filipczyk
+    homepage: https://github.com/rkd77/tap2mic
+    description: It make possible write TAP-image to real tape(plays it to "MIC" output).
+    download: https://web.archive.org/web/20190921075120/http://nihirash.net/tap2mic
+    repo: https://github.com/rkd77/tap2mic
+    bundled_in: null
+    redistributable: true
+  - name: tapein
+    version: "0.3"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: (c) phoenix,ub880d
+    homepage: http://sindik.at/~ub880d/2016/03/3-drobna-uprava-prikazov-tapein-a-tapeout/
+    description: ""
+    download: http://sindik.at/~ub880d/download/article_3/tapein
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tapeout
+    version: "0.2"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: phoenix,ub880d
+    homepage: http://sindik.at/~ub880d/2016/03/3-drobna-uprava-prikazov-tapein-a-tapeout/
+    description: ""
+    download: http://sindik.at/~ub880d/download/article_3/tapeout
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tar
+    version: "0.4"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: ub880d
+    homepage: https://zxfiles.net/zxtar.php https://zxfiles.samcoupe.cz/zxtar.php
+    description: ""
+    download: https://zxfiles.net/download/TAR http://zxfiles.samcoupe.cz/download/TAR
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tcpping
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Johan Engdahl
+    homepage: https://gitlab.com/thesmog358/tbblue/-/blob/master/src/c/DotCommands/tcpping/tcpping.c
+    description: TCPPING bps = Setting uart to x bps
+    download: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/TCPPING
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: term0
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - rpi0
+    author: Term Zero / mattsteel
+    homepage: https://itch.io/jam/dotjam
+    description: Term0 This tool starts a bi-directional communication stream with
+      the Raspberry Pi-Zero accelerator. [BREAK] quits to Basic with L BREAK
+      into program. [TRUE VIDEO] produces EOT or ^D (0x04) that normally
+      produces a 'normal exit' from whatev
+    download: https://mattsteel.itch.io/term0
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: testram
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: VELESOFT 2013
+    homepage: http://zx-pk.ru/threads/21032-tr-dos-support-in-system-esxdos/page3.html?s=613495175880b9d09291f5835f4bc125
+    description: TESTRAM is tester of ZX ram memory 48/128kB. Including Tapetester
+    download: http://velesoft.speccy.cz/other/esxdos_testram_command.zip
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: testspr2
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: Maybe SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: time
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Victor Trucco
+    homepage: https://gitlab.com/victor.trucco/RTC
+    description: Date and Time for RTC / Realtime-Clock / ZX Spectrum Next / TBBlue
+    download: https://gitlab.com/victor.trucco/RTC/raw/master/commands/TIME
+    repo: https://gitlab.com/victor.trucco/RTC
+    bundled_in: null
+    redistributable: true
+  - name: tosprram
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: null
+    description: SpecNext only
+    download: https://sourceforge.net/projects/zesarux/files/Beta_and_Snapshot_versions/ZEsarUX_extras-5.1.zip/download
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: trd
+    version: Posting
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: zxy
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1191#p1191
+    description: "New version/modification of .TRD command : .trd [TR-DOS command]
+      assumes mounted TRD image by vdisk command or .trd ! <TRD image> does : -
+      mounting TRD image as unit 0 - executing TR-DOS command RUN"
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tsplay
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://board.esxdos.org/viewtopic.php?pid=1976#p1976
+    description: "Successfully tried playing this Turbo Sound file from:
+      https://zxart.ee/eng/authors/m/mmcm/spring-warm-day-for-dizzy-game/ Direct
+      .TS-File-Download-Link:
+      https://zxart.ee/file/id:85719/filename:MmcM_-_Spring_Warm_Day_for_Dizzy_\
+      Game_%282013%"
+    download: http://www.esxdos.org/files/esxdos087.zip
+    repo: null
+    bundled_in: esxdos 0.8.7 final
+    redistributable: true
+  - name: txt2bas
+    version: "1.6"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://gitlab.com/thesmog358/tbblue/-/blob/ef6dc4fd0f684349d16354d67d4f756db2994fdb/src/asm/dot_commands/txt2bas.asm
+    description: Convert text file to BASIC
+    download: https://gitlab.com/thesmog358/tbblue/-/blob/master/dot/TXT2BAS
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: null
+    redistributable: true
+  - name: tzx2tap
+    version: "1.3"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Chris Young (chris-y)
+    homepage: https://github.com/chris-y/tzx2tap
+    description: TZX to TAP file conversion for the ZX Spectrum Next (NextZXOS) as a
+      dot command. Based on ZXTape Utilities TZX to TAP Converter v0.13b by
+      Tomaz Kac. To install copy TZX2TAP to c:/dot copy tzxconv.bas to
+      c:/nextzxos In c:/nextzxos/browser.cf
+    download: https://github.com/chris-y/tzx2tap/releases
+    repo: https://github.com/chris-y/tzx2tap
+    bundled_in: null
+    redistributable: true
+  - name: uart
+    version: 2.2e
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Tim Gilberts
+    homepage: null
+    description: ""
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: untar
+    version: 0.5.0b
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.stalepixels.com/software/D3/#untar
+    description: ".UNTAR - POSIX compliant ESXDOS version of UNTAR, super easy to
+      embed in other apps. A reduced tar extractor. Supports POSIX compliant TAR
+      archives, but only Files (the default) and Directories (type: 5). Files
+      that include: hardlinks (type"
+    download: https://github.com/StalePixels/D3
+    repo: https://github.com/StalePixels/D3
+    bundled_in: null
+    redistributable: true
+  - name: up
+    version: "1.10"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: johnnyo (Janko Stamenović)
+    homepage: https://www.specnext.com/forum/viewtopic.php?t=2545
+    description: "Upload a file via HTTP PUT Usage: .UP [-o..] fname [srv [port]]
+      Options: -b border effects -p show progress -q quiet -r allow ESP restart
+      -t double timeout -v verbose -x never init UART Use
+      /apps/wifi/up/config-up.bas to change the default "
+    download: https://gitlab.com/jankos-projects/Jankos_UP/-/blob/main/release/jankos_up_1_10.zip?ref_type=heads
+    repo: https://gitlab.com/jankos-projects/Jankos_UP
+    bundled_in: null
+    redistributable: true
+  - name: upconfig
+    version: "1.10"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: johnnyo (Janko Stamenović)
+    homepage: https://www.specnext.com/forum/viewtopic.php?t=2545
+    description: .UPCONFIG server port Sets server and port for UP
+    download: https://gitlab.com/jankos-projects/Jankos_UP/-/blob/main/release/jankos_up_1_10.zip?ref_type=heads
+    repo: https://gitlab.com/jankos-projects/Jankos_UP
+    bundled_in: null
+    redistributable: true
+  - name: vdisk
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: http://www.esxdos.org/index.html
+    description: "How to use the TR-DOS emulator: Either use the NMI browser to
+      attach/auto-LOAD .TRDs, or use the .vdisk command: .vdisk unit <filename>
+      Unit 0 = Drive A, Unit 1 = Drive B, etc. If you specify just the unit, it
+      will eject the virtual drive. "
+    download: http://www.esxdos.org/files/esxdos085.zip
+    repo: null
+    bundled_in: esxdos 0.8.5 final
+    redistributable: true
+  - name: wc
+    version: "2.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: null
+    homepage: https://github.com/perrada69/wc
+    description: Copy file of wc to directory /dot/
+    download: https://github.com/perrada69/wc/releases
+    repo: https://github.com/perrada69/wc
+    bundled_in: null
+    redistributable: true
+  - name: wconf
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divtiesus
+    author: Miguel Angel Rodríguez Jódar (mcleod-ideafix)
+    homepage: https://github.com/mcleod-ideafix/divtiesus_utils
+    description: WCONF . This dot command has no parameters. It enters an
+      interactive mode to configure the wifi module of DivTIESUS, prompt the
+      user for an access point to connect to, and the password for it. After
+      succesfully configured, AP data is stored
+    download: https://github.com/mcleod-ideafix/divtiesus_utils/blob/main/WCONF?raw=true
+    repo: https://github.com/mcleod-ideafix/divtiesus_utils
+    bundled_in: null
+    redistributable: true
+  - name: whitenoi
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Kai Weber from Computer Choice, March 1984
+    homepage: http://www.users.globalnet.co.uk/~jg27paw4/type-ins/compchoi/cc_names.htm
+    description: White Noise Generator - Plays White Noise
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
+    repo: null
+    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    redistributable: true
+  - name: writespi
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: ".readspi and .writespi (ZX-UNO only): small utilities to make
+      backup and restore copies of the SPI Flash inside ZX-UNO. Illustrate in a
+      simple way how to open, read and write files in ESXDOS, and how to handle
+      SPI Flash commands."
+    download: http://svn.zxuno.com/svn/zxuno/software/spiflashutils/
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: zxcircle
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: Ibán Cereijo Graña
+    homepage: http://icereijo.com/a-circle-algorithm-for-zx-spectrum/
+    description: ZXCircle - Fast circle drawing algorithm
+    download: http://forum.tlienhard.com/phpBB3/download/file.php?id=6574
+    repo: null
+    bundled_in: not in esxdos-release. just a compiled .asm-example as demo-file
+    redistributable: true
+  - name: zxunocfg
+    version: "0"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs: []
+    author: mcleod_ideafix
+    homepage: http://board.esxdos.org/viewtopic.php?pid=774#p774
+    description: Main configuration utility for ZX-UNO. Illustrates how to read
+      parameterse for a dot command using assembler.
+    download: http://svn.zxuno.com/svn/zxuno/software/zxunocfg/
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: zxzvm
+    version: "0.03"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divmmc
+      - divide
+    author: bob_fossil
+    homepage: https://spectrumcomputing.co.uk/forums/viewtopic.php?p=84540#p84540
+    description: "Example File can be found here: http://nothings.org/games/if/heroes/"
+    download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/ZXZVM_test2.zip
+    repo: null
+    bundled_in: null
+    redistributable: true

@@ -1,5 +1,54 @@
 # Seed list of repositories the worker indexes on start.
-# Each repo must contain a .zxpkg.toml manifest at the default branch HEAD.
-# One-off repos can also be added at runtime via the /admin form.
+# Repos WITH a .zxpkg.toml at HEAD are indexed into packages; repos without one are
+# mirrored (source preserved) and kept in "watching" state until a manifest is added
+# (upstream, or via the /admin manual-manifest form). One-off repos can also be added
+# at runtime via the /admin form.
+#
+# Production reconciliation (pkg.zx.in.net, for DB-reset re-seeding):
+#   fold/md5sum/morse/number -> syroegkin/dots (below)
+#   cowsay (marco's retrobits, repo-less) -> portal/seed/catalog.yaml
 repos:
+  # --- canonical seed (has .zxpkg.toml; produces fold/md5sum/morse/number) ---
   - https://github.com/syroegkin/dots
+
+  # --- GitHub: ZX Spectrum / esxDOS / Next dot-command sources -----------------
+  - https://github.com/nagydani/dot-commands            # esxDOS + UnoDOS3 dot commands
+  - https://github.com/chris-y/tzx2tap                  # .tzx2tap
+  - https://github.com/Nuntis-Spayz/sev-dot-cmds        # dot command collection (Next + N-Go)
+  - https://github.com/perrada69/memdump                # .memdump (Shrek/MB Maniax)
+  - https://github.com/perrada69/shownxi                # .shownxi
+  - https://github.com/perrada69/recolor                # .recolor
+  - https://github.com/perrada69/Ping-for-ZX-Spectrum-Next  # .ping
+  - https://github.com/perrada69/wc                     # .wc (wifi connect)
+  - https://github.com/nihirash/esxdos-scl2trd-dot      # .scl2trd
+  - https://github.com/nihirash/general-sound-control   # GeneralSound control dot
+  - https://github.com/mcleod-ideafix/wload             # .wload (OTA upload)
+  - https://github.com/mcleod-ideafix/divtiesus_utils   # DivTIESUS dots (.GO3E .MOUSE .NTPDATE .loadrom .WCONF)
+  - https://github.com/flatduckrecords/mdx              # .mdx (MGT microdrive extractor)
+  - https://github.com/flatduckrecords/ssx              # .ssx (SAM Coupe screens)
+  - https://github.com/em00k/nextbasic-dotcommands      # .fsize and friends
+  - https://github.com/em00k/next-zxdb-downloader       # ZXDB-dl search package (.espbaud)
+  - https://github.com/em00k/modp-zxnext                # .modp (Amiga MOD player)
+  - https://github.com/StalePixels/D3                   # .ini .every .inkey .less .untar .ch8show
+  - https://github.com/StalePixels/QEtoo                # .qe editor
+  - https://github.com/StalePixels/SPUI                 # .spui UI tools
+  - https://github.com/StalePixels/NBNtools             # .nbnget (NextBestNetwork)
+  - https://github.com/StalePixels/PiTools              # .crc32 .piput (Pi tools)
+  - https://github.com/ped7g/ZXSpectrumNextMisc         # .displayedge
+  - https://github.com/Threetwosevensixseven/espreset   # .espreset
+  - https://github.com/Threetwosevensixseven/nget       # .nget (prior-art package manager)
+  - https://github.com/Threetwosevensixseven/nxtp       # .nxtp (network time)
+  - https://github.com/Threetwosevensixseven/espupdate  # ESP firmware updater
+  - https://github.com/Threetwosevensixseven/pihash     # .pihash (Pi crypto)
+  - https://github.com/remy/next-http                   # .http
+  - https://github.com/rkd77/ear2tap                    # .ear2tap
+  - https://github.com/rkd77/tap2mic                    # .tap2mic
+  - https://github.com/essszettt/sysinfo                # .sysinfo
+  - https://github.com/essszettt/ping                   # .ping (ethernet)
+  - https://github.com/essszettt/bindump                # .bindump
+
+  # --- GitLab: SpecNext distro + dot-command sources --------------------------
+  - https://gitlab.com/thesmog358/tbblue                # System/Next official distro — /dot has many Garry Lancaster commands
+  - https://gitlab.com/victor.trucco/RTC                # .date .time (RTC)
+  - https://gitlab.com/jankos-projects/Jankos_UP        # .up / .upconfig (HTTP PUT upload)
+  - https://gitlab.com/next-tools/odin                  # .odin assembler

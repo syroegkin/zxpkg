@@ -5,6 +5,7 @@ import { parse as parseYaml } from "yaml";
 import { bootstrap, query, exec, one } from "../lib/db";
 import { crawlRepo, type RepoRow } from "../lib/archiver";
 import { parseRepoUrl } from "../lib/repo-url";
+import { seedCatalog } from "../lib/seed-catalog";
 import { env } from "../lib/env";
 
 function log(msg: string): void {
@@ -81,6 +82,8 @@ async function main(): Promise<void> {
   log("starting; applying schema…");
   await bootstrap();
   await seedRepos();
+  const cat = await seedCatalog(); // metadata + link-only packages from seed/catalog.yaml
+  log(`catalog seed: +${cat.added} added, ${cat.skipped} skipped`);
   await crawlAll(); // initial sweep on boot
 
   setInterval(() => crawlAll().catch((e) => log(`sweep error: ${e.message}`)), env.pollIntervalMs);

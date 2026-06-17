@@ -5,16 +5,16 @@
 ;
 ; INCLUDE after index_core.inc.asm.  Inputs (set by the caller/harness):
 ;   idxptr   = &index.dat
-;   srch_mach= running machine code (0=16k 1=48k 2=128k 3=next)
+;   srch_mach= running machine BIT (16k=1 48k=2 128k=4 next=8 zxuno=16)
 ;   rawterm  = search term bytes (any case); rawlen = its length (0 = list all)
 ; Outputs:
 ;   matchcount = number of matches; matchbuf[0..matchcount-1] = record indices.
 ;
-; Compat rule: a record's `machine` field is the MINIMUM model, so a record is
-; compatible iff cur_mach <= srch_mach.  Names are lowercase by manifest rule, so
-; we lowercase the term once and do a plain substring test.
+; Compat rule: a record's `machine` field is a known-good SET (bitfield), so a
+; record is compatible iff (cur_mach AND srch_mach) != 0.  Names are lowercase by
+; manifest rule, so we lowercase the term once and do a plain substring test.
 
-srch_mach  equ $9030          ; running machine code (input)
+srch_mach  equ $9030          ; running machine bit (input)
 ndl_len    equ $9031          ; lowercased needle length
 mb_ptr     equ $9034          ; matchbuf write cursor
 matchcount equ $9036          ; number of matches (output)
@@ -57,13 +57,12 @@ is_walk:
          or l
          jr z,is_done          ; all records visited
          call index_next
-         ; compat: keep iff cur_mach <= srch_mach
+         ; compat: keep iff the record's known-good SET overlaps the running machine
+         ; bit (cur_mach AND srch_mach != 0). srch_mach = the running machine's bit.
          ld a,(cur_mach)
          ld hl,srch_mach
-         cp (hl)
-         jr z,is_compat        ; equal -> compatible
-         jr nc,is_skip         ; cur_mach > srch_mach -> incompatible
-is_compat:
+         and (hl)
+         jr z,is_skip          ; no overlap -> incompatible for this machine
          call name_match       ; A = 1 if the (lowercased) term is in cur_name
          or a
          jr z,is_skip

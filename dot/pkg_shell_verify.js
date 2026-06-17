@@ -6,7 +6,8 @@
 //
 //   node pkg_shell_verify.js <esxroot> "<command>"
 //
-// Machine filter mirrors set_machine: srch_mach = next(3) -> everything compatible.
+// Machine filter mirrors set_machine: srch_mach = $FF (all bits) -> everything
+// compatible. machine is a known-good SET (bitfield), matched by AND-overlap.
 
 const fs = require("fs");
 const path = require("path");
@@ -16,25 +17,44 @@ const command = process.argv[3] || "";
 const idx = require("../spec/vectors/index.json");
 
 const CR = "\r"; // device prints byte 13
-const SRCH_MACH = 3; // set_machine default = next
-const MACH_CODE = { "16k": 0, "48k": 1, "128k": 2, "next": 3 };
+const SRCH_MACH = 0xff; // set_machine default = $FF (all bits; no HW filter yet)
+const MACH_BIT = { "16k": 1, "48k": 2, "128k": 4, "next": 8, "zxuno": 16 };
+const MACH_ORDER = ["16k", "48k", "128k", "next", "zxuno"]; // bit order (print_mach)
+
+function machBits(r) {
+  return (r.machine_csv || "")
+    .split(",").map((s) => s.trim()).filter(Boolean)
+    .reduce((f, m) => f | (MACH_BIT[m] || 0), 0);
+}
+// Mirror print_mach: each set bit's name in bit order, each followed by a space.
+function machNames(r) {
+  const bits = machBits(r);
+  let s = "";
+  for (let i = 0; i < MACH_ORDER.length; i++) if (bits & (1 << i)) s += MACH_ORDER[i] + " ";
+  return s;
+}
 
 function summary(r) {
   return `${r.name} v${r.version}${CR}`;
 }
 function detail(r) {
+  // info prints the latest-version detail, then a "versions:" list of every version
+  // of the same package (device walks all index records with a matching name).
+  const versions = idx.rows.filter((x) => x.name === r.name);
   return (
     `name: ${r.name}${CR}` +
     `ver:  ${r.version}${CR}` +
     `type: ${r.type}${CR}` +
     `cmd:  ${r.command}${CR}` +
-    `mach: ${r.machine}${CR}` +
+    `mach: ${machNames(r)}${CR}` +
     `size: ${r.size}${CR}` +
-    `desc: ${r.description}${CR}`
+    `desc: ${r.description}${CR}` +
+    `versions:${CR}` +
+    versions.map((x) => `  v${x.version}${CR}`).join("")
   );
 }
 function compatible(r) {
-  return (MACH_CODE[r.machine] ?? 3) <= SRCH_MACH;
+  return (machBits(r) & SRCH_MACH) !== 0;
 }
 
 const USAGE =
@@ -45,6 +65,7 @@ const USAGE =
   " info <name>" + CR +
   " scan            rebuild DB" + CR +
   " remove <name>" + CR +
+  " env             machine/os" + CR +
   " (install/update: .pkg-inst)" + CR;
 
 function expectedFor(cmd) {

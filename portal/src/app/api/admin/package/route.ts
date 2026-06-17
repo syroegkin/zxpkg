@@ -37,7 +37,9 @@ export async function POST(req: Request) {
       author: b.author,
       license: b.license,
       homepage: b.homepage,
-      machine: b.machine,
+      redistributable: b.redistributable,
+      bundledIn: b.bundled_in || b.bundledIn,
+      machine: Array.isArray(b.machine) ? b.machine : csv(b.machine),
       os: Array.isArray(b.os) ? b.os : csv(b.os),
       needs: Array.isArray(b.needs) ? b.needs : csv(b.needs),
       minCore: b.min_core || b.minCore,
@@ -59,7 +61,9 @@ export async function POST(req: Request) {
       author: g("author"),
       license: g("license"),
       homepage: g("homepage"),
-      machine: g("machine"),
+      redistributable: g("redistributable"),
+      bundledIn: g("bundled_in"),
+      machine: f.getAll("machine").map(String),
       os: f.getAll("os").map(String),
       needs: f.getAll("needs").map(String),
       minCore: g("min_core"),
@@ -67,9 +71,10 @@ export async function POST(req: Request) {
     };
     values = {
       repo_url: repoUrl, name: g("name"), version: g("version"), type: g("type"),
-      machine: g("machine"), os: f.getAll("os").map(String), needs: f.getAll("needs").map(String),
+      machine: f.getAll("machine").map(String), os: f.getAll("os").map(String), needs: f.getAll("needs").map(String),
       command: g("command"), src: g("src"), description: g("description"),
       license: g("license"), author: g("author"), homepage: g("homepage"),
+      redistributable: g("redistributable"), bundled_in: g("bundled_in"),
     };
   }
 

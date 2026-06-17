@@ -37,6 +37,7 @@ export default function NewManifest({ searchParams }: { searchParams: SP }) {
 
   const v = (k: string, fb = "") => (submitted ? spStr(k) : fb);
   const osChecked = (o: string) => (submitted ? spArr("os").includes(o) : o === "esxdos");
+  const machineChecked = (m: string) => (submitted ? spArr("machine").includes(m) : m === "next");
   const needChecked = (f: string) => (submitted ? spArr("needs").includes(f) : false);
 
   let toml: string | null = null;
@@ -50,7 +51,9 @@ export default function NewManifest({ searchParams }: { searchParams: SP }) {
       author: spStr("author"),
       license: spStr("license"),
       homepage: spStr("homepage") || repoUrl,
-      machine: spStr("machine") || "next",
+      redistributable: spStr("redistributable") || undefined,
+      bundledIn: spStr("bundled_in") || undefined,
+      machine: spArr("machine"),
       os: spArr("os"),
       needs: spArr("needs"),
       minCore: spStr("min_core"),
@@ -114,9 +117,12 @@ export default function NewManifest({ searchParams }: { searchParams: SP }) {
         <datalist id="zx-types">
           {SUGGESTED_TYPES.map((t) => <option key={t} value={t} />)}
         </datalist>
-        <select name="machine" defaultValue={v("machine", "next")}>
-          {MACHINES.map((m) => <option key={m} value={m}>{m}</option>)}
-        </select>
+        <span className="os-select">
+          <span className="grp-label">runs on</span>
+          {MACHINES.map((m) => (
+            <label key={m}><input type="checkbox" name="machine" value={m} defaultChecked={machineChecked(m)} /> {m}</label>
+          ))}
+        </span>
         <span className="os-select">
           <span className="grp-label">os</span>
           {OSES.map((o) => (
@@ -136,6 +142,14 @@ export default function NewManifest({ searchParams }: { searchParams: SP }) {
         <input name="license" placeholder="license (auto-detected at crawl if blank)" defaultValue={v("license")} />
         <input name="homepage" placeholder="homepage URL" defaultValue={v("homepage") || repoUrl} />
         <input name="min_core" placeholder="min Next core (optional)" defaultValue={v("min_core")} />
+        <input name="bundled_in" placeholder="bundled in (e.g. esxdos 0.8.7) — optional" defaultValue={v("bundled_in")} />
+        <label className="redist-field">
+          redistributable
+          <select name="redistributable" defaultValue={v("redistributable", "true")}>
+            <option value="true">yes — portal may rehost</option>
+            <option value="false">no — link-only (paid/restricted)</option>
+          </select>
+        </label>
         <button type="submit">Generate</button>
       </form>
 

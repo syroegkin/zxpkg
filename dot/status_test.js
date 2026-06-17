@@ -52,6 +52,7 @@ const root = path.resolve(process.argv[3] || "esxdos_root");
 
 if (mode === "setup") {
   fs.rmSync(path.join(root, "DOT"), { recursive: true, force: true });
+  fs.rmSync(path.join(root, "BIN"), { recursive: true, force: true }); // scan walks /BIN too — keep it empty here
   fs.mkdirSync(path.join(root, "DOT"), { recursive: true });
   fs.mkdirSync(path.join(root, "ZXPKG"), { recursive: true });
   fs.writeFileSync(path.join(root, "ZXPKG", "INDEX.DAT"), encIndex(recs));

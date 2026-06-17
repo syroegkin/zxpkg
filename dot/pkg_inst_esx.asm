@@ -79,6 +79,7 @@ run:
 
 cmdname: db "/CMD.TXT", 0
 
+        DEFINE TEST_INST       ; install dir = /DOT in the sim (esxDOS sim lacks M_DOSVERSION)
         INCLUDE "pkg_inst_main.inc.asm"
 
         SAVESNA "pkg_inst_esx.sna", start

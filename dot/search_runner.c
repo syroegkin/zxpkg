@@ -1,7 +1,7 @@
 /* search_runner.c — harness for the `.pkg search`/`list` query layer.
  *   ./search_runner search_demo.bin <index.dat> <term> <machine> <expected>
  *     term     : search string ("" = list all)
- *     machine  : running machine code 0=16k 1=48k 2=128k 3=next
+ *     machine  : running machine BIT/mask (16k=1 48k=2 128k=4 next=8 zxuno=16; 255=all)
  *     expected : comma-separated record indices, or "none"
  * Prints the matched record indices (with package names, parsed from index.dat
  * for readability) and self-checks against <expected>.  Exit 0 = match.

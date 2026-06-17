@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { searchPackages } from "@/lib/queries";
-import { MACHINES, OSES, SUGGESTED_TYPES, machineLabel } from "@/lib/manifest";
+import { MACHINES, OSES, SUGGESTED_TYPES, splitCsv } from "@/lib/manifest";
 import { env } from "@/lib/env";
 import JsonLd from "@/app/JsonLd";
 
@@ -92,7 +92,9 @@ export default async function Home({
             {p.description && <p className="pkg-desc">{p.description}</p>}
             <div className="chips">
               <span className="chip chip-type">{p.type}</span>
-              <span className="chip">{machineLabel(p.machine)}</span>
+              {splitCsv(p.machine_csv).map((m) => (
+                <span key={m} className="chip">{m}</span>
+              ))}
               {p.os_csv.split(",").filter(Boolean).map((o) => (
                 <span key={o} className="chip chip-os">{o}</span>
               ))}

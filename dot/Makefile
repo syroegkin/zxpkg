@@ -138,12 +138,15 @@ search_demo.bin: search_demo.asm index_core.inc.asm index_search.inc.asm
 search_runner: search_runner.c z80.h
 	$(CC) $(CFLAGS) -o search_runner search_runner.c
 search: search_demo.bin search_runner $(IDX)
-	@./search_runner search_demo.bin $(IDX) ""      3 "0,1,2"   # list all on Next
-	@./search_runner search_demo.bin $(IDX) ""      1 "0"       # list all on 48k (compat filter)
-	@./search_runner search_demo.bin $(IDX) "snake" 3 "2"       # name substring
-	@./search_runner search_demo.bin $(IDX) "n"     3 "1,2"     # substring matches nxtel+snake
-	@./search_runner search_demo.bin $(IDX) "MORSE" 3 "0"       # case-folded
-	@./search_runner search_demo.bin $(IDX) "nope"  3 "none"    # no match
+	@./search_runner search_demo.bin $(IDX) ""      255 "0,1,2,3,4" # list all (mask 0xFF = no machine filter)
+	@./search_runner search_demo.bin $(IDX) "ztool" 255 "3,4"   # multi-version: both ztool records match
+	@./search_runner search_demo.bin $(IDX) ""      2   "0"     # 48k bit: only morse lists 48k
+	@./search_runner search_demo.bin $(IDX) ""      16  "1"     # zxuno bit: only nxtel lists zxuno
+	@./search_runner search_demo.bin $(IDX) ""      8   "0,1"   # next bit: morse+nxtel (snake is 128k-only)
+	@./search_runner search_demo.bin $(IDX) "snake" 255 "2"     # name substring (no machine filter)
+	@./search_runner search_demo.bin $(IDX) "n"     255 "1,2"   # substring matches nxtel+snake
+	@./search_runner search_demo.bin $(IDX) "MORSE" 255 "0"     # case-folded
+	@./search_runner search_demo.bin $(IDX) "nope"  255 "none"  # no match
 
 # `.pkg` command-line parse + subcommand dispatch + info name lookup
 cmd_demo.bin: cmd_demo.asm index_core.inc.asm index_search.inc.asm cmd_core.inc.asm
@@ -360,7 +363,7 @@ esx-shell: pkg_shell_esx.sna
 	@rm -rf $(ESXROOT)/ZXPKG/CACHE   # install/update cases test the missing-file path (no crypto)
 	@cp ../spec/vectors/index.dat $(ESXROOT)/ZXPKG/INDEX.DAT
 	@for c in "list" "search n" "search morse" "search zzz" \
-	          "info nxtel" "info snake" "info ghost" "info" \
+	          "info nxtel" "info snake" "info ghost" "info" "info ztool" \
 	          "help" "install foo" "update" "bogus arg"; do \
 	  printf '%s' "$$c" > $(ESXROOT)/CMD.TXT; \
 	  rm -f $(ESXROOT)/OUT.TXT; \

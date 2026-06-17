@@ -23,6 +23,8 @@ rf_ver   equ $9063          ; resolved version {ptr(2), len(1)} into idxbuf
 if_name  equ $9066          ; current record's name {ptr(2), len(1)} (compare temp)
 nm_p     equ $9069          ; target name pointer (saved from pi_arg) (2)
 nm_l     equ $906b          ; target name length (1)
+iv_p     equ $906d          ; requested version pointer (iv_l=0 -> latest) (2) — clear of if_fh
+iv_l     equ $906f          ; requested version length (1)
 if_fh    equ $906c          ; index file handle (1)
 cmd_buf  equ $9070          ; resolved CMD as ASCIIZ, reused as pi_arg (<=16)
 sel_buf  equ $9400          ; gopher selector "<prefix>/artifacts/<name>/<ver>/<CMD>(.sig)"
@@ -81,7 +83,8 @@ do_install:
         ld a,(pi_alen)
         or a
         jp z,di_usage
-        call idx_find             ; pi_arg(<name>) -> rf_cmd/rf_ver ; CF=1 if not in index
+        call parse_name_ver       ; split arg -> nm_p/nm_l (name) + iv_p/iv_l (opt version)
+        call idx_find             ; name(+version) -> rf_cmd/rf_ver ; CF=1 if not in index
         jp c,di_noreg
         call use_cmd_as_arg       ; copy CMD to cmd_buf, repoint pi_arg/pi_alen at it
         ld hl,ip_src : ld (mk_dst),hl
@@ -89,7 +92,7 @@ do_install:
         ld hl,ip_sig : ld (mk_dst),hl
         ld hl,s_cachepre : ld de,s_sigsuf : call mk_path   ; /ZXPKG/CACHE/<CMD>.SIG
         ld hl,ip_dst : ld (mk_dst),hl
-        ld hl,s_dotpre   : ld de,s_empty  : call mk_path   ; /DOT/<CMD>
+        call pick_install_dir : ld de,s_empty : call mk_path  ; /DOT (NextZXOS) or /BIN (esxDOS)
         call cache_present        ; CF=0 if /ZXPKG/CACHE/<CMD> already staged
         jr nc,di_verify
         ld de,s_fetching : call pstr
@@ -157,6 +160,39 @@ pt_skipsp:
         ld a,(hl) : cp ' ' : ret nz
         inc hl : dec b : jr pt_skipsp
 
+; parse_name_ver: split the install argument (pi_arg/pi_alen) into a name token
+; (nm_p/nm_l) and an optional version token (iv_p/iv_l; iv_l=0 when absent).
+;   e.g. "morse 1.1.0" -> name="morse", ver="1.1.0";  "morse" -> name="morse", ver=""
+parse_name_ver:
+        ld hl,(pi_arg)
+        ld a,(pi_alen)
+        ld b,a
+        ld (nm_p),hl              ; name token
+        ld c,0
+pnv_n:
+        ld a,b : or a : jr z,pnv_nend
+        ld a,(hl) : cp ' ' : jr z,pnv_nend
+        inc hl : dec b : inc c : jr pnv_n
+pnv_nend:
+        ld a,c : ld (nm_l),a
+pnv_sk:                           ; skip spaces between name and version
+        ld a,b : or a : jr z,pnv_none
+        ld a,(hl) : cp ' ' : jr nz,pnv_v
+        inc hl : dec b : jr pnv_sk
+pnv_v:
+        ld (iv_p),hl              ; version token
+        ld c,0
+pnv_vl:
+        ld a,b : or a : jr z,pnv_vend
+        ld a,(hl) : cp ' ' : jr z,pnv_vend
+        inc hl : dec b : inc c : jr pnv_vl
+pnv_vend:
+        ld a,c : ld (iv_l),a
+        ret
+pnv_none:
+        xor a : ld (iv_l),a
+        ret
+
 ; tok_eq: HL -> ASCIIZ keyword.  Z if it case-folds equal to the token (pi_tok/
 ; pi_tlen).  Trashes A/BC/DE/HL; pi_tok/pi_tlen preserved.
 tok_eq:
@@ -220,8 +256,7 @@ tolower_a:
 ; name isn't in it.  Record = [u32 crc][mach][os][feat][u24 size] then 5 length-
 ; prefixed strings: type, cmd, name, ver, desc.
 idx_find:
-        ld hl,(pi_arg) : ld (nm_p),hl     ; remember target name (pi_arg gets repointed)
-        ld a,(pi_alen) : ld (nm_l),a
+        ; nm_p/nm_l (name) and iv_p/iv_l (optional version) are set by parse_name_ver.
         ld a,(in_drive)                   ; load /ZXPKG/INDEX.DAT into idxbuf
         ld ix,pkgdst                      ; "/ZXPKG/INDEX.DAT" (defined in install_core)
         push ix : pop hl
@@ -258,9 +293,17 @@ if_rec:
         ld ix,rf_ver : call if_capture    ; ver  -> rf_ver
         call if_skip                      ; desc
         call if_namematch                 ; Z if record name == target
+        jr nz,if_miss                     ; name differs -> next record
+        ld a,(iv_l)                        ; name matches; was a specific version asked?
+        or a
+        jr z,if_hit                       ; no -> first match wins (records are latest-first)
+        call if_vermatch                  ; Z if this record's version == requested
+        jr z,if_hit
+if_miss:
         pop de
-        jr z,if_found
         jr if_rec
+if_hit:
+        pop de
 if_found:
         or a                              ; CF=0
         ret
@@ -304,6 +347,25 @@ inm_lp:
         xor a                             ; Z = equal
         ret
 
+; if_vermatch: Z if the record's version (rf_ver) equals the requested version
+; (iv_p/iv_l), exact byte match.
+if_vermatch:
+        ld a,(rf_ver+2)
+        ld hl,iv_l
+        cp (hl)
+        ret nz                            ; lengths differ
+        or a : ret z                      ; both empty -> equal
+        ld b,a
+        ld hl,(rf_ver)
+        ld de,(iv_p)
+ivm_lp:
+        ld a,(de) : ld c,a
+        ld a,(hl) : cp c
+        ret nz
+        inc hl : inc de : djnz ivm_lp
+        xor a                             ; Z = equal
+        ret
+
 ; use_cmd_as_arg: copy rf_cmd (the resolved command) to cmd_buf as ASCIIZ and point
 ; pi_arg/pi_alen at it, so the existing mk_path builds /ZXPKG/CACHE/<CMD>, /DOT/<CMD>.
 use_cmd_as_arg:
@@ -320,6 +382,26 @@ uca_lp:
 uca_z:
         xor a : ld (de),a
         ret
+
+; pick_dotdir: HL = "/DOT/" if a /DOT directory exists (NextZXOS), else "/BIN/" (classic
+; esxDOS).  A filesystem probe — robust + testable, no OS-version syscall needed.
+; pick_install_dir: HL = "/DOT/" on NextZXOS, "/BIN/" on classic esxDOS.  Uses the same
+; reliable signal as `.pkg`'s detect_machine: M_DOSVERSION ($88) returns Fc=1 on esxDOS,
+; Fc=0 on NextZXOS.  (HW-validate-pending — no ESP/OS-version emulation in the sim.)
+pick_install_dir:
+    IFDEF TEST_INST
+        ld hl,s_dotpre                    ; headless install test: deterministic /DOT — the
+        ret                              ; esxDOS sim doesn't implement M_DOSVERSION ($88) cleanly
+    ELSE
+        rst $08
+        db $88                            ; M_DOSVERSION
+        jr c,pid_bin                      ; Fc=1 -> esxDOS -> /BIN
+        ld hl,s_dotpre                    ; NextZXOS -> /DOT
+        ret
+pid_bin:
+        ld hl,s_binpre
+        ret
+    ENDIF
 
 ; cache_present: CF=0 if /ZXPKG/CACHE/<CMD> (ip_src) already exists, else CF=1.
 cache_present:
@@ -512,11 +594,12 @@ s_cachedir:   db "/ZXPKG/CACHE", 0
 s_cachepre:   db "/ZXPKG/CACHE/", 0
 s_sigsuf:     db ".SIG", 0
 s_dotpre:     db "/DOT/", 0
+s_binpre:     db "/BIN/", 0
 s_empty:      db 0
 s_inst_ok:    db " installed", 13, 0
 s_inst_bad:   db "bad signature - refused", 13, 0
 s_inst_io:    db "install: staged file missing", 13, 0
-s_inst_usage: db "usage: .pkg-inst install <name>", 13, 0
+s_inst_usage: db "usage: .pkg-inst install <name> [version]", 13, 0
 s_inst_noreg: db "not in registry - run .pkg-inst update", 13, 0
 s_inst_neterr:db "fetch failed (wifi? driver?)", 13, 0
 s_fetching:   db "fetching over wifi...", 13, 0
@@ -540,4 +623,4 @@ s_usage:      db "ZXPkg .pkg-inst:", 13
         INCLUDE "sha_core.inc.asm"
         INCLUDE "sha_stream.inc.asm"
         INCLUDE "install_core.inc.asm"
-        INCLUDE "gopher_core.inc.asm"
+        INCLUDE "gopher_uart.inc.asm"   ; self-contained ESP-over-UART (no ESPAT driver)

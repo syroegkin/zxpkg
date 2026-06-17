@@ -109,9 +109,12 @@ writeFileSync(resolve(OUT, "rabin.json"), JSON.stringify(rabinVec, null, 2) + "\
 
 // ---- index.dat v1 fixture (spec §6) — encoded with the SAME encoder the portal ships ----
 const indexRows: IndexRow[] = [
-  { name: "morse", version: "1.2.0", type: "dot", description: "Morse code for the ZX Spectrum", machine: "48k", os_csv: "nextzxos,esxdos", needs_csv: "", command: "MORSE", crc32c: 0x1234abcd, size: 512 },
-  { name: "nxtel", version: "0.9", type: "dot", description: "Viewdata / teletext client", machine: "next", os_csv: "nextzxos", needs_csv: "wifi", command: "NXTEL", crc32c: 0xdeadbeef, size: 4096 },
-  { name: "snake", version: "2.0.1", type: "game", description: "", machine: "128k", os_csv: "esxdos", needs_csv: "", command: "SNAKE", crc32c: 0x00ff00ff, size: 16384 },
+  { name: "morse", version: "1.2.0", type: "dot", description: "Morse code for the ZX Spectrum", machine_csv: "48k,128k,next", os_csv: "nextzxos,esxdos", needs_csv: "", command: "MORSE", crc32c: 0x1234abcd, size: 512 },
+  { name: "nxtel", version: "0.9", type: "dot", description: "Viewdata / teletext client", machine_csv: "next,zxuno", os_csv: "nextzxos", needs_csv: "wifi", command: "NXTEL", crc32c: 0xdeadbeef, size: 4096 },
+  { name: "snake", version: "2.0.1", type: "game", description: "", machine_csv: "128k", os_csv: "esxdos,unodos", needs_csv: "", command: "SNAKE", crc32c: 0x00ff00ff, size: 16384 },
+  // multi-version package (latest-first) — exercises versioned install + info version list
+  { name: "ztool", version: "2.0", type: "util", description: "Z tool (newer)", machine_csv: "128k", os_csv: "esxdos", needs_csv: "", command: "ZTOOL", crc32c: 0xaaaa0002, size: 1000 },
+  { name: "ztool", version: "1.0", type: "util", description: "Z tool (older)", machine_csv: "128k", os_csv: "esxdos", needs_csv: "", command: "ZTOOL", crc32c: 0xaaaa0001, size: 900 },
 ];
 const indexKeyId = 1;
 const indexBuf = encodeIndex(indexRows, indexKeyId);

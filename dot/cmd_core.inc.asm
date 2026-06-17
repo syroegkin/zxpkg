@@ -128,6 +128,7 @@ cmdtab:
          db 4,"scan",7
          db 6,"update",8
          db 6,"status",9
+         db 3,"env",10
          db 0                 ; end of table
 
 ; info_find: exact (case-folded) match of the arg against a package name.
