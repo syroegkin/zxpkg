@@ -11,18 +11,32 @@ const bp = process.env.NEXT_PUBLIC_BASE_PATH || "";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { q?: string; type?: string; machine?: string; os?: string };
+  searchParams: { q?: string; type?: string; machine?: string; os?: string; page?: string };
 }) {
   const q = searchParams.q || "";
   const type = searchParams.type || "";
   const machine = searchParams.machine || "";
   const os = searchParams.os || "";
-  const results = await searchPackages({
+  const { items: results, total, page, pages } = await searchPackages({
     q: q || undefined,
     type: type || undefined,
     machine: machine || undefined,
     os: os || undefined,
+    page: parseInt(searchParams.page || "1", 10) || 1,
   });
+  // page link preserving the active filters
+  const pageHref = (p: number) => {
+    const u = new URLSearchParams();
+    if (q) u.set("q", q);
+    if (type) u.set("type", type);
+    if (machine) u.set("machine", machine);
+    if (os) u.set("os", os);
+    u.set("page", String(p));
+    return `${bp}/?${u.toString()}`;
+  };
+  // windowed page numbers around the current page
+  const pageNums: number[] = [];
+  for (let p = Math.max(1, page - 2); p <= Math.min(pages, page + 2); p++) pageNums.push(p);
 
   const noFilters = !q && !type && !machine && !os;
   const siteUrl = `${env.publicBaseUrl}${bp}`;
@@ -81,7 +95,7 @@ export default async function Home({
       </form>
 
       <h1 className="results-heading">
-        {q ? `Results for “${q}”` : "ZX Spectrum packages & dot commands"} <span className="count">({results.length})</span>
+        {q ? `Results for “${q}”` : "ZX Spectrum packages & dot commands"} <span className="count">({total})</span>
       </h1>
 
       <ul className="pkg-list">
@@ -104,6 +118,28 @@ export default async function Home({
         ))}
       </ul>
       {results.length === 0 && <p className="empty">No packages found.</p>}
+
+      {pages > 1 && (
+        <nav className="pager" aria-label="Pagination">
+          {page > 1 ? <Link href={pageHref(page - 1)} rel="prev">‹ Prev</Link> : <span className="disabled">‹ Prev</span>}
+          {pageNums[0] > 1 && (
+            <>
+              <Link href={pageHref(1)}>1</Link>
+              {pageNums[0] > 2 && <span className="gap">…</span>}
+            </>
+          )}
+          {pageNums.map((p) =>
+            p === page ? <span key={p} className="current" aria-current="page">{p}</span> : <Link key={p} href={pageHref(p)}>{p}</Link>
+          )}
+          {pageNums[pageNums.length - 1] < pages && (
+            <>
+              {pageNums[pageNums.length - 1] < pages - 1 && <span className="gap">…</span>}
+              <Link href={pageHref(pages)}>{pages}</Link>
+            </>
+          )}
+          {page < pages ? <Link href={pageHref(page + 1)} rel="next">Next ›</Link> : <span className="disabled">Next ›</span>}
+        </nav>
+      )}
     </>
   );
 }

@@ -12,7 +12,16 @@ export interface PackageListItem {
   version: string;
 }
 
-export async function searchPackages(opts: { q?: string; type?: string; machine?: string; os?: string }): Promise<PackageListItem[]> {
+export const PAGE_SIZE = 30;
+
+export interface Paged<T> {
+  items: T[];
+  total: number;
+  page: number; // 1-based, clamped to [1, pages]
+  pages: number;
+}
+
+export async function searchPackages(opts: { q?: string; type?: string; machine?: string; os?: string; page?: number }): Promise<Paged<PackageListItem>> {
   const where: string[] = ["v.is_latest=1", "p.archive_state='listed'"];
   const params: any[] = [];
   if (opts.q) {
@@ -32,13 +41,21 @@ export async function searchPackages(opts: { q?: string; type?: string; machine?
     where.push("FIND_IN_SET(?, v.os_csv)");
     params.push(opts.os);
   }
-  return query<PackageListItem>(
+  const whereSql = where.join(" AND ");
+  const from = "FROM packages p JOIN versions v ON v.package_id = p.id";
+
+  const total = (await one<{ n: number }>(`SELECT COUNT(*) AS n ${from} WHERE ${whereSql}`, params))?.n ?? 0;
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(Math.max(1, opts.page || 1), pages);
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const items = await query<PackageListItem>(
     `SELECT p.name, p.description, p.author, v.type, v.machine_csv, v.os_csv, v.version
-     FROM packages p JOIN versions v ON v.package_id = p.id
-     WHERE ${where.join(" AND ")}
-     ORDER BY p.name LIMIT 200`,
+     ${from} WHERE ${whereSql}
+     ORDER BY p.name LIMIT ${PAGE_SIZE} OFFSET ${offset}`,
     params
   );
+  return { items, total, page, pages };
 }
 
 export interface AdminPackageRow {
@@ -50,14 +67,21 @@ export interface AdminPackageRow {
   archive_state: "listed" | "hidden" | "removed";
 }
 
-export async function adminPackages(): Promise<AdminPackageRow[]> {
-  return query<AdminPackageRow>(
+export const ADMIN_PAGE_SIZE = 50;
+
+export async function adminPackages(opts: { page?: number } = {}): Promise<Paged<AdminPackageRow>> {
+  const total = (await one<{ n: number }>("SELECT COUNT(*) AS n FROM packages"))?.n ?? 0;
+  const pages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const page = Math.min(Math.max(1, opts.page || 1), pages);
+  const offset = (page - 1) * ADMIN_PAGE_SIZE;
+  const items = await query<AdminPackageRow>(
     `SELECT p.name, p.repo_id, p.archive_state, v.version, v.type,
             (SELECT 1 FROM manual_manifests mm WHERE mm.name = p.name) AS is_manual
      FROM packages p
      LEFT JOIN versions v ON v.package_id = p.id AND v.is_latest = 1
-     ORDER BY p.name`
+     ORDER BY p.name LIMIT ${ADMIN_PAGE_SIZE} OFFSET ${offset}`
   );
+  return { items, total, page, pages };
 }
 
 // Load a manual manifest (with its repo URL) for editing.

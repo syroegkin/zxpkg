@@ -118,7 +118,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
   const repos = await query<RepoRow>(
     "SELECT id, source_url, status, error_message, last_crawled_at, last_commit_sha FROM repos ORDER BY source_url"
   );
-  const packages = await adminPackages();
+  const pkgPage = await adminPackages({ page: parseInt(spStr("pkgpage") || "1", 10) || 1 });
+  const packages = pkgPage.items;
+  const pkgPageHref = (p: number) => `${bp}/admin?pkgpage=${p}#packages`;
+  const pkgPageNums: number[] = [];
+  for (let p = Math.max(1, pkgPage.page - 2); p <= Math.min(pkgPage.pages, pkgPage.page + 2); p++) pkgPageNums.push(p);
   const collisions = await machineCollisions();
 
   const okMsg: Record<string, string> = {
@@ -320,7 +324,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         </section>
       )}
 
-      <h2>Packages <span className="muted">({packages.length})</span></h2>
+      <h2 id="packages">Packages <span className="muted">({pkgPage.total})</span></h2>
       <table className="repos">
         <thead>
           <tr><th>Name</th><th>Type</th><th>Version</th><th>Source</th><th>State</th><th>Actions</th></tr>
@@ -354,6 +358,27 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
           })}
         </tbody>
       </table>
+      {pkgPage.pages > 1 && (
+        <nav className="pager" aria-label="Packages pagination">
+          {pkgPage.page > 1 ? <a href={pkgPageHref(pkgPage.page - 1)}>‹ Prev</a> : <span className="disabled">‹ Prev</span>}
+          {pkgPageNums[0] > 1 && (
+            <>
+              <a href={pkgPageHref(1)}>1</a>
+              {pkgPageNums[0] > 2 && <span className="gap">…</span>}
+            </>
+          )}
+          {pkgPageNums.map((p) =>
+            p === pkgPage.page ? <span key={p} className="current">{p}</span> : <a key={p} href={pkgPageHref(p)}>{p}</a>
+          )}
+          {pkgPageNums[pkgPageNums.length - 1] < pkgPage.pages && (
+            <>
+              {pkgPageNums[pkgPageNums.length - 1] < pkgPage.pages - 1 && <span className="gap">…</span>}
+              <a href={pkgPageHref(pkgPage.pages)}>{pkgPage.pages}</a>
+            </>
+          )}
+          {pkgPage.page < pkgPage.pages ? <a href={pkgPageHref(pkgPage.page + 1)}>Next ›</a> : <span className="disabled">Next ›</span>}
+        </nav>
+      )}
 
       <h2>Repositories <span className="muted">({repos.length})</span></h2>
       <table className="repos">
