@@ -95,7 +95,7 @@ export default async function PackagePage({ params }: { params: { name: string }
             {pkg.archive_state === "hidden" && <span className="badge-hidden">hidden</span>}
             {pkg.is_manual ? (
               <a href={`${bp}/admin?edit=${encodeURIComponent(pkg.name)}#manual`}>Edit</a>
-            ) : artifacts.length === 0 ? (
+            ) : !pkg.source_url ? (
               <a href={`${bp}/admin?editbase=${encodeURIComponent(pkg.name)}#editbase`}>Edit</a>
             ) : null}
             <a href={`${bp}/admin?override=${encodeURIComponent(pkg.name)}#override`}>Override</a>

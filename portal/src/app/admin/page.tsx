@@ -569,7 +569,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
                 <td className="row-actions">
                   {p.is_manual
                     ? <a href={`${bp}/admin?edit=${encodeURIComponent(p.name)}#manual`}>Edit</a>
-                    : !p.has_artifact
+                    : p.repo_id == null
                     ? <a href={`${bp}/admin?editbase=${encodeURIComponent(p.name)}#editbase`}>Edit</a>
                     : null}
                   <a href={`${bp}/admin?override=${encodeURIComponent(p.name)}#override`}>Override</a>
