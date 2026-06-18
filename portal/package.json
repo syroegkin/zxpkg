@@ -10,6 +10,8 @@
     "worker": "tsx src/worker/main.ts",
     "worker:dev": "tsx watch src/worker/main.ts",
     "db:migrate": "tsx src/scripts/migrate.ts",
+    "seed:reset": "tsx src/scripts/seed-reset.ts",
+    "seed:reseed": "tsx src/scripts/seed-reseed.ts",
     "genkey": "tsx src/scripts/genkey.ts",
     "sign:selftest": "tsx src/scripts/sign-selftest.ts",
     "vectors:gen": "tsx src/scripts/gen-spec-vectors.ts",

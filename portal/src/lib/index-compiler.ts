@@ -14,13 +14,20 @@ async function indexRows(): Promise<IndexRow[]> {
   // All versions (not just is_latest) so the device can install/list specific versions.
   // Latest-first per package so a no-version `install <name>` resolves to the newest
   // (idx_find takes the first name match) and `list` can show the newest first.
+  // COALESCE admin overrides (package_overrides) over the base so the device index and
+  // gopher reflect admin edits/censorship; redistributable is also override-aware.
   return query<IndexRow>(
-    `SELECT p.name, v.version, v.type, p.description, v.machine_csv, v.os_csv, v.needs_csv,
+    `SELECT p.name, v.version, COALESCE(o.type, v.type) AS type,
+            COALESCE(o.description, p.description) AS description,
+            COALESCE(o.machine_csv, v.machine_csv) AS machine_csv,
+            COALESCE(o.os_csv, v.os_csv) AS os_csv,
+            COALESCE(o.needs_csv, v.needs_csv) AS needs_csv,
             a.command, a.crc32c, a.size
      FROM versions v
      JOIN packages p ON p.id = v.package_id
      JOIN artifacts a ON a.version_id = v.id
-     WHERE p.archive_state = 'listed' AND p.redistributable = 1
+     LEFT JOIN package_overrides o ON o.package_id = p.id
+     WHERE p.archive_state = 'listed' AND COALESCE(o.redistributable, p.redistributable) = 1
      ORDER BY p.name, p.preferred DESC, v.is_latest DESC, v.created_at DESC, a.command`
   );
 }

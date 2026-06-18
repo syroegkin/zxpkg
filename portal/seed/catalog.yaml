@@ -1,12 +1,12 @@
-# Light catalog seed derived from portal/seed/dot-commands.csv (esxDOS DOT-commands sheet V025).
+# ZXPkg catalog seed — HAND-MAINTAINED. The worker seeds this idempotently on boot
+# (skips entries whose (name, owner) already exists). Edit this file directly.
 # METADATA + LINK-ONLY: each entry is a browsable package with its original download URL
 # preserved; NOT signed and NOT in the device index until a binary is uploaded/crawled.
 #
-# BEST-EFFORT MAPPING — please review/edit:
-#  - machine defaults to [48k,128k] for plain esxDOS rows (only next/zxuno are auto-detected)
-#  - type defaults to 'dot' (some are game/util/demo)
-#  - version/name are sanitized from free-text and may need fixing
-# Regenerate: npx tsx src/scripts/catalog-seed.ts   (latest-per-command; 26 older rows skipped)
+# History: the initial ~155 entries were a ONE-TIME import from the esxDOS DOT-commands
+# sheet (src/scripts/catalog-seed.ts reading seed/dot-commands.csv). That importer is no
+# longer the source of truth — do NOT regenerate (it would clobber later hand additions).
+# Conventions: version = real version, else the release date as YYYY.MM.DD (else "0").
 packages:
   - name: "128"
     version: "0"
@@ -2652,5 +2652,1511 @@ packages:
     description: "Example File can be found here: http://nothings.org/games/if/heroes/"
     download: http://www.thefossilrecord.co.uk/wp-content/uploads/zx/ZXZVM_test2.zip
     repo: null
+    bundled_in: null
+    redistributable: true
+# --- Web-research additions (2026-06): dot commands harvested from GitHub, GitLab,
+#     z88dk, esxDOS/Spectrum-Next forums and the NextZXOS (tbblue) distro. Link/metadata
+#     only, same as the rest of this catalog. UART-based Pi tools mapped to needs:[accelerator],
+#     ESP tools to [wifi], MB03+ to [mb03plus], eLeMeNt ZX to [ezx]. ---
+
+  - name: bas2txt
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Converts NextBASIC program files to plain text, with options for different line-ending styles."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: bmpconv
+    version: "2020.04.21"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Converts BMP images to Next bitmap or tilemap format, with options for byte maps, 8x8 block size and saving the image."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: bmp2spr
+    version: "2022.07.07"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Converts BMP bitmap images into ZX Spectrum Next sprite data."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: boot
+    version: "1.5"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: SpecNext
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Boots into an alternative NextZXOS personality (overwrites the current config)."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: coff
+    version: "0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Toggles memory contention off on the ZX Spectrum Next."
+    download: null
+    repo: null
+    bundled_in: nextzxos
+    redistributable: true
+  - name: config
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: z88dk
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Hardware configuration tool covering CPU timing, audio, joysticks and display settings."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: core
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Boots alternative FPGA cores (Atom, CPC and others) on the Spectrum Next, with an optional ROM file."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: cpm
+    version: "1.4"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Loads the CP/M environment on the Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: crc32
+    version: "2024.04.16"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Computes the CRC-32 checksum of a file on the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: defrag
+    version: "1.7"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Defragments individual files on the SD card; later NextZXOS versions handle files up to 4GB."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: dollar
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "The .$ command: executes any other dot command using a BASIC string expression for its arguments instead of literal text."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: find
+    version: "1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: z88dk
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Searches the directory hierarchy with filters for type, size, name and depth."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: i2cscan
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Scans the I2C bus and reports connected devices."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: install
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Installs NextZXOS driver files from a .DRV file."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: lfn
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Resolves a long filename from its short 8.3 name."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: loadraw
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Chris Taylor
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Raw PCM loader companion to .playraw: loads a RAW PCM sample file into one of eight memory slots (0-7) for later playback."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: mem
+    version: "2022.10.29"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Displays memory status on the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: mkp3d
+    version: "2022.10.29"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Creates a P3D 3D-model data file for the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: mkswap
+    version: "1.3"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Creates a swap file (1-30 MB) for use by NextZXOS machine-code programs."
+    download: null
+    repo: null
+    bundled_in: nextzxos
+    redistributable: true
+  - name: ndawplay
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Plays NextDAW (NDAW) format music files."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: nexload
+    version: "1.3"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jim Bagley
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Loads and runs NEX format executables (up to NEX format v1.3)."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: nxmod
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: em00k
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Plays Amiga ProTracker MOD modules with PAULA emulation: 4-channel playback across 4 DACs, with panning, mute, restart, pause and exit keys."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: pi2c
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Raspberry Pi I2C communication interface for the Spectrum Next, with read and write capabilities."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: piget
+    version: "2024.04.16"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Receives a file from an attached Raspberry Pi accelerator over the serial link."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: piput
+    version: "2024.04.16"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Sends a file to an attached Raspberry Pi accelerator over the serial link."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: pisend
+    version: "2.00b"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: em00k
+    homepage: https://github.com/em00k/pisend-source
+    description: "Encodes and transmits files from the Spectrum Next to a Raspberry Pi over the serial link."
+    download: null
+    repo: https://github.com/em00k/pisend-source
+    bundled_in: nextzxos
+    redistributable: true
+  - name: piver
+    version: "1.18"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: SpecNext
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Reports the Raspberry Pi accelerator (nextpi) admin version over the serial link. Part of the pitools suite."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: playaky9
+    version: "2018.10.31"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Plays 9-channel Arkos Tracker modules on the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: playraw
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Chris Taylor
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "NextBASIC PCM audio player: starts, stops and queries playback of raw PCM samples loaded via .loadraw."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: playvid
+    version: "2022.12.06"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Allen Albright
+    homepage: https://github.com/em00k/MakeVid-Release
+    description: "Plays full-motion .VID videos with digital audio, streaming directly from the SD card at 28MHz. Companion to the MakeVid converter."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: ps2mode
+    version: "1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Switches the PS/2 port between mouse and keyboard modes."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: rmdir
+    version: "2020.08.31"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Gari Biasillo
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/src/c/DotCommands
+    description: "Removes directories on the ZX Spectrum Next, with optional recursive parent removal."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: showsimg
+    version: "1.03.01"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Theodore Evans
+    homepage: https://github.com/varmfskii/zxnext_tools/tree/master/showsimg
+    description: "Displays still images on the Next in many graphics modes (Layer 2, Radastan, MLT/MC HiColor, Timex, LoRes, ULA, NXI), mode auto-guessed or forced by option."
+    download: null
+    repo: https://github.com/varmfskii/zxnext_tools
+    bundled_in: nextzxos
+    redistributable: true
+  - name: spredit
+    version: "2023.12.19"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Sprite image editor that loads images into sprite VRAM and lets you edit them. Usage: .spredit <filename>."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: term
+    version: "0.80"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: SpecNext
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Serial terminal for the Next over UART at up to 115200 baud, with help via SHIFT+H and base64 file download support."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: uninstall
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Garry Lancaster
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Uninstalls a previously installed NextZXOS driver."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: unzip
+    version: "2022.10.30"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Extracts files from ZIP archives on the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: uuencode
+    version: "0.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Xalior
+    homepage: https://www.cs.hmc.edu/~oneill/specnext/dot-cmds.html
+    description: "Encodes binary files into UU-format text. Usage: .uuencode input.bin output.txt."
+    download: null
+    repo: null
+    bundled_in: nextzxos
+    redistributable: true
+  - name: xper
+    version: "3.02.00"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: SpecNext
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "Reads Xilinx FPGA peripherals on the issue 4 board: retrieves the unique DNA identifier and XADC voltage and temperature readings."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: bfind
+    version: "0.4"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: SpecNext
+    homepage: https://gitlab.com/thesmog358/tbblue/-/tree/master/dot
+    description: "BASIC Find String: searches a loaded NextBASIC program for a string from the current edit line or a given line number, reporting matching lines."
+    download: null
+    repo: https://gitlab.com/thesmog358/tbblue
+    bundled_in: nextzxos
+    redistributable: true
+  - name: espupdate
+    version: "1.71"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: Robin Verhagen-Guest
+    homepage: https://github.com/Threetwosevensixseven/espupdate
+    description: "In-circuit firmware updater for the ESP8266-01 WiFi module on the ZX Spectrum Next, flashing new firmware from a file without external hardware."
+    download: https://github.com/Threetwosevensixseven/espupdate/releases
+    repo: https://github.com/Threetwosevensixseven/espupdate
+    bundled_in: null
+    redistributable: true
+  - name: pihash
+    version: "2023.11.06"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - accelerator
+    author: Robin Verhagen-Guest
+    homepage: https://github.com/Threetwosevensixseven/pihash
+    description: "Offloads cryptographic hash operations to the Raspberry Pi Zero accelerator via NextPi over the serial link. Requires the Pi accelerator."
+    download: null
+    repo: https://github.com/Threetwosevensixseven/pihash
+    bundled_in: null
+    redistributable: true
+  - name: zxdb-dl
+    version: "0.96"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: em00k
+    homepage: https://github.com/em00k/next-zxdb-downloader
+    description: "Searches and downloads ZX Spectrum software from the ZXDB database directly to the SD card over WiFi, with pageable results and a configurable download directory."
+    download: https://github.com/em00k/next-zxdb-downloader/releases/tag/v0.96
+    repo: https://github.com/em00k/next-zxdb-downloader
+    bundled_in: null
+    redistributable: true
+  - name: zed
+    version: "2026.03.31"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: taylorza
+    homepage: https://github.com/taylorza/zed
+    description: "A native full-screen text editor for the ZX Spectrum Next. Supports navigation, cut/copy/paste, find and goto, with settings via zed.cfg."
+    download: null
+    repo: https://github.com/taylorza/zed
+    bundled_in: null
+    redistributable: true
+  - name: ed
+    version: "2023.05.29"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/next-tools/ed
+    description: "Simple text editor for the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/next-tools/ed
+    bundled_in: null
+    redistributable: true
+  - name: ned
+    version: "2020.10.11"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: null
+    homepage: https://gitlab.com/next-tools/ned
+    description: "Text editor for the ZX Spectrum Next."
+    download: null
+    repo: https://gitlab.com/next-tools/ned
+    bundled_in: null
+    redistributable: true
+  - name: sysinfo
+    version: "0.0.20"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: essszettt
+    homepage: https://github.com/essszettt/sysinfo
+    description: "Reads system information of a ZX Spectrum Next (registers, system variables and esxDOS/NextOS), with an option to save results to a text file."
+    download: https://github.com/essszettt/sysinfo/releases/tag/v0.0.20
+    repo: https://github.com/essszettt/sysinfo
+    bundled_in: null
+    redistributable: true
+  - name: pwd
+    version: "0.1.3"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: essszettt
+    homepage: https://github.com/essszettt/pwd
+    description: "Prints the current working directory on the ZX Spectrum Next."
+    download: https://github.com/essszettt/pwd/releases/tag/v0.1.3
+    repo: https://github.com/essszettt/pwd
+    bundled_in: null
+    redistributable: true
+  - name: reset
+    version: "0.1.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: essszettt
+    homepage: https://github.com/essszettt/reset
+    description: "Resets the system on a ZX Spectrum Next."
+    download: https://github.com/essszettt/reset/releases/tag/v0.1.0
+    repo: https://github.com/essszettt/reset
+    bundled_in: null
+    redistributable: true
+  - name: scrnshot
+    version: "0.1.1"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: essszettt
+    homepage: https://github.com/essszettt/scrnshot
+    description: "Creates BMP-format screenshots on the ZX Spectrum Next, supporting multiple video layers and colour modes (Layer 0/1/2, HiColor, LoRes, ULA)."
+    download: https://github.com/essszettt/scrnshot/releases/tag/v0.1.1
+    repo: https://github.com/essszettt/scrnshot
+    bundled_in: null
+    redistributable: true
+  - name: espcmd
+    version: "0.2.0"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: essszettt
+    homepage: https://github.com/essszettt/espcmd
+    description: "Sends raw AT-commands to an ESP8266 WiFi module over the UART at 115200 bit/s on the Next, with options to set baud rate and timeout."
+    download: https://github.com/essszettt/espcmd/releases/tag/v0.2.0
+    repo: https://github.com/essszettt/espcmd
+    bundled_in: null
+    redistributable: true
+  - name: dot7gfx
+    version: "2024.02.22"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: ped7g
+    homepage: https://github.com/ped7g/ZXSpectrumNextMisc/tree/master/dot7gFX
+    description: "Palette fade-out visual effect packaged as a dot command with arguments, simple to call from NextBASIC."
+    download: null
+    repo: https://github.com/ped7g/ZXSpectrumNextMisc
+    bundled_in: null
+    redistributable: true
+  - name: sync
+    version: "1.2"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs:
+      - wifi
+    author: Jari Komppa
+    homepage: https://solhsa.com/specnext.html
+    description: "NextSync: syncs files from a PC to the Next over WiFi by running a companion server on the host, for the build-run-crash-repeat dev loop."
+    download: null
+    repo: https://github.com/jarikomppa/specnext
+    bundled_in: null
+    redistributable: true
+  - name: sdbench
+    version: "2022.02.11"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa
+    homepage: https://github.com/jarikomppa/specnext/tree/master/sdbench
+    description: "Benchmarks SD card read/write performance on the ZX Spectrum Next."
+    download: null
+    repo: https://github.com/jarikomppa/specnext
+    bundled_in: null
+    redistributable: true
+  - name: playflx
+    version: "2022.02.15"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa
+    homepage: https://github.com/jarikomppa/specnext/tree/master/playflx
+    description: "Plays compressed video in an optimised FLX format designed for the ZX Spectrum Next."
+    download: null
+    repo: https://github.com/jarikomppa/specnext
+    bundled_in: null
+    redistributable: true
+  - name: zakplay
+    version: "2020.05.29"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa
+    homepage: https://github.com/jarikomppa/specnext/tree/master/zakplay
+    description: "Plays compressed music in the zak format, a universal format for AY and FM chip audio on the ZX Spectrum Next."
+    download: null
+    repo: https://github.com/jarikomppa/specnext
+    bundled_in: null
+    redistributable: true
+  - name: aymid
+    version: "2023.06.23"
+    type: dot
+    machine:
+      - next
+    os:
+      - nextzxos
+    needs: []
+    author: Jari Komppa
+    homepage: https://github.com/jarikomppa/specnext/tree/master/aymid
+    description: "Proof-of-concept MIDI file player that plays standard MIDI files through the AY sound chip on the ZX Spectrum Next."
+    download: null
+    repo: https://github.com/jarikomppa/specnext
+    bundled_in: null
+    redistributable: true
+  - name: te
+    version: "2020.09.21"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "Text editor for esxDOS text and config files, handling both CR and LF line endings; edits large files using esxDOS buffer memory."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: close
+    version: "2019.09.27"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "esxDOS/UnoDOS3 dot command to close an open file handle, reverse-engineered and written in Z80 assembly."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: open
+    version: "2019.09.28"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "esxDOS/UnoDOS3 dot command to open a file handle, reverse-engineered and written in Z80 assembly."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: load
+    version: "2022.01.21"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "Loads a BASIC program stored as a text file. Part of nagydani's esxDOS/UnoDOS3 dot-command set."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: save
+    version: "2022.01.20"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "Saves a BASIC program as a text file. Part of nagydani's esxDOS/UnoDOS3 dot-command set."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: merge
+    version: "2022.01.21"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+      - unodos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "Merges a BASIC program stored as a text file into memory. Part of nagydani's esxDOS/UnoDOS3 dot-command set."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: l
+    version: "2022.01.21"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: nagydani
+    homepage: https://github.com/nagydani/dot-commands
+    description: "Smart loader that loads files by type. Part of nagydani's esxDOS dot-command set."
+    download: null
+    repo: https://github.com/nagydani/dot-commands
+    bundled_in: null
+    redistributable: true
+  - name: gsc
+    version: "0.2"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: nihirash
+    homepage: https://github.com/nihirash/general-sound-control
+    description: "General Sound Control: plays Amiga MOD music and controls the GeneralSound sound card in the background, with pause, continue, rewind and init commands."
+    download: https://github.com/nihirash/general-sound-control/releases
+    repo: https://github.com/nihirash/general-sound-control
+    bundled_in: null
+    redistributable: true
+  - name: hrun
+    version: "2024.12.13"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+      - next
+    os:
+      - esxdos
+      - nextzxos
+    needs: []
+    author: nihirash
+    homepage: https://github.com/nihirash/esxdos-hrun
+    description: "Executes hobeta files (CODE files with a .$C extension) from esxDOS. Works standalone or as an LFN browser plugin for direct file selection."
+    download: null
+    repo: https://github.com/nihirash/esxdos-hrun
+    bundled_in: null
+    redistributable: true
+  - name: basinfo
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "Displays BASIC system variables (svars) information."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: udged
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "User-defined graphics (UDG) character editor dot command."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: prncap
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "Printer capture utility for esxDOS."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: cal
+    version: "2020.05.24"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: ub880d
+    homepage: https://board.esxdos.org/viewtopic.php?id=679
+    description: "Calendar dot command added in esxDOS v0.8.8, created by UB880D."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: partinf2
+    version: "2017.09.10"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs: []
+    author: ub880d
+    homepage: https://forum.tlienhard.com/phpBB3/viewtopic.php?t=2436
+    description: "Partition information dot command, a variant of partinfo patched by ub880d."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mbjoy
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "MB03+ Ultimate dot command that switches the Kempston joystick interface on or off."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mbrom
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "MB03+ Ultimate dot command that selects the custom ROM."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mbsaa
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "MB03+ Ultimate dot command that switches the SAA1099 sound chip on or off."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mbtmx
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "MB03+ Ultimate dot command that switches Timex graphics mode on or off."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mbula
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "MB03+ Ultimate dot command that switches the ULA+ palette on or off."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: tftp
+    version: "0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - mb03plus
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "TFTP network file-transfer client dot command for esxDOS on MB03+ hardware."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: area
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that selects the FlashROM bank."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: cpu
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that sets Z80 CPU speed, including overclock modes."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: crt
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that adjusts the TV/CRT screen output level."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: diag
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX hardware diagnostic dot command."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: gdev
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that switches the active graphics device."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: mute
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that turns sound devices on or off."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: sdev
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that switches the active sound interface."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: stick
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command for Atari and Sega controller configuration."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: xbtn
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that configures the extra button settings."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: zx
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that switches the emulated ZX Spectrum model."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: rds
+    version: "0"
+    type: dot
+    machine:
+      - element
+    os:
+      - esxdos
+    needs: []
+    author: null
+    homepage: https://esxdos.zxfiles.net/
+    description: "eLeMeNt ZX dot command that controls Radastan (low-res, 16-colour) graphics mode."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: wget
+    version: "2020.05.18"
+    type: dot
+    machine:
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - wifi
+      - ay
+    author: Alexander Sharikhin
+    homepage: https://github.com/nihirash/zx-net-tools
+    description: "esxDOS dot command for the 128K Spectrum that downloads files over HTTP to the SD card. Needs an ESP WiFi module on the AY chip. Usage: .wget //host/file out.scr"
+    download: null
+    repo: https://github.com/nihirash/zx-net-tools
+    bundled_in: null
+    redistributable: true
+  - name: wload
+    version: "2021.11.05"
+    type: dot
+    machine:
+      - zxuno
+    os:
+      - esxdos
+    needs:
+      - wifi
+    author: mcleod-ideafix
+    homepage: https://github.com/mcleod-ideafix/wload
+    description: "WiFi binary uploader for the ZX-Uno: receives machine-code binaries over the air from a PC (via netcat) by listening on a TCP port."
+    download: null
+    repo: https://github.com/mcleod-ideafix/wload
+    bundled_in: null
+    redistributable: true
+  - name: lain
+    version: "0.1"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - wifi
+    author: Alex Nihirash
+    homepage: https://github.com/nihirash/Lain
+    description: "esxDOS dot command running a TCP server on port 6144 that receives SNA snapshot files over WiFi from a PC and executes them on the Spectrum."
+    download: null
+    repo: https://github.com/nihirash/Lain
+    bundled_in: null
+    redistributable: true
+  - name: bridgezx
+    version: "0.1.0"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - wifi
+    author: M. Ignacio Monge Garcia
+    homepage: https://github.com/IgnacioMonge/BridgeZX
+    description: "esxDOS dot command that launches a listening server on a ZX Spectrum to receive files wirelessly from a PC over an ESP-12 WiFi module via UART."
+    download: null
+    repo: https://github.com/IgnacioMonge/BridgeZX
+    bundled_in: null
+    redistributable: true
+  - name: netmanzx
+    version: "1.4.5"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+      - next
+    os:
+      - esxdos
+      - nextzxos
+    needs:
+      - wifi
+    author: M. Ignacio Monge Garcia
+    homepage: https://github.com/IgnacioMonge/NetManZX
+    description: "WiFi network configuration utility for ZX Spectrum computers with ESP8266 modules: scan, join and store access points. Based on the original by Alex Nihirash."
+    download: https://github.com/IgnacioMonge/NetManZX/releases
+    repo: https://github.com/IgnacioMonge/NetManZX
+    bundled_in: null
+    redistributable: true
+  - name: iwconfig
+    version: "0.1"
+    type: dot
+    machine:
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - wifi
+    author: Alex Nihirash
+    homepage: https://github.com/nihirash/iwconfig
+    description: "Simple WiFi configuration utility for ZX-Uno. Run as .iwconfig SSID PASS to store WiFi credentials on the ESP module for use by network dot commands."
+    download: https://github.com/nihirash/iwconfig/releases
+    repo: https://github.com/nihirash/iwconfig
+    bundled_in: null
+    redistributable: true
+  - name: divramka
+    version: "2017.12.09"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+    os:
+      - esxdos
+    needs:
+      - divmmc
+    author: Velesoft
+    homepage: https://velesoft.speccy.cz/zx/divide/divide-soft.htm
+    description: "Tester utility for checking the SRAM memory in DivIDE/DivMMC interfaces."
+    download: null
+    repo: null
+    bundled_in: null
+    redistributable: true
+  - name: touch
+    version: "2025.11.14"
+    type: dot
+    machine:
+      - 48k
+      - 128k
+      - next
+    os:
+      - esxdos
+      - nextzxos
+    needs: []
+    author: aralbrec
+    homepage: https://github.com/z88dk/z88dk/tree/master/examples/zxn/unsorted/dot-command/touch
+    description: "esxDOS/NextZXOS dot command that updates a file's modification timestamp to the current date and time by reading and rewriting a byte of each file. A z88dk example."
+    download: null
+    repo: https://github.com/z88dk/z88dk
     bundled_in: null
     redistributable: true

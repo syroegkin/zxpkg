@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { searchPackages } from "@/lib/queries";
+import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
 import { MACHINES, OSES, SUGGESTED_TYPES, splitCsv } from "@/lib/manifest";
 import { env } from "@/lib/env";
 import JsonLd from "@/app/JsonLd";
@@ -17,12 +19,15 @@ export default async function Home({
   const type = searchParams.type || "";
   const machine = searchParams.machine || "";
   const os = searchParams.os || "";
+  // Admins also see hidden packages in the catalog (badged), so they can find + manage them.
+  const isAdmin = tokenIsValid(cookies().get(ADMIN_COOKIE)?.value);
   const { items: results, total, page, pages } = await searchPackages({
     q: q || undefined,
     type: type || undefined,
     machine: machine || undefined,
     os: os || undefined,
     page: parseInt(searchParams.page || "1", 10) || 1,
+    includeHidden: isAdmin,
   });
   // page link preserving the active filters
   const pageHref = (p: number) => {
@@ -103,6 +108,7 @@ export default async function Home({
           <li key={p.name} className="pkg-card">
             <Link className="pkg-name" href={`/${p.name}`}>{p.name}</Link>
             <span className="pkg-version">{p.version}</span>
+            {p.archive_state === "hidden" && <span className="badge-hidden">hidden</span>}
             {p.description && <p className="pkg-desc">{p.description}</p>}
             <div className="chips">
               <span className="chip chip-type">{p.type}</span>
@@ -112,7 +118,7 @@ export default async function Home({
               {p.os_csv.split(",").filter(Boolean).map((o) => (
                 <span key={o} className="chip chip-os">{o}</span>
               ))}
-              {p.author && <span className="pkg-author">by {p.author}</span>}
+              {p.author && <Link className="pkg-author" href={`/author/${encodeURIComponent(p.author)}`}>by {p.author}</Link>}
             </div>
           </li>
         ))}

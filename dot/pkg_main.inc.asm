@@ -488,10 +488,13 @@ qp_walk:
         or l
         jr z,qp_done
         call index_next
-        ld a,(cur_mach)        ; compat: cur_mach AND srch_mach != 0
+        ld a,(cur_mach)        ; compat: show if machine unspecified, else require overlap
+        or a
+        jr z,qp_compat         ; machine=0 (unspecified) -> compatible (warn, don't hide)
         ld hl,srch_mach
         and (hl)
-        jr z,qp_skip
+        jr z,qp_skip           ; declared a machine set but none overlaps this one
+qp_compat:
         call name_match
         or a
         jr z,qp_skip

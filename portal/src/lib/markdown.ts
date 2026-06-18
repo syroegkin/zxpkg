@@ -6,11 +6,17 @@
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Escape a value going into a double-quoted HTML attribute (esc() misses quotes).
+const escAttr = (s: string): string => esc(s).replace(/"/g, "&quot;");
+
 function inlineHtml(s: string): string {
   let t = esc(s); // escape first, then apply markup to the escaped text
   t = t.replace(/`([^`]+)`/g, (_m, c) => `<code>${c}</code>`);
+  // images BEFORE links (![alt](url) would otherwise match the link rule and leave a stray "!")
+  t = t.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_m, alt, url) =>
+    /^(https?:\/\/|\/)/.test(url) ? `<img src="${escAttr(url)}" alt="${escAttr(alt)}" loading="lazy">` : alt); // safe schemes only
   t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, txt, url) =>
-    /^(https?:\/\/|\/|#)/.test(url) ? `<a href="${esc(url)}">${txt}</a>` : txt); // safe schemes only
+    /^(https?:\/\/|\/|#)/.test(url) ? `<a href="${escAttr(url)}">${txt}</a>` : txt); // safe schemes only
   t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   t = t.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
   t = t.replace(/_([^_]+)_/g, "<em>$1</em>");

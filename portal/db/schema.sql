@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS packages (
   redistributable TINYINT(1) NOT NULL DEFAULT 1,    -- false => portal mirrors link-only (paid/restricted)
   author        VARCHAR(128) NULL,
   category      VARCHAR(64)  NULL,
+  readme        LONGTEXT     NULL,                 -- long markdown body (web page only; never in device index)
   -- listed = public; hidden = unlisted (review); removed = tombstone (files deleted,
   -- row kept so it can't be silently re-archived). Public catalog/index = listed only.
   archive_state ENUM('listed','hidden','removed') NOT NULL DEFAULT 'listed',
@@ -80,6 +81,32 @@ CREATE TABLE IF NOT EXISTS manual_manifests (
   CONSTRAINT fk_manual_repo FOREIGN KEY (repo_id) REFERENCES repos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Admin per-field overrides layered ON TOP of a package's base data (seed / crawled
+-- TOML / upload). NULL column = inherit the base; non-NULL = the override wins at read
+-- time (site, search, device index.dat + gopher). The crawler never touches this table,
+-- so admin edits survive every re-crawl; "drop override" = delete the row (or NULL a
+-- column) and the underlying source re-surfaces. One row per package (package_id).
+CREATE TABLE IF NOT EXISTS package_overrides (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  package_id      INT UNSIGNED NOT NULL UNIQUE,
+  -- package-level fields (mirror `packages`)
+  description     VARCHAR(255) NULL,
+  readme          LONGTEXT     NULL,
+  homepage        VARCHAR(512) NULL,
+  license         VARCHAR(64)  NULL,
+  author          VARCHAR(128) NULL,
+  redistributable TINYINT(1)   NULL,
+  -- version-level fields (mirror the latest `versions` row; applied package-wide)
+  type            VARCHAR(24)  NULL,
+  machine_csv     VARCHAR(64)  NULL,
+  os_csv          VARCHAR(64)  NULL,
+  needs_csv       VARCHAR(128) NULL,
+  bundled_in      VARCHAR(255) NULL,
+  note            VARCHAR(255) NULL,                  -- admin note: why this was overridden
+  updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_override_pkg FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Non-installable, download-only companion files preserved for a version (e.g. the
 -- author's original source/binary zip). Never signed, never put in the device index
 -- (index.dat is built from `artifacts` only) — a zip can't leak into the on-device flow.
@@ -132,3 +159,7 @@ ALTER TABLE packages ADD COLUMN IF NOT EXISTS owner VARCHAR(64) NOT NULL DEFAULT
 ALTER TABLE packages ADD COLUMN IF NOT EXISTS preferred TINYINT(1) NOT NULL DEFAULT 0;
 ALTER TABLE packages DROP INDEX IF EXISTS name;             -- old global-unique on name
 ALTER TABLE packages ADD UNIQUE INDEX IF NOT EXISTS uq_name_owner (name, owner);
+-- Rich markdown body for the package web page (2026-06): short `description` stays the
+-- device/card summary; `readme` holds the long markdown (screenshots, formatted text).
+ALTER TABLE packages ADD COLUMN IF NOT EXISTS readme LONGTEXT NULL;
+ALTER TABLE package_overrides ADD COLUMN IF NOT EXISTS readme LONGTEXT NULL;
