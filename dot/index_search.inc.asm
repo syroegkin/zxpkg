@@ -60,9 +60,12 @@ is_walk:
          ; compat: keep iff the record's known-good SET overlaps the running machine
          ; bit (cur_mach AND srch_mach != 0). srch_mach = the running machine's bit.
          ld a,(cur_mach)
+         or a
+         jr z,is_compat        ; machine=0 (unspecified) -> compatible (warn, don't hide)
          ld hl,srch_mach
          and (hl)
-         jr z,is_skip          ; no overlap -> incompatible for this machine
+         jr z,is_skip          ; declared a machine set but none overlaps this one
+is_compat:
          call name_match       ; A = 1 if the (lowercased) term is in cur_name
          or a
          jr z,is_skip

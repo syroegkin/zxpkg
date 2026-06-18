@@ -250,6 +250,11 @@ code, .mono { font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono",
 .confirm .cancel { color: var(--muted); }
 .admin-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding: 8px 12px; background: var(--bg-soft); border: 1px dashed var(--border); border-radius: 6px; font-size: 14px; }
 .admin-bar > span { color: var(--muted); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+/* badges sit as direct children of .admin-bar; keep their own colours (override the muted/uppercase above) */
+.admin-bar > span.badge-hidden, .admin-bar > span.badge-removed, .admin-bar > span.badge-ov, .admin-bar > span.badge-meta, .admin-bar > span.badge-bin {
+  text-transform: none; letter-spacing: 0; font-size: 11px;
+}
+.admin-bar > span.badge-hidden, .admin-bar > span.badge-removed, .admin-bar > span.badge-ov, .admin-bar > span.badge-bin { color: #fff; }
 
 /* Pagination */
 .pager { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 24px 0 8px; }

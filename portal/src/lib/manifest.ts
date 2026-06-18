@@ -53,6 +53,15 @@ export const FEATURE_LABELS: Record<string, string> = {
 };
 export const featureLabel = (f: string): string => FEATURE_LABELS[f] || f;
 
+// Known OS releases for the os_version datalist (newest first). The field is free-form
+// ("<os> <version>"), but these are the common targets — e.g. "esxdos 0.8.7".
+export const ESXDOS_VERSIONS = ["0.8.9", "0.8.8", "0.8.7", "0.8.6", "0.8.5", "0.8.0", "0.7.4", "0.7.3"];
+export const NEXTZXOS_VERSIONS = ["2.09", "2.08", "2.07", "2.06", "2.05", "2.04", "2.01", "2.00"];
+export const OS_VERSION_OPTIONS = [
+  ...ESXDOS_VERSIONS.map((v) => `esxdos ${v}`),
+  ...NEXTZXOS_VERSIONS.map((v) => `nextzxos ${v}`),
+];
+
 export interface ManifestArtifact {
   src: string; // repo path (build/MORSE) or a release-asset URL
   command: string; // filename written to /DOT (esxDOS 8.3, uppercase)
@@ -69,6 +78,7 @@ export interface Manifest {
   claim?: string;
   redistributable: boolean; // default true; false ⇒ portal mirrors link-only
   bundledIn?: string; // provenance: OS/distro release it originally shipped in
+  osVersion?: string; // specific target OS release, e.g. "esxdos 0.8.7"
   machine: Machine[]; // known-good set
   os: Os[];
   needs: string[];
@@ -88,6 +98,7 @@ export interface ManifestInput {
   claim?: unknown;
   redistributable?: unknown;
   bundledIn?: unknown;
+  osVersion?: unknown;
   machine?: unknown;
   os?: unknown;
   needs?: unknown;
@@ -197,6 +208,7 @@ export function validateManifest(input: ManifestInput): ParseResult {
       claim: str(input.claim),
       redistributable: bool(input.redistributable, true),
       bundledIn: str(input.bundledIn),
+      osVersion: str(input.osVersion)?.slice(0, 48),
       machine,
       os,
       needs,
@@ -230,6 +242,7 @@ export function parseManifest(text: string): ParseResult {
     os: compat.os,
     needs: compat.needs,
     minCore: compat.min_core,
+    osVersion: compat.os_version,
     artifacts: root?.artifact,
   });
 }

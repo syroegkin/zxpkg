@@ -1,6 +1,7 @@
 // Best-effort license detection from a repo's LICENSE/COPYING file.
 // Used to fill in a package's license when the manifest doesn't state one.
-import * as git from "./git";
+import * as vcs from "./vcs";
+import type { Vcs } from "./repo-url";
 
 const CANDIDATES = [
   "LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "LICENCE.md", "LICENCE.txt",
@@ -30,9 +31,9 @@ export function detectLicenseText(text: string): string | null {
   return null;
 }
 
-export async function detectRepoLicense(mirrorDir: string): Promise<string | null> {
+export async function detectRepoLicense(kind: Vcs, mirrorDir: string): Promise<string | null> {
   for (const name of CANDIDATES) {
-    const buf = await git.readFileAtHead(mirrorDir, name);
+    const buf = await vcs.readFileAtHead(kind, mirrorDir, name);
     if (buf) {
       const lic = detectLicenseText(buf.toString("utf8").slice(0, 4000));
       if (lic) return lic;

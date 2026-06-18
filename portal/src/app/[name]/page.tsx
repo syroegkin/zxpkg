@@ -208,6 +208,7 @@ export default async function PackagePage({ params }: { params: { name: string }
               ))}
             </div>
             <p className="muted">runs on: {machinesLabel(latest.machine_csv)}</p>
+            {latest.os_version && <p className="muted">for {latest.os_version}</p>}
             {latest.min_core && <p className="muted">core ≥ {latest.min_core}</p>}
             {latest.bundled_in && <p className="muted">bundled in {latest.bundled_in}</p>}
           </section>

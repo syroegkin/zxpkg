@@ -35,9 +35,9 @@ export async function publishUpload(manifest: Manifest, files: Record<string, Bu
 
   await exec("UPDATE versions SET is_latest=0 WHERE package_id=?", [pkg.id]);
   const vr = await exec(
-    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,commit_sha,manifest_json,is_latest)
-     VALUES (?,?,?,?,?,?,?,?,?,?,1)`,
-    [pkg.id, manifest.version, manifest.type, manifest.machine.join(","), manifest.os.join(","), manifest.needs.join(","), manifest.minCore || null, manifest.bundledIn || null, UPLOAD_SHA, JSON.stringify(manifest)]
+    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,os_version,commit_sha,manifest_json,is_latest)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,1)`,
+    [pkg.id, manifest.version, manifest.type, manifest.machine.join(","), manifest.os.join(","), manifest.needs.join(","), manifest.minCore || null, manifest.bundledIn || null, manifest.osVersion || null, UPLOAD_SHA, JSON.stringify(manifest)]
   );
 
   mkdirSync(store.artifactDir(manifest.name, manifest.version), { recursive: true });

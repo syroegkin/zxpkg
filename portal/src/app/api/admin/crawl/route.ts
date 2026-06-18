@@ -1,6 +1,6 @@
 import { env } from "@/lib/env";
 import { exec, one } from "@/lib/db";
-import { parseRepoUrl } from "@/lib/repo-url";
+import { parseRepoUrl, type Vcs } from "@/lib/repo-url";
 import { reqIsAdmin } from "@/lib/admin-auth";
 import { adminBack } from "@/lib/form-redirect";
 
@@ -12,15 +12,18 @@ export async function POST(req: Request) {
 
   let url = "";
   let token: string | undefined;
+  let vcsHint = "auto"; // "git" | "svn" | "auto" (heuristic)
   if (isJson) {
     const body: any = await req.json().catch(() => ({}));
     url = body.url || "";
     token = body.token;
+    vcsHint = body.type || body.vcs || "auto";
   } else {
     const form = await req.formData();
     url = String(form.get("url") || "");
     const t = form.get("token");
     token = t == null ? undefined : String(t);
+    vcsHint = String(form.get("type") || "auto");
   }
 
   const fail = (msg: string) =>
@@ -31,12 +34,12 @@ export async function POST(req: Request) {
 
   let ref;
   try {
-    ref = parseRepoUrl(url);
+    ref = parseRepoUrl(url, vcsHint as Vcs | "auto");
   } catch {
     return fail("Invalid repository URL");
   }
 
-  await exec("INSERT IGNORE INTO repos (source_url, host) VALUES (?,?)", [ref.cloneUrl, ref.host]);
+  await exec("INSERT IGNORE INTO repos (source_url, host, vcs) VALUES (?,?,?)", [ref.cloneUrl, ref.host, ref.vcs]);
   const repo = await one<{ id: number }>("SELECT id FROM repos WHERE source_url=?", [ref.cloneUrl]);
   if (repo) await exec("INSERT INTO crawl_queue (repo_id) VALUES (?)", [repo.id]);
 

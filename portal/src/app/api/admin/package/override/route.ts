@@ -77,6 +77,7 @@ export async function POST(req: Request) {
     machine_csv: csvCol("machine", MACHINES),
     os_csv: csvCol("os", OSES),
     needs_csv: csvCol("needs", FEATURES),
+    os_version: textCol("os_version"),
     bundled_in: textCol("bundled_in"),
   };
   const note = (g("note") ?? "").trim() || null;
@@ -89,17 +90,18 @@ export async function POST(req: Request) {
     await exec(
       `INSERT INTO package_overrides
          (package_id, description, readme, homepage, license, author, redistributable,
-          type, machine_csv, os_csv, needs_csv, bundled_in, note, updated_at)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())
+          type, machine_csv, os_csv, needs_csv, os_version, bundled_in, note, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())
        ON DUPLICATE KEY UPDATE
          description=VALUES(description), readme=VALUES(readme), homepage=VALUES(homepage),
          license=VALUES(license), author=VALUES(author), redistributable=VALUES(redistributable),
          type=VALUES(type), machine_csv=VALUES(machine_csv), os_csv=VALUES(os_csv),
-         needs_csv=VALUES(needs_csv), bundled_in=VALUES(bundled_in), note=VALUES(note), updated_at=NOW()`,
+         needs_csv=VALUES(needs_csv), os_version=VALUES(os_version), bundled_in=VALUES(bundled_in),
+         note=VALUES(note), updated_at=NOW()`,
       [
         data.id, cols.description, cols.readme, cols.homepage, cols.license, cols.author,
         cols.redistributable, cols.type, cols.machine_csv, cols.os_csv, cols.needs_csv,
-        cols.bundled_in, note,
+        cols.os_version, cols.bundled_in, note,
       ]
     );
   }

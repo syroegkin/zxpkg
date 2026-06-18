@@ -143,6 +143,7 @@ export interface VersionRow {
   needs_csv: string;
   min_core: string | null;
   bundled_in: string | null;
+  os_version: string | null;
   commit_sha: string;
   is_latest: number;
   created_at: string;
@@ -195,6 +196,7 @@ export async function getPackage(
               COALESCE(o.os_csv, v.os_csv) AS os_csv,
               COALESCE(o.needs_csv, v.needs_csv) AS needs_csv,
               v.min_core, COALESCE(o.bundled_in, v.bundled_in) AS bundled_in,
+              COALESCE(o.os_version, v.os_version) AS os_version,
               v.commit_sha, v.is_latest, v.created_at
        FROM versions v LEFT JOIN package_overrides o ON o.package_id = v.package_id
        WHERE v.package_id = ? ORDER BY v.created_at DESC`,
@@ -254,7 +256,7 @@ export async function machineCollisions(): Promise<{ name: string; entries: { ow
 // The list of fields an admin may override (used by the override form + handler).
 export const OVERRIDE_FIELDS = [
   "description", "readme", "homepage", "license", "author", "redistributable",
-  "type", "machine_csv", "os_csv", "needs_csv", "bundled_in",
+  "type", "machine_csv", "os_csv", "needs_csv", "os_version", "bundled_in",
 ] as const;
 export type OverrideField = (typeof OVERRIDE_FIELDS)[number];
 
@@ -262,6 +264,8 @@ export interface OverrideEditData {
   id: number;
   name: string;
   owner: string;
+  version: string; // latest version's version string (for the simple base-edit form)
+  versionId: number | null;
   // base = the underlying source value (seed/TOML/upload), before any override
   base: Record<OverrideField, string | null>;
   // override = current per-field overrides; null = no override row yet, field null = inherits
@@ -278,7 +282,7 @@ export async function getOverrideEditData(name: string): Promise<OverrideEditDat
   );
   if (!p) return null;
   const v = await one<any>(
-    `SELECT type, machine_csv, os_csv, needs_csv, bundled_in FROM versions
+    `SELECT id, version, type, machine_csv, os_csv, needs_csv, os_version, bundled_in FROM versions
      WHERE package_id=? ORDER BY is_latest DESC, created_at DESC LIMIT 1`,
     [p.id]
   );
@@ -288,19 +292,21 @@ export async function getOverrideEditData(name: string): Promise<OverrideEditDat
     id: p.id,
     name: p.name,
     owner: p.owner,
+    version: str(v?.version) ?? "0",
+    versionId: v?.id ?? null,
     base: {
       description: str(p.description), readme: str(p.readme), homepage: str(p.homepage),
       license: str(p.license), author: str(p.author), redistributable: str(p.redistributable),
       type: str(v?.type) ?? "dot", machine_csv: str(v?.machine_csv) ?? "",
       os_csv: str(v?.os_csv) ?? "", needs_csv: str(v?.needs_csv) ?? "",
-      bundled_in: str(v?.bundled_in),
+      os_version: str(v?.os_version), bundled_in: str(v?.bundled_in),
     },
     override: o
       ? {
           description: str(o.description), readme: str(o.readme), homepage: str(o.homepage),
           license: str(o.license), author: str(o.author), redistributable: str(o.redistributable),
           type: str(o.type), machine_csv: str(o.machine_csv), os_csv: str(o.os_csv),
-          needs_csv: str(o.needs_csv), bundled_in: str(o.bundled_in), note: str(o.note),
+          needs_csv: str(o.needs_csv), os_version: str(o.os_version), bundled_in: str(o.bundled_in), note: str(o.note),
         }
       : null,
   };

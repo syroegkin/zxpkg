@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { query } from "@/lib/db";
 import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
-import { SUGGESTED_TYPES, MACHINES, OSES, FEATURES, splitCsv } from "@/lib/manifest";
+import { SUGGESTED_TYPES, MACHINES, OSES, FEATURES, OS_VERSION_OPTIONS, splitCsv } from "@/lib/manifest";
 import { adminPackages, getManualManifest, getOverrideEditData, machineCollisions } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,7 @@ interface RepoRow {
   error_message: string | null;
   last_crawled_at: string | null;
   last_commit_sha: string | null;
+  vcs: string;
 }
 
 type SP = Record<string, string | string[] | undefined>;
@@ -54,6 +55,10 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
   // Load a package's base+override data for the per-field override form (any package).
   const overrideName = spStr("override");
   const ovr = overrideName ? await getOverrideEditData(overrideName) : null;
+
+  // Load base data for the simple base-edit form (auto-added / poorly-parsed metadata).
+  const editBaseName = spStr("editbase");
+  const eb = editBaseName ? await getOverrideEditData(editBaseName) : null;
 
   // Defaults for the manual-package form: edit data > error round-trip > blanks.
   const pkg = edit
@@ -120,7 +125,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
   const crawlUrl = af === "crawl" ? spStr("url") : "";
 
   const repos = await query<RepoRow>(
-    "SELECT id, source_url, status, error_message, last_crawled_at, last_commit_sha FROM repos ORDER BY source_url"
+    "SELECT id, source_url, status, error_message, last_crawled_at, last_commit_sha, vcs FROM repos ORDER BY source_url"
   );
   const pkgPage = await adminPackages({ page: parseInt(spStr("pkgpage") || "1", 10) || 1 });
   const packages = pkgPage.items;
@@ -141,6 +146,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
     overridedrop: "Overrides dropped; base source restored.",
     metahidden: `Hid ${spStr("n")} metadata-only package(s).`,
     metalisted: `Re-listed ${spStr("n")} metadata-only package(s).`,
+    editbase: "Metadata saved; index & gopher rebuilt.",
   };
   const ok = okMsg[spStr("ok")];
 
@@ -161,6 +167,9 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
     { key: "author", label: "author" },
     { key: "bundled_in", label: "bundled in" },
   ];
+  // base-edit form helpers (direct base values, no override layer)
+  const ebSet = (field: string) => splitCsv((eb?.base[field as keyof typeof eb.base] as string) ?? "");
+  const ebRedist = eb && eb.base.redistributable === "0" ? "false" : "true";
 
   return (
     <section className="admin">
@@ -216,7 +225,12 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
 
       <h2>Add a repo that has a <code>.zxpkg.toml</code></h2>
       <form method="post" action={`${bp}/api/admin/crawl`} className="admin-form">
-        <input name="url" type="url" placeholder="https://github.com/owner/repo" defaultValue={crawlUrl} required />
+        <input name="url" type="url" placeholder="https://github.com/owner/repo or svn URL" defaultValue={crawlUrl} required />
+        <select name="type" defaultValue="auto" title="version-control type">
+          <option value="auto">auto-detect</option>
+          <option value="git">git</option>
+          <option value="svn">svn (Subversion)</option>
+        </select>
         <button type="submit">Add &amp; crawl</button>
       </form>
 
@@ -231,6 +245,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <datalist id="zx-types">
           {SUGGESTED_TYPES.map((t) => (
             <option key={t} value={t} />
+          ))}
+        </datalist>
+        <datalist id="zx-osversions">
+          {OS_VERSION_OPTIONS.map((ov) => (
+            <option key={ov} value={ov} />
           ))}
         </datalist>
         <span className="os-select">
@@ -272,6 +291,55 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         </label>
         <button type="submit">{edit ? "Save changes" : "Save package"}</button>
       </form>
+
+      {eb && (
+        <section className="override-edit">
+          <h2 id="editbase">
+            Edit metadata for <code>{eb.name}</code> <span className="muted">(owner {eb.owner})</span>
+          </h2>
+          <p className="muted">
+            Edits the package&rsquo;s source fields directly — for auto-added / poorly-parsed metadata
+            entries. (For repo-crawled packages use <strong>Override</strong> instead, since a re-crawl
+            rewrites these.)
+          </p>
+          <form method="post" action={`${bp}/api/admin/package/edit-base`} className="admin-form admin-grid">
+            <input type="hidden" name="name" value={eb.name} />
+            <input name="version" placeholder="version" defaultValue={eb.version} />
+            <input name="type" list="zx-types" placeholder="type" defaultValue={eb.base.type ?? "dot"} />
+            <input name="os_version" list="zx-osversions" placeholder="OS version (e.g. esxdos 0.8.7)" defaultValue={eb.base.os_version ?? ""} />
+            <span className="os-select">
+              <span className="grp-label">runs on</span>
+              {MACHINES.map((m) => (
+                <label key={m}><input type="checkbox" name="machine" value={m} defaultChecked={ebSet("machine_csv").includes(m)} /> {m}</label>
+              ))}
+            </span>
+            <span className="os-select">
+              <span className="grp-label">os</span>
+              {OSES.map((o) => (
+                <label key={o}><input type="checkbox" name="os" value={o} defaultChecked={ebSet("os_csv").includes(o)} /> {o}</label>
+              ))}
+            </span>
+            <span className="os-select">
+              <span className="grp-label">requires</span>
+              {FEATURES.map((fk) => (
+                <label key={fk}><input type="checkbox" name="needs" value={fk} defaultChecked={ebSet("needs_csv").includes(fk)} /> {fk}</label>
+              ))}
+            </span>
+            <textarea name="description" placeholder="description" defaultValue={eb.base.description ?? ""} rows={2} className="grid-full" />
+            <input name="homepage" placeholder="homepage" defaultValue={eb.base.homepage ?? ""} />
+            <input name="license" placeholder="license" defaultValue={eb.base.license ?? ""} />
+            <input name="author" placeholder="author" defaultValue={eb.base.author ?? ""} />
+            <input name="bundled_in" placeholder="bundled in (e.g. esxdos 0.8.7 final)" defaultValue={eb.base.bundled_in ?? ""} />
+            <label className="redist-field">redistributable
+              <select name="redistributable" defaultValue={ebRedist}>
+                <option value="true">yes — rehost</option>
+                <option value="false">no — link-only</option>
+              </select>
+            </label>
+            <button type="submit">Save metadata</button>
+          </form>
+        </section>
+      )}
 
       {ovr && (
         <section className="override-edit">
@@ -346,6 +414,13 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
               </span>
               <label className="of-inherit"><input type="checkbox" name="inherit_needs" /> inherit</label>
               <div className="override-base">base: {ovr.base.needs_csv || <em>(none)</em>}</div>
+            </div>
+
+            <div className="override-field">
+              <label className="of-label">OS version {ovIsSet("os_version") && <span className="of-tag">overridden</span>}</label>
+              <input name="os_version" list="zx-osversions" defaultValue={ovEff("os_version")} />
+              <label className="of-inherit"><input type="checkbox" name="inherit_os_version" /> inherit</label>
+              <div className="override-base">base: {ovr.base.os_version || <em>(none)</em>}</div>
             </div>
 
             <div className="override-field">
@@ -482,7 +557,11 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
                     : <span className={p.archive_state === "hidden" ? "badge-hidden" : "badge-removed"}>{p.archive_state}</span>}
                 </td>
                 <td className="row-actions">
-                  {p.is_manual ? <a href={`${bp}/admin?edit=${encodeURIComponent(p.name)}#manual`}>Edit</a> : null}
+                  {p.is_manual
+                    ? <a href={`${bp}/admin?edit=${encodeURIComponent(p.name)}#manual`}>Edit</a>
+                    : !p.has_artifact
+                    ? <a href={`${bp}/admin?editbase=${encodeURIComponent(p.name)}#editbase`}>Edit</a>
+                    : null}
                   <a href={`${bp}/admin?override=${encodeURIComponent(p.name)}#override`}>Override</a>
                   {p.archive_state !== "removed" && (
                     <>
@@ -531,7 +610,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <tbody>
           {repos.map((r) => (
             <tr key={r.id}>
-              <td>{r.source_url}</td>
+              <td>{r.source_url}{r.vcs === "svn" ? <span className="badge-meta">svn</span> : null}</td>
               <td>{r.status}</td>
               <td>{r.last_commit_sha ? r.last_commit_sha.slice(0, 8) : "—"}</td>
               <td>{r.last_crawled_at ? new Date(r.last_crawled_at as any).toISOString().slice(0, 16).replace("T", " ") : "—"}</td>

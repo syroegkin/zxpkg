@@ -1,5 +1,6 @@
 // Best-effort description from a repo's README — used when a package states none.
-import * as git from "./git";
+import * as vcs from "./vcs";
+import type { Vcs } from "./repo-url";
 
 const CANDIDATES = ["README.md", "README", "README.txt", "README.markdown", "readme.md", "Readme.md"];
 
@@ -13,9 +14,9 @@ function stripMd(s: string): string {
 }
 
 // First prose line of the README (skips headings, badges, HTML, rules). Max ~240 chars.
-export async function detectRepoDescription(mirrorDir: string): Promise<string | null> {
+export async function detectRepoDescription(kind: Vcs, mirrorDir: string): Promise<string | null> {
   for (const name of CANDIDATES) {
-    const buf = await git.readFileAtHead(mirrorDir, name);
+    const buf = await vcs.readFileAtHead(kind, mirrorDir, name);
     if (!buf) continue;
     for (const raw of buf.toString("utf8").split(/\r?\n/)) {
       const line = raw.trim();

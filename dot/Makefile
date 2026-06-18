@@ -219,7 +219,7 @@ pkg: PKG ## build the .pkg dot command (query/scan/status; copy to /dot, run .pk
 
 # .pkg-inst — the crypto half (install/update); separate dot so each stays <7KB.
 PKG-INST: pkg_inst.asm pkg_inst_main.inc.asm rabin_core.inc.asm bn_core.inc.asm \
-          sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
+          sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm gopher_uart.inc.asm pubkey.bin
 	$(SJASM) pkg_inst.asm
 pkg-inst: PKG-INST ## build the .pkg-inst dot command (install/update, signature-gated)
 	@echo "built dot command: PKG-INST ($$(stat -c%s PKG-INST) bytes, <7KB classic-ok: $$([ $$(stat -c%s PKG-INST) -lt 7168 ] && echo yes || echo NO))"
@@ -264,7 +264,9 @@ SYNCDIR  := next-sync
 next-sync: PKG PKG-INST PKG-GET PKGDIAG PKGCLEAN ## stage the NextSync mirror folder for pushing to the Next
 	@mkdir -p $(SYNCDIR)/dot $(SYNCDIR)/ZXPKG
 	@cp PKG PKG-INST PKG-GET PKGDIAG PKGCLEAN $(SYNCDIR)/dot/
-	@cp ../spec/vectors/index.dat $(SYNCDIR)/ZXPKG/INDEX.DAT
+	# NB: do NOT stage spec/vectors/index.dat here — that is the TEST index and would
+	# clobber the live /ZXPKG/INDEX.DAT the device fetched via '.pkg-inst update'.
+	# The device gets its real index over WiFi ('.pkg-inst update').
 	@printf 'syncpoint.dat\nsyncignore.txt\n' > $(SYNCDIR)/syncignore.txt  # keep bookkeeping off the SD
 	@rm -f $(SYNCDIR)/syncpoint.dat               # force a full re-send on next .sync
 	@echo "staged $(SYNCDIR)/ :"
@@ -374,7 +376,7 @@ esx-shell: pkg_shell_esx.sna
 # end-to-end test of the `.pkg-inst` dot (parse + crypto verify + copy) via its $5E00
 # harness: install valid/tampered, update valid/tampered.  (timeout 10: Rabin+SHA run.)
 pkg_inst_esx.sna: pkg_inst_esx.asm pkg_inst_main.inc.asm rabin_core.inc.asm bn_core.inc.asm \
-                  sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm pubkey.bin
+                  sha_core.inc.asm sha_stream.inc.asm install_core.inc.asm gopher_uart.inc.asm pubkey.bin
 	$(SJASM) pkg_inst_esx.asm
 esx-pkg-inst: pkg_inst_esx.sna
 	@mkdir -p $(ESXROOT)/ZXPKG/CACHE $(ESXROOT)/DOT   # ensure_dirs must (re)create /ZXPKG + /ZXPKG/CACHE

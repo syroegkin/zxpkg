@@ -3,7 +3,7 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { exec, one, query } from "./db";
 import { parseManifest, deriveOwner, type Manifest } from "./manifest";
-import { parseRepoUrl, type RepoRef } from "./repo-url";
+import { parseRepoUrl, type RepoRef, type Vcs } from "./repo-url";
 import { store } from "./store";
 import { crc32c } from "./crc32c";
 import { signBlob } from "./sign";
@@ -11,12 +11,13 @@ import { rebuildIndex } from "./index-compiler";
 import { detectRepoLicense } from "./license";
 import { detectRepoDescription } from "./readme";
 import { isSafePublicUrl } from "./url-guard";
-import * as git from "./git";
+import * as vcs from "./vcs";
 
 export interface RepoRow {
   id: number;
   source_url: string;
   last_commit_sha: string | null;
+  vcs: Vcs;
 }
 
 export type CrawlStatus = "unchanged" | "indexed" | "errored" | "watching";
@@ -31,14 +32,14 @@ async function setError(id: number, msg: string): Promise<void> {
   await exec("UPDATE repos SET status='errored', error_message=?, last_crawled_at=NOW() WHERE id=?", [msg, id]);
 }
 
-async function fetchArtifactBytes(mirrorDir: string, src: string): Promise<Buffer> {
+async function fetchArtifactBytes(kind: Vcs, mirrorDir: string, src: string): Promise<Buffer> {
   if (/^https?:\/\//i.test(src)) {
     if (!isSafePublicUrl(src)) throw new Error(`refusing unsafe artifact URL: ${src}`);
     const res = await fetch(src);
     if (!res.ok) throw new Error(`download ${src} -> HTTP ${res.status}`);
     return Buffer.from(await res.arrayBuffer());
   }
-  const buf = await git.readFileAtHead(mirrorDir, src);
+  const buf = await vcs.readFileAtHead(kind, mirrorDir, src);
   if (!buf) throw new Error(`artifact src not found at HEAD: ${src}`);
   return buf;
 }
@@ -72,14 +73,14 @@ async function indexVersion(repo: RepoRow, head: string, m: Manifest, mirrorDir:
   // New version becomes the latest.
   await exec("UPDATE versions SET is_latest=0 WHERE package_id=?", [pkg.id]);
   const vr = await exec(
-    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,commit_sha,manifest_json,is_latest)
-     VALUES (?,?,?,?,?,?,?,?,?,?,1)`,
-    [pkg.id, m.version, m.type, m.machine.join(","), m.os.join(","), m.needs.join(","), m.minCore || null, m.bundledIn || null, head, JSON.stringify(m)]
+    `INSERT INTO versions (package_id,version,type,machine_csv,os_csv,needs_csv,min_core,bundled_in,os_version,commit_sha,manifest_json,is_latest)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,1)`,
+    [pkg.id, m.version, m.type, m.machine.join(","), m.os.join(","), m.needs.join(","), m.minCore || null, m.bundledIn || null, m.osVersion || null, head, JSON.stringify(m)]
   );
 
   mkdirSync(store.artifactDir(m.name, m.version), { recursive: true });
   for (const a of m.artifacts) {
-    const bytes = await fetchArtifactBytes(mirrorDir, a.src);
+    const bytes = await fetchArtifactBytes(repo.vcs, mirrorDir, a.src);
     const filePath = store.artifactFile(m.name, m.version, a.command);
     const sigPath = store.sigFile(m.name, m.version, a.command);
     writeFileSync(filePath, bytes);
@@ -99,7 +100,8 @@ async function markActive(id: number, head: string | null): Promise<void> {
 }
 
 export async function crawlRepo(repo: RepoRow): Promise<CrawlResult> {
-  const ref: RepoRef = parseRepoUrl(repo.source_url);
+  const kind = repo.vcs;
+  const ref: RepoRef = parseRepoUrl(repo.source_url, kind);
   const mirrorDir = store.mirrorDir(ref.host, ref.ownerRepo);
 
   // Admin-entered manifests (fallback for repos that lack a .zxpkg.toml).
@@ -108,10 +110,10 @@ export async function crawlRepo(repo: RepoRow): Promise<CrawlResult> {
     [repo.id]
   );
 
-  // Remote HEAD (best-effort — the remote may be gone).
+  // Remote HEAD (best-effort — the remote may be gone). For SVN this is a revision number.
   let head: string | null = null;
   try {
-    head = await git.lsRemoteHead(ref.cloneUrl);
+    head = await vcs.lsRemoteHead(kind, ref.cloneUrl);
   } catch {
     head = null;
   }
@@ -123,18 +125,18 @@ export async function crawlRepo(repo: RepoRow): Promise<CrawlResult> {
   // Mirror is best-effort (needed for the .toml + repo-path artifacts).
   let mirrorOk = true;
   try {
-    await git.ensureMirror(ref.cloneUrl, mirrorDir);
+    await vcs.ensureMirror(kind, ref.cloneUrl, mirrorDir);
   } catch {
     mirrorOk = false;
   }
-  if (mirrorOk && !head) head = await git.localHead(mirrorDir);
+  if (mirrorOk && !head) head = await vcs.localHead(kind, mirrorDir);
 
   // A repo may ship several packages — read every *.zxpkg.toml at HEAD.
   const tomlManifests: Manifest[] = [];
   const tomlErrors: string[] = [];
   if (mirrorOk) {
-    for (const path of await git.listManifests(mirrorDir)) {
-      const buf = await git.readFileAtHead(mirrorDir, path);
+    for (const path of await vcs.listManifests(kind, mirrorDir)) {
+      const buf = await vcs.readFileAtHead(kind, mirrorDir, path);
       if (!buf) continue;
       const parsed = parseManifest(buf.toString("utf8"));
       if (parsed.manifest) tomlManifests.push(parsed.manifest);
@@ -184,13 +186,13 @@ export async function crawlRepo(repo: RepoRow): Promise<CrawlResult> {
 
   // Auto-detect the license from the repo's LICENSE/COPYING when not stated.
   if (mirrorOk && manifests.some((m) => !m.license)) {
-    const lic = await detectRepoLicense(mirrorDir);
+    const lic = await detectRepoLicense(kind, mirrorDir);
     if (lic) for (const m of manifests) if (!m.license) m.license = lic;
   }
 
   // Auto-fill the description from the repo's README when not stated.
   if (mirrorOk && manifests.some((m) => !m.description)) {
-    const desc = await detectRepoDescription(mirrorDir);
+    const desc = await detectRepoDescription(kind, mirrorDir);
     if (desc) for (const m of manifests) if (!m.description) m.description = desc;
   }
 

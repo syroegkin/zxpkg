@@ -38,7 +38,7 @@ async function crawlAll(): Promise<void> {
   if (sweeping) return;
   sweeping = true;
   try {
-    const repos = await query<RepoRow>("SELECT id, source_url, last_commit_sha FROM repos");
+    const repos = await query<RepoRow>("SELECT id, source_url, last_commit_sha, vcs FROM repos");
     log(`sweep: ${repos.length} repo(s)`);
     for (const r of repos) {
       try {
@@ -62,7 +62,7 @@ async function drainQueue(): Promise<void> {
       "SELECT id, repo_id FROM crawl_queue WHERE status='pending' ORDER BY id LIMIT 10"
     );
     for (const it of items) {
-      const repo = await one<RepoRow>("SELECT id, source_url, last_commit_sha FROM repos WHERE id=?", [it.repo_id]);
+      const repo = await one<RepoRow>("SELECT id, source_url, last_commit_sha, vcs FROM repos WHERE id=?", [it.repo_id]);
       try {
         if (repo) {
           const res = await crawlRepo(repo);

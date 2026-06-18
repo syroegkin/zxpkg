@@ -111,6 +111,7 @@ di_ok:
         ld de,ip_dst : call pstr
         ld de,s_inst_ok : jp pstr
 di_bad:
+        call del_cache_art                ; drop the bad download so a retry refetches cleanly
         ld de,s_inst_bad : jp pstr
 di_noreg:
         ld de,s_inst_noreg : jp pstr
@@ -132,6 +133,7 @@ du_ok:
         call del_cache_index              ; transient: drop the staged index so next update refetches
         ld de,s_upd_ok : jp pstr
 du_bad:
+        call del_cache_index              ; drop the bad staged index so a retry refetches
         ld de,s_upd_bad : jp pstr
 du_neterr:
         ld de,s_inst_neterr : jp pstr
@@ -291,7 +293,8 @@ if_rec:
         ld ix,rf_cmd : call if_capture    ; cmd  -> rf_cmd
         ld ix,if_name : call if_capture   ; name -> if_name (compare temp)
         ld ix,rf_ver : call if_capture    ; ver  -> rf_ver
-        call if_skip                      ; desc
+        call if_skip                      ; desc ; HL now -> next record
+        push hl                           ; if_namematch/if_vermatch trash HL — save next-record ptr
         call if_namematch                 ; Z if record name == target
         jr nz,if_miss                     ; name differs -> next record
         ld a,(iv_l)                        ; name matches; was a specific version asked?
@@ -300,9 +303,11 @@ if_rec:
         call if_vermatch                  ; Z if this record's version == requested
         jr z,if_hit
 if_miss:
+        pop hl                            ; restore the next-record pointer
         pop de
         jr if_rec
 if_hit:
+        pop hl                            ; discard saved next-record ptr (balance the stack)
         pop de
 if_found:
         or a                              ; CF=0
@@ -475,6 +480,21 @@ del_cache_index:
         db F_UNLINK
         ld a,(in_drive)
         ld ix,idxsig
+        push ix : pop hl
+        rst $08
+        db F_UNLINK
+        ret
+
+; del_cache_art: drop the staged artifact (+.SIG) after a FAILED verify, so a bad or
+; truncated download can't poison the next install (which is cache-first).
+del_cache_art:
+        ld a,(in_drive)
+        ld ix,ip_src
+        push ix : pop hl
+        rst $08
+        db F_UNLINK
+        ld a,(in_drive)
+        ld ix,ip_sig
         push ix : pop hl
         rst $08
         db F_UNLINK

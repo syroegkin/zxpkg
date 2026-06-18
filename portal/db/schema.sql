@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS repos (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   source_url      VARCHAR(512) NOT NULL UNIQUE,
   host            VARCHAR(64)  NOT NULL DEFAULT 'git',
+  vcs             ENUM('git','svn') NOT NULL DEFAULT 'git',  -- version-control type (git or Subversion)
   owner_handle    VARCHAR(128) NULL,
   claim_token     VARCHAR(64)  NULL,
   claim_state     ENUM('unclaimed','claimed') NOT NULL DEFAULT 'unclaimed',
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS versions (
   os_csv        VARCHAR(64)  NOT NULL DEFAULT '',
   needs_csv     VARCHAR(128) NOT NULL DEFAULT '',
   min_core      VARCHAR(16)  NULL,
+  os_version    VARCHAR(48)  NULL,                  -- specific target OS release, e.g. "esxdos 0.8.7" / "nextzxos 2.09"
   bundled_in    VARCHAR(255) NULL,                  -- provenance: OS/distro release it shipped in
   commit_sha    CHAR(40)     NOT NULL,
   manifest_json LONGTEXT     NOT NULL,
@@ -92,6 +94,7 @@ CREATE TABLE IF NOT EXISTS package_overrides (
   -- package-level fields (mirror `packages`)
   description     VARCHAR(255) NULL,
   readme          LONGTEXT     NULL,
+  os_version      VARCHAR(48)  NULL,
   homepage        VARCHAR(512) NULL,
   license         VARCHAR(64)  NULL,
   author          VARCHAR(128) NULL,
@@ -163,3 +166,8 @@ ALTER TABLE packages ADD UNIQUE INDEX IF NOT EXISTS uq_name_owner (name, owner);
 -- device/card summary; `readme` holds the long markdown (screenshots, formatted text).
 ALTER TABLE packages ADD COLUMN IF NOT EXISTS readme LONGTEXT NULL;
 ALTER TABLE package_overrides ADD COLUMN IF NOT EXISTS readme LONGTEXT NULL;
+-- Specific target OS release (e.g. "esxdos 0.8.7") (2026-06).
+ALTER TABLE versions ADD COLUMN IF NOT EXISTS os_version VARCHAR(48) NULL;
+ALTER TABLE package_overrides ADD COLUMN IF NOT EXISTS os_version VARCHAR(48) NULL;
+-- Subversion repo support (2026-06): mirror/store SVN repos alongside git.
+ALTER TABLE repos ADD COLUMN IF NOT EXISTS vcs ENUM('git','svn') NOT NULL DEFAULT 'git';
