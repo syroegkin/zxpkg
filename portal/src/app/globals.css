@@ -171,7 +171,8 @@ code, .mono { font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono",
 .versions th, .versions td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top; }
 .versions th { color: var(--muted); font-weight: 500; }
 .tag-latest { background: #def7e5; color: #1a7f37; border-radius: 10px; padding: 1px 8px; font-size: 11px; margin-left: 8px; }
-.file-links { margin-right: 10px; white-space: nowrap; }
+.version-files { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.file-links { white-space: nowrap; }
 .file-links .sig { color: var(--muted); font-size: 12px; margin-left: 4px; }
 
 .pkg-side section { padding: 14px 0; border-top: 1px solid var(--border); }

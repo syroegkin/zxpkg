@@ -270,6 +270,9 @@ export interface OverrideEditData {
   base: Record<OverrideField, string | null>;
   // override = current per-field overrides; null = no override row yet, field null = inherits
   override: (Record<OverrideField, string | null> & { note: string | null }) | null;
+  // link-only source bundles on the latest version (editable in the base-edit form)
+  repoUrl: string | null;
+  downloadUrl: string | null;
 }
 
 // Load a package's BASE values + current OVERRIDE values for the admin override form.
@@ -287,13 +290,22 @@ export async function getOverrideEditData(name: string): Promise<OverrideEditDat
     [p.id]
   );
   const o = await one<any>("SELECT * FROM package_overrides WHERE package_id=?", [p.id]);
+  const bundles = v
+    ? await query<{ label: string | null; original_url: string | null }>(
+        "SELECT label, original_url FROM source_bundles WHERE version_id=?",
+        [v.id]
+      )
+    : [];
   const str = (x: any): string | null => (x == null ? null : String(x));
+  const bundleUrl = (label: string) => str(bundles.find((b) => b.label === label)?.original_url);
   return {
     id: p.id,
     name: p.name,
     owner: p.owner,
     version: str(v?.version) ?? "0",
     versionId: v?.id ?? null,
+    repoUrl: bundleUrl("source repository"),
+    downloadUrl: bundleUrl("original download"),
     base: {
       description: str(p.description), readme: str(p.readme), homepage: str(p.homepage),
       license: str(p.license), author: str(p.author), redistributable: str(p.redistributable),

@@ -302,7 +302,7 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
             entries. (For repo-crawled packages use <strong>Override</strong> instead, since a re-crawl
             rewrites these.)
           </p>
-          <form method="post" action={`${bp}/api/admin/package/edit-base`} className="admin-form admin-grid">
+          <form method="post" action={`${bp}/api/admin/package/edit-base`} encType="multipart/form-data" className="admin-form admin-grid">
             <input type="hidden" name="name" value={eb.name} />
             <input name="version" placeholder="version" defaultValue={eb.version} />
             <input name="type" list="zx-types" placeholder="type" defaultValue={eb.base.type ?? "dot"} />
@@ -325,17 +325,27 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
                 <label key={fk}><input type="checkbox" name="needs" value={fk} defaultChecked={ebSet("needs_csv").includes(fk)} /> {fk}</label>
               ))}
             </span>
-            <textarea name="description" placeholder="description" defaultValue={eb.base.description ?? ""} rows={2} className="grid-full" />
+            <textarea name="description" placeholder="short description (cards + device)" defaultValue={eb.base.description ?? ""} rows={2} className="grid-full" />
+            <textarea name="readme" placeholder="long description / readme — markdown, images ok (package page only)" defaultValue={eb.base.readme ?? ""} rows={8} className="grid-full readme-edit" />
             <input name="homepage" placeholder="homepage" defaultValue={eb.base.homepage ?? ""} />
             <input name="license" placeholder="license" defaultValue={eb.base.license ?? ""} />
             <input name="author" placeholder="author" defaultValue={eb.base.author ?? ""} />
             <input name="bundled_in" placeholder="bundled in (e.g. esxdos 0.8.7 final)" defaultValue={eb.base.bundled_in ?? ""} />
+            <input name="repo_url" type="url" placeholder="repo URL (source link)" defaultValue={eb.repoUrl ?? ""} />
+            <input name="download_url" type="url" placeholder="original download URL" defaultValue={eb.downloadUrl ?? ""} />
             <label className="redist-field">redistributable
               <select name="redistributable" defaultValue={ebRedist}>
                 <option value="true">yes — rehost</option>
                 <option value="false">no — link-only</option>
               </select>
             </label>
+            <p className="muted grid-full">
+              Attach a binary to make it installable (<code>.pkg-inst install {eb.name}</code>): give a command
+              name plus a file <em>or</em> a binary URL. The portal signs + indexes it.
+            </p>
+            <input name="command" placeholder="command (e.g. ZXDBDL)" defaultValue="" />
+            <input name="binary_file" type="file" />
+            <input name="binary_url" type="url" placeholder="…or binary URL to fetch" defaultValue="" />
             <button type="submit">Save metadata</button>
           </form>
         </section>

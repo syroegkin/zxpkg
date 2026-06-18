@@ -157,7 +157,7 @@ export default async function PackagePage({ params }: { params: { name: string }
                   <td>{v.machine_csv.split(",").join(", ")}</td>
                   <td>{v.os_csv.split(",").join(", ")}</td>
                   <td>{ymd(v.created_at)}</td>
-                  <td>
+                  <td className="version-files">
                     {va.map((a) => (
                       <span key={a.command} className="file-links">
                         <a href={`${bp}/artifact/${pkg.name}/${v.version}/${a.command}`}>{a.command}</a>
