@@ -30,5 +30,13 @@ EXPOSE 70
 # su=nobody: socat stays root only to bind :70, but runs gophernicus as an
 # unprivileged user (Gophernicus refuses to run as root). nobody must be able to
 # read the mounted store (the files are world-readable as the worker writes them).
+#
+# -e sig=9 -e dat=9 : serve signatures + index as RAW BINARY (gopher type 9). Without
+#   this, Gophernicus content-detects the 130-byte .sig as TEXT (no NUL bytes) and
+#   UTF-8-transcodes its high bytes (0xED -> C3 AD), inflating 130 -> 177 and CORRUPTING
+#   it -> the device's signature check fails ("bad signature"). The artifact binaries
+#   (no extension) still content-detect as binary. VERIFY after deploy:
+#     printf '/pkg/index/v1.dat.sig\r\n' | nc gopher.zx.in.net 70 | wc -c   # must be 130
+# -nf : drop the "Gophered by Gophernicus/... on ..." footer line from menus.
 CMD ["socat", "TCP-LISTEN:70,reuseaddr,fork", \
-     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher -w 64,su=nobody"]
+     "EXEC:gophernicus -h gopher.zx.in.net -r /srv/gopher -w 64 -nf -e sig=9 -e dat=9,su=nobody"]
