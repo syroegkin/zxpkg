@@ -18,6 +18,7 @@ export async function POST(req: Request) {
   const form = await req.formData();
   const name = String(form.get("name") || "");
   const state = String(form.get("state") || "");
+  const from = String(form.get("from") || ""); // "pkg" => return to the package page
   if (!reqIsAdmin(req, String(form.get("token") || "") || undefined)) {
     return new Response("Unauthorized", { status: 401 });
   }
@@ -36,5 +37,10 @@ export async function POST(req: Request) {
     }
     await rebuildIndex();
   }
-  return Response.redirect(new URL(`${env.basePath}/admin?ok=state`, env.publicBaseUrl), 303);
+  // Return to the package page when the toggle came from there (unless it was removed).
+  const dest =
+    from === "pkg" && state !== "removed"
+      ? `${env.basePath}/${encodeURIComponent(name)}`
+      : `${env.basePath}/admin?ok=state`;
+  return Response.redirect(new URL(dest, env.publicBaseUrl), 303);
 }

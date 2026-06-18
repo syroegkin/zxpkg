@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { getPackage } from "@/lib/queries";
 import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
 import { featureLabel, splitCsv, machinesLabel } from "@/lib/manifest";
+import { md2html } from "@/lib/markdown";
 import { safeHref } from "@/lib/url-guard";
 import { env } from "@/lib/env";
 import JsonLd from "@/app/JsonLd";
@@ -60,6 +61,9 @@ export default async function PackagePage({ params }: { params: { name: string }
 
   const latest = versions.find((v) => v.is_latest) || versions[0];
   const latestArtifacts = latest ? artifacts.filter((a) => a.version_id === latest.id) : [];
+  // Installable on-device ⇔ it's in the signed device index: has a binary artifact AND is
+  // redistributable. Metadata/link-only entries (no artifact) can't be `.pkg-inst install`ed.
+  const installable = artifacts.length > 0 && !!pkg.redistributable;
   // Preservation case: an uploaded package with no upstream git repository.
   const isPreserved = !pkg.source_url;
   const bundleHref = (b: (typeof bundles)[number], version: string): string | null =>
@@ -88,9 +92,17 @@ export default async function PackagePage({ params }: { params: { name: string }
         {isAdmin && (
           <div className="admin-bar">
             <span>Admin</span>
+            {pkg.archive_state === "hidden" && <span className="badge-hidden">hidden</span>}
             {pkg.is_manual ? (
               <a href={`${bp}/admin?edit=${encodeURIComponent(pkg.name)}#manual`}>Edit</a>
             ) : null}
+            <a href={`${bp}/admin?override=${encodeURIComponent(pkg.name)}#override`}>Override</a>
+            <form method="post" action={`${bp}/api/admin/package/state`} className="inline-form">
+              <input type="hidden" name="name" value={pkg.name} />
+              <input type="hidden" name="state" value={pkg.archive_state === "hidden" ? "listed" : "hidden"} />
+              <input type="hidden" name="from" value="pkg" />
+              <button type="submit" className="linkish">{pkg.archive_state === "hidden" ? "Show" : "Hide"}</button>
+            </form>
             <a className="btn-danger-link" href={`${bp}/admin?confirm=package&name=${encodeURIComponent(pkg.name)}`}>Delete</a>
           </div>
         )}
@@ -100,10 +112,25 @@ export default async function PackagePage({ params }: { params: { name: string }
         </header>
         {pkg.description && <p className="pkg-lead">{pkg.description}</p>}
 
-        <div className="install-box">
-          <span className="install-label">Install on your ZX Spectrum</span>
-          <code>.pkg-inst install {pkg.name}</code>
-        </div>
+        {installable ? (
+          <div className="install-box">
+            <span className="install-label">Install on your ZX Spectrum</span>
+            <code>.pkg-inst install {pkg.name}</code>
+          </div>
+        ) : (
+          <div className="install-box install-box-meta">
+            <span className="install-label">Archive entry — not installable on device</span>
+            <span className="muted">
+              No signed binary in the registry yet, so <code>.pkg-inst</code> can&rsquo;t fetch it. Grab it
+              from the source or homepage links{pkg.redistributable ? "" : " (this one is preserved link-only)"}.
+            </span>
+          </div>
+        )}
+
+        {pkg.readme && (
+          // md2html escapes all HTML and emits only a safe tag whitelist, so this is XSS-safe.
+          <div className="pkg-readme" dangerouslySetInnerHTML={{ __html: md2html(pkg.readme) }} />
+        )}
 
         <h2>Versions</h2>
         <table className="versions">
@@ -153,13 +180,21 @@ export default async function PackagePage({ params }: { params: { name: string }
       </div>
 
       <aside className="pkg-side">
-        <section>
-          <h3>Install</h3>
-          <code className="side-install">.pkg-inst install {pkg.name}</code>
-          {!pkg.redistributable && (
-            <p className="muted">Preserved but not redistributed — download via the original source link.</p>
-          )}
-        </section>
+        {installable ? (
+          <section>
+            <h3>Install</h3>
+            <code className="side-install">.pkg-inst install {pkg.name}</code>
+          </section>
+        ) : (
+          <section>
+            <h3>Not installable</h3>
+            <p className="muted">
+              {pkg.redistributable
+                ? "Metadata/archive entry — no signed binary yet. Use the source or homepage link below."
+                : "Preserved but not redistributed — download via the original source link below."}
+            </p>
+          </section>
+        )}
         {latest && (
           <section>
             <h3>Compatibility</h3>
@@ -208,7 +243,7 @@ export default async function PackagePage({ params }: { params: { name: string }
         {pkg.author && (
           <section>
             <h3>Author</h3>
-            <p>{pkg.author}</p>
+            <p><a href={`${bp}/author/${encodeURIComponent(pkg.author)}`}>{pkg.author}</a></p>
           </section>
         )}
         {pkg.source_url ? (

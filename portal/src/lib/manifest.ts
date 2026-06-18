@@ -5,10 +5,10 @@
 import { parse as parseToml } from "smol-toml";
 import { parseRepoUrl } from "./repo-url";
 
-export type Machine = "16k" | "48k" | "128k" | "next" | "zxuno";
+export type Machine = "16k" | "48k" | "128k" | "next" | "zxuno" | "element";
 export type Os = "nextzxos" | "esxdos" | "unodos";
 
-export const MACHINES: Machine[] = ["16k", "48k", "128k", "next", "zxuno"];
+export const MACHINES: Machine[] = ["16k", "48k", "128k", "next", "zxuno", "element"];
 export const OSES: Os[] = ["nextzxos", "esxdos", "unodos"];
 
 // `machine` and `os` are KNOWN-GOOD SETS — the models/OSes a package is tested or

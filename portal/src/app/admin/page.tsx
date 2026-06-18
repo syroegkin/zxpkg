@@ -2,8 +2,8 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { query } from "@/lib/db";
 import { ADMIN_COOKIE, tokenIsValid } from "@/lib/admin-auth";
-import { SUGGESTED_TYPES, MACHINES, OSES, FEATURES } from "@/lib/manifest";
-import { adminPackages, getManualManifest, machineCollisions } from "@/lib/queries";
+import { SUGGESTED_TYPES, MACHINES, OSES, FEATURES, splitCsv } from "@/lib/manifest";
+import { adminPackages, getManualManifest, getOverrideEditData, machineCollisions } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false } };
@@ -50,6 +50,10 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
   // Load a manual package for editing (pre-fills the manual form).
   const edit = editName ? await getManualManifest(editName) : null;
   const em = edit?.manifest ?? {};
+
+  // Load a package's base+override data for the per-field override form (any package).
+  const overrideName = spStr("override");
+  const ovr = overrideName ? await getOverrideEditData(overrideName) : null;
 
   // Defaults for the manual-package form: edit data > error round-trip > blanks.
   const pkg = edit
@@ -133,6 +137,10 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
     repodel: "Repository and its packages deleted.",
     recrawl: "Re-crawl queued.",
     state: "Package state updated.",
+    override: "Overrides saved; index & gopher rebuilt.",
+    overridedrop: "Overrides dropped; base source restored.",
+    metahidden: `Hid ${spStr("n")} metadata-only package(s).`,
+    metalisted: `Re-listed ${spStr("n")} metadata-only package(s).`,
   };
   const ok = okMsg[spStr("ok")];
 
@@ -140,6 +148,19 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
   const confirmKind = spStr("confirm");
   const confirmName = spStr("name");
   const confirmId = spStr("id");
+
+  // Override-form helpers: effective value = override (if set) else base.
+  const ovEff = (field: string) =>
+    ovr ? ((ovr.override?.[field as keyof typeof ovr.override] as string | null) ?? ovr.base[field as keyof typeof ovr.base] ?? "") : "";
+  const ovIsSet = (field: string) => !!(ovr?.override && ovr.override[field as keyof typeof ovr.override] != null);
+  const ovEffSet = (field: string) => splitCsv(ovEff(field));
+  const ovRedist = ovr ? ((ovr.override?.redistributable ?? ovr.base.redistributable) === "0" ? "false" : "true") : "true";
+  const ovTextFields = [
+    { key: "homepage", label: "homepage" },
+    { key: "license", label: "license" },
+    { key: "author", label: "author" },
+    { key: "bundled_in", label: "bundled in" },
+  ];
 
   return (
     <section className="admin">
@@ -252,6 +273,107 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
         <button type="submit">{edit ? "Save changes" : "Save package"}</button>
       </form>
 
+      {ovr && (
+        <section className="override-edit">
+          <h2 id="override">
+            Override fields for <code>{ovr.name}</code> <span className="muted">(owner {ovr.owner})</span>
+          </h2>
+          <p className="muted">
+            Per-field edits that win over the package&rsquo;s source (seed / repo <code>.zxpkg.toml</code> / upload)
+            and survive re-crawls. Tick <em>inherit</em> to clear a field back to its base value; leave a field
+            untouched to keep tracking the source.
+          </p>
+          <form method="post" action={`${bp}/api/admin/package/override`} className="admin-form override-form">
+            <input type="hidden" name="name" value={ovr.name} />
+
+            <div className="override-field grid-full">
+              <label className="of-label">description <span className="muted">(short; shown on cards + device)</span> {ovIsSet("description") && <span className="of-tag">overridden</span>}</label>
+              <textarea name="description" rows={2} defaultValue={ovEff("description")} />
+              <label className="of-inherit"><input type="checkbox" name="inherit_description" /> inherit</label>
+              <div className="override-base">base: {ovr.base.description ? ovr.base.description : <em>(empty)</em>}</div>
+            </div>
+
+            <div className="override-field grid-full">
+              <label className="of-label">readme <span className="muted">(markdown; rendered on the package page — headings, lists, code, links, ![images](url))</span> {ovIsSet("readme") && <span className="of-tag">overridden</span>}</label>
+              <textarea name="readme" rows={10} defaultValue={ovEff("readme")} className="readme-edit" />
+              <label className="of-inherit"><input type="checkbox" name="inherit_readme" /> inherit</label>
+            </div>
+
+            {ovTextFields.map((tf) => (
+              <div className="override-field" key={tf.key}>
+                <label className="of-label">{tf.label} {ovIsSet(tf.key) && <span className="of-tag">overridden</span>}</label>
+                <input name={tf.key} defaultValue={ovEff(tf.key)} />
+                <label className="of-inherit"><input type="checkbox" name={`inherit_${tf.key}`} /> inherit</label>
+                <div className="override-base">base: {ovr.base[tf.key as keyof typeof ovr.base] || <em>(empty)</em>}</div>
+              </div>
+            ))}
+
+            <div className="override-field">
+              <label className="of-label">type {ovIsSet("type") && <span className="of-tag">overridden</span>}</label>
+              <input name="type" list="zx-types" defaultValue={ovEff("type")} />
+              <label className="of-inherit"><input type="checkbox" name="inherit_type" /> inherit</label>
+              <div className="override-base">base: {ovr.base.type}</div>
+            </div>
+
+            <div className="override-field grid-full">
+              <label className="of-label">runs on {ovIsSet("machine_csv") && <span className="of-tag">overridden</span>}</label>
+              <span className="os-select">
+                {MACHINES.map((m) => (
+                  <label key={m}><input type="checkbox" name="machine" value={m} defaultChecked={ovEffSet("machine_csv").includes(m)} /> {m}</label>
+                ))}
+              </span>
+              <label className="of-inherit"><input type="checkbox" name="inherit_machine" /> inherit</label>
+              <div className="override-base">base: {ovr.base.machine_csv || <em>(none)</em>}</div>
+            </div>
+
+            <div className="override-field grid-full">
+              <label className="of-label">os {ovIsSet("os_csv") && <span className="of-tag">overridden</span>}</label>
+              <span className="os-select">
+                {OSES.map((o) => (
+                  <label key={o}><input type="checkbox" name="os" value={o} defaultChecked={ovEffSet("os_csv").includes(o)} /> {o}</label>
+                ))}
+              </span>
+              <label className="of-inherit"><input type="checkbox" name="inherit_os" /> inherit</label>
+              <div className="override-base">base: {ovr.base.os_csv || <em>(none)</em>}</div>
+            </div>
+
+            <div className="override-field grid-full">
+              <label className="of-label">requires {ovIsSet("needs_csv") && <span className="of-tag">overridden</span>}</label>
+              <span className="os-select">
+                {FEATURES.map((fk) => (
+                  <label key={fk}><input type="checkbox" name="needs" value={fk} defaultChecked={ovEffSet("needs_csv").includes(fk)} /> {fk}</label>
+                ))}
+              </span>
+              <label className="of-inherit"><input type="checkbox" name="inherit_needs" /> inherit</label>
+              <div className="override-base">base: {ovr.base.needs_csv || <em>(none)</em>}</div>
+            </div>
+
+            <div className="override-field">
+              <label className="of-label">redistributable {ovIsSet("redistributable") && <span className="of-tag">overridden</span>}</label>
+              <select name="redistributable" defaultValue={ovRedist}>
+                <option value="true">yes — rehost</option>
+                <option value="false">no — link-only</option>
+              </select>
+              <label className="of-inherit"><input type="checkbox" name="inherit_redistributable" /> inherit</label>
+              <div className="override-base">base: {ovr.base.redistributable === "0" ? "no" : "yes"}</div>
+            </div>
+
+            <div className="override-field grid-full">
+              <label className="of-label">note <span className="muted">(why; admin-only)</span></label>
+              <input name="note" defaultValue={ovr.override?.note ?? ""} />
+            </div>
+
+            <button type="submit">Save overrides</button>
+          </form>
+          {ovr.override && (
+            <form method="post" action={`${bp}/api/admin/package/override/drop`} className="admin-form">
+              <input type="hidden" name="name" value={ovr.name} />
+              <button type="submit" className="btn-danger">Drop all overrides</button>
+            </form>
+          )}
+        </section>
+      )}
+
       <h2>Upload a binary <span className="muted">(no repo at all; for orphaned files)</span></h2>
       <p className="muted">Attach a file <em>or</em> give a binary URL. The portal downloads and archives the bytes either way.</p>
       <form method="post" action={`${bp}/api/admin/upload`} encType="multipart/form-data" className="admin-form admin-grid">
@@ -325,9 +447,20 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
       )}
 
       <h2 id="packages">Packages <span className="muted">({pkgPage.total})</span></h2>
+      <div className="admin-bulk">
+        <span className="muted">Metadata-only (no binary):</span>
+        <form method="post" action={`${bp}/api/admin/packages/hide-metadata`}>
+          <input type="hidden" name="state" value="hidden" />
+          <button type="submit" className="linkish">Hide all</button>
+        </form>
+        <form method="post" action={`${bp}/api/admin/packages/hide-metadata`}>
+          <input type="hidden" name="state" value="listed" />
+          <button type="submit" className="linkish">Show all</button>
+        </form>
+      </div>
       <table className="repos">
         <thead>
-          <tr><th>Name</th><th>Type</th><th>Version</th><th>Source</th><th>State</th><th>Actions</th></tr>
+          <tr><th>Name</th><th>Type</th><th>Version</th><th>Source</th><th>Kind</th><th>State</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {packages.map((p) => {
@@ -337,10 +470,20 @@ export default async function Admin({ searchParams }: { searchParams: SP }) {
                 <td><Link href={`/${p.name}`}>{p.name}</Link></td>
                 <td>{p.type || "—"}</td>
                 <td>{p.version || "—"}</td>
-                <td>{source}</td>
-                <td>{p.archive_state === "listed" ? "—" : p.archive_state}</td>
+                <td>{source}{p.is_overridden ? <span className="badge-ov">override</span> : null}</td>
+                <td>
+                  {p.has_artifact
+                    ? <span className="badge-bin">binary</span>
+                    : <span className="badge-meta">metadata</span>}
+                </td>
+                <td>
+                  {p.archive_state === "listed"
+                    ? "—"
+                    : <span className={p.archive_state === "hidden" ? "badge-hidden" : "badge-removed"}>{p.archive_state}</span>}
+                </td>
                 <td className="row-actions">
                   {p.is_manual ? <a href={`${bp}/admin?edit=${encodeURIComponent(p.name)}#manual`}>Edit</a> : null}
+                  <a href={`${bp}/admin?override=${encodeURIComponent(p.name)}#override`}>Override</a>
                   {p.archive_state !== "removed" && (
                     <>
                       <form method="post" action={`${bp}/api/admin/package/state`}>

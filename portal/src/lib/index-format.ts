@@ -10,7 +10,7 @@
 // machine_flags/os_flags are KNOWN-GOOD SETS (bitfields), not a minimum-model
 // ordinal — a bit set means "tested/declared to run on this model (or OS)".
 export const SCHEMA_VER = 1;
-export const MACHINE_BIT: Record<string, number> = { "16k": 1, "48k": 2, "128k": 4, next: 8, zxuno: 16 };
+export const MACHINE_BIT: Record<string, number> = { "16k": 1, "48k": 2, "128k": 4, next: 8, zxuno: 16, element: 32 };
 export const OS_BIT: Record<string, number> = { nextzxos: 1, esxdos: 2, unodos: 4 };
 // Device-actionable subset of `needs`; the wider needs enum is portal-only metadata.
 export const FEATURE_BIT: Record<string, number> = { wifi: 1, accelerator: 2, "2mb": 4 };
